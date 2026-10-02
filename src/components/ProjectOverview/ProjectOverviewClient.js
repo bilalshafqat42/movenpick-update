@@ -346,6 +346,27 @@ export default function ProjectOverviewClient({
                 data-active={index === activeDay || undefined}
               />
             ))}
+
+            {/*
+             * The chosen time and name over the photo. Keyed on the
+             * selection so it remounts and plays its fade-in on every
+             * change. Hidden from assistive tech: the selected tab
+             * already announces the same words.
+             */}
+            <div className={styles.dayShade} aria-hidden="true" />
+
+            <div
+              key={activeDay}
+              className={styles.dayCaption}
+              aria-hidden="true"
+            >
+              <span className={styles.dayCaptionTime}>
+                {dayItems[activeDay].time}
+              </span>
+              <span className={styles.dayCaptionLabel}>
+                {dayItems[activeDay].label}
+              </span>
+            </div>
           </div>
         </>
       ) : (
