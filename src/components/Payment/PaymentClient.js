@@ -28,6 +28,7 @@ export default function PaymentClient({
   id = "payment-plan",
   titleId = "payment-title",
   columnLabels = ["Milestone", "%"],
+  introInPanel = false,
 }) {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
@@ -240,22 +241,30 @@ export default function PaymentClient({
     { scope: sectionRef },
   );
 
+  /*
+   * The heading and its text: a centred block above the photo and table
+   * by default, or with introInPanel at the top of the table's column.
+   */
+  const intro = (
+    <div className={`${styles.intro} ${introInPanel ? styles.panelIntro : ""}`}>
+      <h2 ref={headingRef} id={titleId} className={styles.heading}>
+        {heading}
+      </h2>
+
+      <p ref={textRef} className={styles.text}>
+        {text}
+      </p>
+    </div>
+  );
+
   return (
     <section
       ref={sectionRef}
       id={id}
-      className={styles.payment}
+      className={`${styles.payment} ${introInPanel ? styles.introInPanel : ""}`}
       aria-labelledby={titleId}
     >
-      <div className={styles.intro}>
-        <h2 ref={headingRef} id={titleId} className={styles.heading}>
-          {heading}
-        </h2>
-
-        <p ref={textRef} className={styles.text}>
-          {text}
-        </p>
-      </div>
+      {!introInPanel && intro}
 
       <div className={styles.body}>
         <div ref={imagePanelRef} className={styles.imagePanel}>
@@ -273,6 +282,8 @@ export default function PaymentClient({
         </div>
 
         <div className={styles.tablePanel}>
+          {introInPanel && intro}
+
           <div ref={tableHeaderRef} className={styles.tableHeader}>
             <span>{columnLabels[0]}</span>
             <span>{columnLabels[1]}</span>
