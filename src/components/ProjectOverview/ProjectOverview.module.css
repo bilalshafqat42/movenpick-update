@@ -21,18 +21,6 @@
   line-height: 1.35;
 
   /*
-   * A "light" Gloock. The family ships in a single 400 weight and
-   * browsers only synthesise bolder weights, never lighter, so
-   * font-weight: 300 would do nothing. Instead a hairline stroke in the
-   * section's cream background is painted over each glyph's outline,
-   * shaving half its width off every edge so the letters render
-   * thinner. Sized in em so the trim stays proportional at the tablet
-   * and mobile font sizes below; much thicker and the serifs and
-   * hairlines start to break up.
-   */
-  -webkit-text-stroke: 0.015em var(--color-cream);
-
-  /*
    * 60% gold, written as a colour rather than `opacity: 0.6`.
    *
    * This paragraph fades in on scroll, and that entrance drives
