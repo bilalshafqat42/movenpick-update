@@ -52,14 +52,13 @@ const MOBILE_SIDE_LIFT = 100;
 
 /*
  * Overall emphasis, applied on top of every tier's sizing below: the
- * centre photo 20% larger and the side photos 10% smaller.
+ * centre photo 20% wider (its height is unchanged, so it reads as a
+ * wider crop of the same picture) and the side photos 10% smaller.
  *
- * The centre scale deliberately goes past the desktop height budget, so
- * on a short laptop screen the photo's lower edge and the caption under
- * it sit just below the fold. It is still kept clear of the side cards
- * (see CENTRE_SIDE_CLEARANCE).
+ * The extra width is still kept clear of the side cards (see
+ * CENTRE_SIDE_CLEARANCE), so on a narrow screen it may grow by less.
  */
-const CENTRE_SCALE = 1.2;
+const CENTRE_WIDTH_SCALE = 1.2;
 const SIDE_SCALE = 0.9;
 
 /*
@@ -431,9 +430,9 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
        */
       const sideWidth = Math.max(48, viewportWidth * 0.11) * SIDE_SCALE;
 
-      const centreHeight = window.innerHeight * 0.5 * CENTRE_SCALE;
+      const centreHeight = window.innerHeight * 0.5;
       const centreWidth = Math.min(
-        centreHeight * MOBILE_CENTRE_ASPECT,
+        centreHeight * MOBILE_CENTRE_ASPECT * CENTRE_WIDTH_SCALE,
         viewportWidth * 0.86,
         viewportWidth - 2 * (sideWidth + MOBILE_CENTRE_SIDE_CLEARANCE),
       );
@@ -456,9 +455,9 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
     if (viewportWidth <= 767) {
       const sideWidth = Math.max(62, viewportWidth * 0.13) * SIDE_SCALE;
 
-      const centreHeight = window.innerHeight * 0.5 * CENTRE_SCALE;
+      const centreHeight = window.innerHeight * 0.5;
       const centreWidth = Math.min(
-        centreHeight * MOBILE_CENTRE_ASPECT,
+        centreHeight * MOBILE_CENTRE_ASPECT * CENTRE_WIDTH_SCALE,
         viewportWidth * 0.86,
         viewportWidth - 2 * (sideWidth + MOBILE_CENTRE_SIDE_CLEARANCE),
       );
@@ -514,13 +513,11 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
 
     sideWidth *= SIDE_SCALE;
 
+    const centreHeight = Math.min(widthCap / CENTRE_ASPECT, heightBudget);
     const centreWidth = Math.min(
-      Math.min(widthCap / CENTRE_ASPECT, heightBudget) *
-        CENTRE_ASPECT *
-        CENTRE_SCALE,
+      centreHeight * CENTRE_ASPECT * CENTRE_WIDTH_SCALE,
       viewportWidth - 2 * (sideWidth + CENTRE_SIDE_CLEARANCE),
     );
-    const centreHeight = centreWidth / CENTRE_ASPECT;
 
     /*
      * The side cards are bottom-aligned against the centre photo, so a

@@ -129,13 +129,19 @@ test.describe("Content with no panel configured", () => {
     await page.goto("/");
 
     /*
-     * Values taken from src/content/sections/hero.js and footer.js. They
-     * are asserted verbatim because the point is that real copy reaches the
+     * Values taken from the project overview and footer.js. They are
+     * asserted verbatim because the point is that real copy reaches the
      * page, which a looser check (non-empty heading) would not establish.
+     * The hero is not used: its committed defaults are still placeholders.
      */
-    await expect(
-      page.getByText("Life Shaped By Sea And Serenity.", { exact: false }),
-    ).toBeVisible();
+    /*
+     * Checked as present rather than visible: the overview paragraph
+     * fades in word by word as it scrolls into view, so at the top of
+     * the page it is in the DOM but not yet shown.
+     */
+    await expect(page.locator("body")).toContainText(
+      "Mövenpick Residences Dubai Motor City offers",
+    );
 
     await expect(page.locator("body")).toContainText("+971 4 330 0299");
   });
