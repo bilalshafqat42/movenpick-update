@@ -7,34 +7,31 @@
  */
 const LOCATION_ITEMS = [
   {
-    time: "9 Min",
+    time: "15 Min",
     destination: "Dubai Hills Mall",
     latitude: "25.10188808891355",
     longitude: "55.2402916478962",
   },
   {
-    // Placeholder drive time — replace once confirmed.
-    time: "[X] Min",
+    time: "15 Min",
     destination: "Sheikh Zayed Road",
     latitude: "25.0701390212613",
     longitude: "55.13773505527004",
   },
   {
-    // Placeholder drive time — replace once confirmed.
-    time: "[X] Min",
+    time: "15 Min",
     destination: "Mall of the Emirates",
     latitude: "25.11831097706271",
     longitude: "55.20109079391421",
   },
   {
-    // Placeholder drive time — replace once confirmed.
-    time: "[X] Min",
+    time: "15 Min",
     destination: "Burj Al Arab",
     latitude: "25.14137030878205",
     longitude: "55.18558447817823",
   },
   {
-    time: "20 Min",
+    time: "25 Min",
     destination: "Burj Khalifa",
     latitude: "25.19744938452987",
     longitude: "55.27471971906346",
