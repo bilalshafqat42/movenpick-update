@@ -231,14 +231,14 @@
 }
 
 /*
- * Selected (the item whose photo is currently shown) reads in black;
+ * Selected (the item whose photo is currently shown) reads in full gold;
  * actively hovering — even a different item, mid-transition — always
  * shows gold, which is why this rule comes after the selected one: the
  * two states can apply to the same element at once when hovering is
  * literally what selects it.
  */
 .item[data-active="true"] .itemTitle {
-  color: #000000;
+  color: var(--color-gold);
 }
 
 .item:hover .itemTitle {
@@ -461,7 +461,7 @@
 
    A single continuous track used to run the full height of the list
    with a fill growing down it as the journey advanced. It is replaced
-   here by a short rule beside the selected item only, in the same black
+   here by a short rule beside the selected item only, in the same full gold
    as that item's text, so the marker and the type say the same thing.
 
    The rule is a pseudo-element rather than a border on the item: the
@@ -499,7 +499,7 @@
 
     width: 2px;
 
-    background: #000000;
+    background: var(--color-gold);
 
     opacity: 0;
 

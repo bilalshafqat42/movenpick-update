@@ -1,4 +1,5 @@
 import { dispatchLead } from "@/lib/lead-dispatch";
+import { readLeadBody, validateLeadRequest } from "@/lib/validation/leadRequest";
 
 /*
  * Contact form, contact popup, and chat widget submissions.
@@ -11,7 +12,16 @@ import { dispatchLead } from "@/lib/lead-dispatch";
  */
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const parsed = await readLeadBody(request);
+
+    if (parsed.error) {
+      return Response.json(
+        { success: false, message: parsed.error },
+        { status: parsed.status },
+      );
+    }
+
+    const { body } = parsed;
 
     /*
      * The Contact section, ContactPopup, and the Chat widget's qualification
@@ -20,6 +30,18 @@ export async function POST(request) {
      * since neither form sends an explicit source field.
      */
     const source = body?.consent !== undefined ? "chat" : "contact";
+
+    const invalid = validateLeadRequest(source, body);
+
+    if (invalid) {
+      // The reason only, never the body: it holds the visitor's details.
+      console.warn("Rejected lead submission:", source, invalid);
+
+      return Response.json(
+        { success: false, message: "Invalid lead submission." },
+        { status: 400 },
+      );
+    }
 
     const { rateLimited, retryAfterSeconds, delivered } = await dispatchLead({
       source,

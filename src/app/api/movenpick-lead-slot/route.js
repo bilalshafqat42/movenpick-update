@@ -1,4 +1,5 @@
 import { dispatchLead } from "@/lib/lead-dispatch";
+import { readLeadBody, validateLeadRequest } from "@/lib/validation/leadRequest";
 
 /*
  * Viewing-slot bookings from the chat widget.
@@ -11,7 +12,28 @@ import { dispatchLead } from "@/lib/lead-dispatch";
  */
 export async function POST(request) {
   try {
-    const body = await request.json();
+    const parsed = await readLeadBody(request);
+
+    if (parsed.error) {
+      return Response.json(
+        { success: false, message: parsed.error },
+        { status: parsed.status },
+      );
+    }
+
+    const { body } = parsed;
+
+    const invalid = validateLeadRequest("slot", body);
+
+    if (invalid) {
+      // The reason only, never the body: it holds the visitor's details.
+      console.warn("Rejected slot booking:", invalid);
+
+      return Response.json(
+        { success: false, message: "Invalid slot booking request." },
+        { status: 400 },
+      );
+    }
 
     const { rateLimited, retryAfterSeconds, delivered } = await dispatchLead({
       source: "slot",

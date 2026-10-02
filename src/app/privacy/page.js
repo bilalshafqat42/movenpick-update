@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getSectionContent, buildDefaultsFromFields } from "@/lib/content";
 import { PRIVACY_FIELDS } from "@/content/sections/privacy";
+import { sanitizeRichText } from "@/lib/sanitize-rich-text";
 import styles from "../legal.module.css";
 
 export const metadata = {
@@ -11,10 +12,9 @@ export const metadata = {
 
 /*
  * `body` is admin-authored HTML, sanitised server-side by the central
- * panel (src/lib/content/sanitize-rich-text.mjs there) on every save, not
- * by this site — Movenpick holds no sanitiser of its own and trusts what the
- * panel already cleaned, the same division of responsibility documented
- * in INTEGRATION.md for every other field the panel supplies.
+ * panel (src/lib/content/sanitize-rich-text.mjs there) on every save, and
+ * sanitised again here before rendering — see src/lib/sanitize-rich-text.js
+ * for why this site no longer relies on the panel alone.
  */
 export default async function PrivacyPage() {
   const content = await getSectionContent("privacy", buildDefaultsFromFields(PRIVACY_FIELDS));
@@ -26,7 +26,7 @@ export default async function PrivacyPage() {
       <main className={styles.page}>
         <div className={styles.content}>
           <h1 className={styles.heading}>{content.title}</h1>
-          <div className={styles.body} dangerouslySetInnerHTML={{ __html: content.body }} />
+          <div className={styles.body} dangerouslySetInnerHTML={{ __html: sanitizeRichText(content.body) }} />
         </div>
       </main>
 

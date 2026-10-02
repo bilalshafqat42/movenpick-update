@@ -1,6 +1,15 @@
 .gallery {
   position: relative;
 
+  /*
+   * Lifted to the project gallery's level so this section's cream covers
+   * the amenities photo panel. That panel deliberately bleeds below its
+   * sticky frame (see .imagePanel in Amenities.module.css), and the
+   * one-screen project gallery directly above this section is not tall
+   * enough to cover the bleed on its own.
+   */
+  z-index: 4;
+
   display: flex;
   flex-direction: column;
 
@@ -125,6 +134,52 @@
 .carousel[data-dragging="true"],
 .carousel[data-dragging="true"] * {
   cursor: none !important;
+}
+
+/* =========================================================
+   Previous / next arrows
+
+   The shared NavArrow, placed on the page gutter like the project
+   gallery's and centred on the photo rather than on the whole stage
+   (which also holds the caption). Above every card, whose stacking
+   GalleryClient sets up to 4.
+   ========================================================= */
+
+.navPrev,
+.navNext {
+  position: absolute;
+  top: calc(var(--gallery-photo-height, 600px) / 2);
+  z-index: 6;
+
+  transform: translateY(-50%);
+}
+
+.navPrev {
+  left: var(--page-gutter);
+}
+
+.navNext {
+  right: var(--page-gutter);
+}
+
+/*
+ * On a phone the gutter would put the arrows over the centre photo's
+ * edge, so they centre on the narrow side cards instead, which sit
+ * lower than the photo's middle there.
+ */
+@media (max-width: 767px) {
+  .navPrev,
+  .navNext {
+    top: var(--gallery-side-middle, 50%);
+  }
+
+  .navPrev {
+    left: max(0px, calc(var(--gallery-side-width, 44px) / 2 - 22px));
+  }
+
+  .navNext {
+    right: max(0px, calc(var(--gallery-side-width, 44px) / 2 - 22px));
+  }
 }
 
 /* =========================================================

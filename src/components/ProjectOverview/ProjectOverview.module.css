@@ -253,6 +253,34 @@
 }
 
 /* =========================================================
+   Standalone copy
+
+   The second instance further down the page. It is not under the hero,
+   so it does not ride over anything: no negative margin, and its own
+   full screen with the content centred in it. Repeated per tier so it
+   outranks the desktop and mobile rules above and below on specificity
+   rather than on source order.
+   ========================================================= */
+
+.projectOverview.standalone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+@media (min-width: 1025px) {
+  .projectOverview.standalone {
+    margin-top: 0;
+
+    /* Clears the fixed header, then the same 90px rhythm as the original. */
+    padding-top: calc(var(--header-height, 90px) + 90px);
+  }
+}
+
+/* =========================================================
    Tablet
    ========================================================= */
 

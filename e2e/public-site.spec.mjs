@@ -12,8 +12,10 @@ test.describe("Public site smoke test", () => {
 
     await expect(page.locator("#home")).toBeAttached();
     await expect(page.locator("#amenities")).toBeAttached();
-    await expect(page.locator("#project")).toBeAttached();
+    await expect(page.locator("#project-gallery")).toBeAttached();
     await expect(page.locator("#gallery")).toBeAttached();
+    await expect(page.locator("#location-map")).toBeAttached();
+    await expect(page.locator("#trusted-partner")).toBeAttached();
     await expect(page.locator("#payment-plan")).toBeAttached();
     await expect(page.locator("#contact")).toBeAttached();
 

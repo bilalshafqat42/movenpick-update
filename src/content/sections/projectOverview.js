@@ -10,7 +10,7 @@ export const PROJECT_OVERVIEW_FIELDS = [
     type: "TEXT",
     long: true,
     defaultValue:
-      "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor Incididunt Ut Labore Et Dolore Magna Aliqua. Ut Enim Ad Minim Veniam. Duis Aute Irure Dolor In Reprehenderit In Voluptate Velit Esse Cillum Dolore",
+      "Mövenpick Residences Dubai Motor City offers wellness-focused, furnished studios and 1–2BR apartments with views of Arabian Ranches, the skyline, and Motor City.",
   },
   {
     key: "stat-1-value",

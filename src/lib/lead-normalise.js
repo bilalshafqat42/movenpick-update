@@ -90,7 +90,7 @@ export function normaliseLead(source, body) {
      * sent rather than parsed into a date here, because a half-understood
      * timezone conversion is worse than passing the original string on.
      */
-    slot: firstNonEmpty(raw.slot, raw.slot_label, raw.appointment),
+    slot: firstNonEmpty(raw.slot, raw.slotLabel, raw.slot_label, raw.appointment),
 
     /*
      * Explicit agreement to be contacted, sent by the chat. `null` rather

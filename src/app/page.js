@@ -60,11 +60,15 @@ export default async function Home() {
 
         <ProjectGallery />
 
-        <TrustedPartner />
-
         <Gallery />
 
         {/* <Project /> */}
+
+        <ProjectOverview
+          id="project-overview-2"
+          standalone
+          analyticsLocation="project_overview_2"
+        />
 
         <MapSection
           eyebrow={locationContent.eyebrow}
@@ -72,6 +76,8 @@ export default async function Home() {
           introText={locationContent.introText}
           destinations={locationContent.items}
         />
+
+        <TrustedPartner />
 
         {/* <SeaSection /> */}
 

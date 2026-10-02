@@ -70,6 +70,15 @@ export async function GET() {
        * waiting a year for it.
        */
       "Cache-Control": "public, max-age=300, stale-while-revalidate=86400",
+      /*
+       * Proxying makes the logo same-origin, which is the point, but it also
+       * means an SVG that carries a <script> would run with this site's
+       * origin if opened directly. sandbox stops any script in the response
+       * from executing; nosniff stops the browser second-guessing the type.
+       * Neither affects its use as a CSS mask-image.
+       */
+      "Content-Security-Policy": "sandbox; default-src 'none'; style-src 'unsafe-inline'",
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }

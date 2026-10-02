@@ -1,14 +1,9 @@
 /*
- * Scroll-driven horizontal gallery.
+ * Arrow-driven gallery.
  *
- * Built on position: sticky rather than GSAP's own pinning, the same
- * pattern Amenities uses for its stage journey. A pin-spacer would sit
- * between this section and the page's scroll-snap points, and sticky
- * keeps the snap anchor on an element that never moves.
- *
- * --pg-slides is set inline by ProjectGalleryClient from the actual
- * slide count it received, so the wrapper height, the rail width and
- * the JS travel distance can never drift apart.
+ * One screen tall. The page scroll no longer moves the slides: the
+ * previous and next buttons do, and each new slide travels across and
+ * covers the one before it (see ProjectGalleryClient).
  */
 
 .gallery {
@@ -25,32 +20,18 @@
 .scrollWrapper {
   position: relative;
 
-  /*
-   * One viewport to arrive in, plus a runway per slide transition. The
-   * runway is longer than a viewport (see
-   * SCROLL_VIEWPORTS_PER_TRANSITION in ProjectGalleryClient) so the
-   * photos move less per unit of scroll and the section reads as
-   * deliberate rather than skittish.
-   *
-   * No overflow here or on .gallery: overflow other than `visible`
-   * makes an element a scroll container, which would trap the sticky
-   * .viewport inside it instead of letting it stick to the page.
-   */
-  height: calc(var(--pg-scroll-viewports, 3) * 100vh);
-  height: calc(var(--pg-scroll-viewports, 3) * 100svh);
+  height: 100vh;
+  height: 100svh;
 
   /*
    * Exit snap point for Amenities' pinned scroll journey (see
    * Amenities.module.css .stageWrapper) — this section's own top edge
-   * is the clean "fully arrived" resting point right after it. It
-   * lives on the wrapper, not the sticky child, so the anchor stays
-   * put while the journey plays.
+   * is the clean "fully arrived" resting point right after it.
    *
    * The negative scroll-margin cancels the global scroll-padding-top
    * that keeps ordinary sections clear of the fixed header (see
    * globals.css). Without it this section snapped 90px short of full
-   * coverage, so "arrived" was never actually full screen and the very
-   * next nudge started sliding the photos. This is a full-bleed
+   * coverage, so "arrived" was never actually full screen. This is a full-bleed
    * section: the header is meant to float over it, not sit above it.
    */
   scroll-snap-align: start;
@@ -58,8 +39,7 @@
 }
 
 .viewport {
-  position: sticky;
-  top: 0;
+  position: relative;
 
   height: 100vh;
   height: 100svh;
@@ -69,66 +49,53 @@
   background: var(--color-gold);
 }
 
+/*
+ * Draggable sideways. pan-y hands vertical swipes back to the browser,
+ * so a finger moving up the photo still scrolls the page.
+ */
+.viewport[data-draggable] {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.viewport[data-dragging] {
+  cursor: grabbing;
+}
+
 /* =========================================================
    Rail and slides
    ========================================================= */
 
 .rail {
-  display: flex;
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Slides stack rather than sitting side by side, so the slide you are
+ * on holds still and the next one travels across and covers it.
+ *
+ * Every slide after the first starts parked off to the right, so the
+ * server-rendered page shows slide one before the script takes over
+ * and positions them inline.
+ */
+.slide {
+  position: absolute;
+  inset: 0;
 
   /*
-   * Sized in percentages of .viewport rather than vw: on desktop, vw
-   * includes the scrollbar's width, so each slide would sit a few
-   * pixels wider than the visible area and the travel would creep out
-   * of alignment by the last slide.
+   * The frame the photograph drifts inside. Without this the overhang
+   * would spill into the neighbouring slide instead of being cropped.
    */
-  width: calc(var(--pg-slides, 3) * 100%);
-  height: 100%;
+  overflow: hidden;
 
   will-change: transform;
 }
 
-/*
- * The stacked layout the scroll-driven transition uses, switched on by
- * ProjectGalleryClient.
- *
- * The strip above is still what reduced motion gets: it turns .rail into
- * a native horizontal scroller, and absolutely positioned children would
- * leave it nothing to scroll. Both layouts have to exist, so the one
- * that only applies to the animated path is keyed off the attribute
- * rather than replacing the other.
- */
-.rail[data-stacked="true"] {
-  width: 100%;
-}
-
-.rail[data-stacked="true"] .slide {
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-}
-
-/*
- * flex: 1 0 0 over a rail that is already --pg-slides viewports wide
- * gives every slide an equal share, which is exactly one viewport
- * each. No per-slide width calc to keep in step with the count.
- */
-.slide {
-  position: relative;
-
-  flex: 1 0 0;
-  height: 100%;
-
-  /*
-   * The frame the photograph drifts inside. Without this the overhang
-   * below would simply spill into the neighbouring slide instead of
-   * being cropped, and the parallax would read as the photos overlapping
-   * rather than as depth.
-   */
-  overflow: hidden;
+.slide:not(:first-child) {
+  transform: translateX(100%);
 }
 
 .image {
@@ -156,9 +123,8 @@
    ========================================================= */
 
 /*
- * Chrome, not slide content: it stays put in the sticky viewport while
- * the photos travel underneath, and only its text crossfades as each
- * slide comes to rest.
+ * Chrome, not slide content: it stays put while the photos travel
+ * underneath, and only its text crossfades as each slide comes to rest.
  */
 .content {
   position: absolute;
@@ -229,12 +195,10 @@
 }
 
 /*
- * One continuous line with a single highlighted segment sliding along
- * it to the current scroll position, rather than a separate dash per
- * slide — a scrubber, not a row of dots. Its position is written every
- * scroll frame by ProjectGalleryClient, so there is deliberately no
- * transition on it: one would lag behind the scroll it is meant to
- * report.
+ * One continuous line that fills as the gallery advances, rather than a
+ * separate dash per slide. Its fill is written every frame of a slide
+ * move by ProjectGalleryClient, so there is deliberately no transition
+ * on it: one would lag behind the move it is meant to report.
  */
 .track {
   position: relative;
@@ -260,6 +224,7 @@
   width: 100%;
   height: 100%;
 
+  transform: scaleX(0.16);
   transform-origin: left center;
 
   background: #ffffff;
@@ -267,7 +232,7 @@
   /*
    * Scaled by ProjectGalleryClient, never sized with `width`: width is
    * not compositable, so animating it would invalidate layout for the
-   * whole pagination row on every scroll frame.
+   * whole pagination row on every frame.
    */
   will-change: transform;
 }
@@ -294,6 +259,29 @@
 }
 
 /* =========================================================
+   Previous / next arrows
+
+   The button itself is the shared NavArrow; this only places it.
+   ========================================================= */
+
+.navPrev,
+.navNext {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+
+  transform: translateY(-50%);
+}
+
+.navPrev {
+  left: var(--page-gutter);
+}
+
+.navNext {
+  right: var(--page-gutter);
+}
+
+/* =========================================================
    Mobile
    ========================================================= */
 
@@ -304,40 +292,6 @@
 
   .text {
     font-size: 13px;
-  }
-}
-
-/* =========================================================
-   Reduced motion
-
-   No scroll-driven movement: the section collapses to a single
-   viewport and .rail becomes a plain horizontal scroller with x
-   snapping, so the same three slides stay reachable by swipe, wheel or
-   keyboard without the page scroll moving anything.
-   ========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-  .scrollWrapper {
-    height: auto;
-  }
-
-  .viewport {
-    position: static;
-  }
-
-  .rail {
-    width: 100%;
-
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-
-    will-change: auto;
-  }
-
-  .slide {
-    flex: 0 0 100%;
-
-    scroll-snap-align: center;
   }
 }
 
