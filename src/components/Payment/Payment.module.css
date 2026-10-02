@@ -185,6 +185,15 @@
   flex-direction: column;
 }
 
+/*
+ * No rows (Floor Plan, until its table is filled in): take no space, so
+ * the column's content centres beside the photo instead of being pushed
+ * up by an empty block that would otherwise grow to fill the column.
+ */
+.table:empty {
+  display: none;
+}
+
 .row {
   position: relative;
 
@@ -563,6 +572,18 @@
    */
   .payment.introInPanel .imagePanel {
     margin-top: var(--header-height, 90px);
+  }
+
+  /*
+   * The table's own full screen exists to give seven rows room. Here
+   * the column holds the intro (and the table only if it has rows), so
+   * it takes its natural height under the photo instead of centring a
+   * short block in a whole empty screen.
+   */
+  .payment.introInPanel .tablePanel {
+    min-height: 0;
+
+    padding-top: clamp(32px, 5svh, 48px);
   }
 
   .intro.panelIntro {

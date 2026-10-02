@@ -7,7 +7,8 @@
  * Everything below is still the Payment Plan's content, copied as the
  * starting point. Replace it with the floor plan details: the heading,
  * intro, photo, the two column names, and one row per line of the table
- * (add or remove rows freely; the table follows the list).
+ * (add or remove rows freely; the table follows the list, and is left
+ * out entirely while the list is empty).
  *
  * `units` are the buttons under the intro. Choosing one shows its
  * `image` in the photo panel; every unit uses the same placeholder until
@@ -41,41 +42,10 @@ export const FLOOR_PLAN_CONTENT = {
       alt: "[Add alt text for the 3 bedroom floor plan]",
     },
   ],
-  rows: [
-    {
-      label: "Booking",
-      percent: "5%",
-      sublabel: "On Booking / Reservation",
-    },
-    {
-      label: "1st Installment - DLD",
-      percent: "15%",
-      sublabel: "Within 60 Days Of Booking",
-    },
-    {
-      label: "2nd Installment",
-      percent: "5%",
-      sublabel: "6 Months After Booking",
-    },
-    {
-      label: "3rd Installment",
-      percent: "5%",
-      sublabel: "12 Months After Booking",
-    },
-    {
-      label: "4th Installment",
-      percent: "5%",
-      sublabel: "18 Months After Booking",
-    },
-    {
-      label: "5th Installment",
-      percent: "5%",
-      sublabel: "24 Months After Booking",
-    },
-    {
-      label: "Final Installment",
-      percent: "60%",
-      sublabel: "On Handover",
-    },
-  ],
+  /*
+   * Empty for now: the payment milestones copied in as a starting point
+   * were removed. Add rows here ({ label, percent, sublabel }) and the
+   * table reappears under the buttons.
+   */
+  rows: [],
 };
