@@ -2,6 +2,13 @@ import { getSectionContent, buildDefaultsFromFields } from "@/lib/content";
 import { PROJECT_OVERVIEW_FIELDS } from "@/content/sections/projectOverview";
 import ProjectOverviewClient from "./ProjectOverviewClient";
 
+/*
+ * Hardcoded on purpose: this paragraph is static copy and must not be
+ * overridden by the admin panel's "description" field.
+ */
+const DESCRIPTION =
+  "Mövenpick Residences Dubai Motor City offers wellness-focused, furnished studios and 1–2BR apartments with views of Arabian Ranches, the skyline, and Motor City.";
+
 export default async function ProjectOverview() {
   const content = await getSectionContent(
     "projectOverview",
@@ -15,7 +22,7 @@ export default async function ProjectOverview() {
 
   return (
     <ProjectOverviewClient
-      description={content.description}
+      description={DESCRIPTION}
       stats={stats}
       cta1Label={content["cta-1-label"]}
       cta1Href={content["cta-1-href"]}
