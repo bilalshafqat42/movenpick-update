@@ -27,32 +27,24 @@ export const FLOOR_PLAN_CONTENT = {
   units: [
     {
       label: "Studio",
-      heading: "[Studio heading]",
-      text: "[Two lines about the studio: its size, layout and what sets it apart. Replace this placeholder.]",
+      heading: "Studio heading",
+      text: "Two lines about the studio: its size, layout and what sets it apart. Replace this placeholder.",
       image: "/images/floor-plan/studio.png",
       alt: "Studio floor plan with balcony, living and sleeping area, kitchen and bathroom",
     },
     {
       label: "1 Bedroom",
-      heading: "[1 Bedroom heading]",
-      text: "[Two lines about the 1 bedroom: its size, layout and what sets it apart. Replace this placeholder.]",
+      heading: "1 Bedroom heading",
+      text: "Two lines about the 1 bedroom: its size, layout and what sets it apart. Replace this placeholder.",
       image: "/images/floor-plan/1-bedroom.png",
       alt: "1 bedroom floor plan with balcony, living room, bedroom, kitchen and dining, dressing area, bathroom and guest WC",
     },
     {
       label: "2 Bedroom",
-      heading: "[2 Bedroom heading]",
-      text: "[Two lines about the 2 bedroom: its size, layout and what sets it apart. Replace this placeholder.]",
+      heading: "2 Bedroom heading",
+      text: "Two lines about the 2 bedroom: its size, layout and what sets it apart. Replace this placeholder.",
       image: "/images/floor-plan/2-bedroom-utility.png",
       alt: "2 bedroom with utility floor plan with balcony, two bedrooms, living room, kitchen and dining, bathrooms and utility room",
-    },
-    {
-      // No floor plan supplied yet: still the placeholder photo.
-      label: "3 Bedroom",
-      heading: "[3 Bedroom heading]",
-      text: "[Two lines about the 3 bedroom: its size, layout and what sets it apart. Replace this placeholder.]",
-      image: "/images/payment/payment-plan.avif",
-      alt: "[Add alt text for the 3 bedroom floor plan]",
     },
   ],
   /*
