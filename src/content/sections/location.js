@@ -1,5 +1,5 @@
 /*
- * The four "minutes away" destinations shown on the interactive map
+ * The five "minutes away" destinations shown on the interactive map
  * (src/components/MapSection). Latitude/longitude here are the pin's
  * real position on the map, not just a label — renaming a destination
  * without updating its coordinates leaves the pin pointing at the old
@@ -7,41 +7,37 @@
  */
 const LOCATION_ITEMS = [
   {
-    // Coordinates unconfirmed — "Medcare Medical Centre" has several
-    // Dubai branches; verify which one and update before publishing
-    // (see the note at the top of this file on why both fields must
-    // be edited together).
-    time: "2 Min",
-    destination: "Medcare Medical Centre",
-    latitude: "25.0500",
-    longitude: "55.2280",
-  },
-  {
-    // Coordinates approximate — confirm before publishing.
     time: "9 Min",
     destination: "Dubai Hills Mall",
-    latitude: "25.1010",
-    longitude: "55.2450",
+    latitude: "25.10188808891355",
+    longitude: "55.2402916478962",
   },
   {
-    time: "19 Min",
-    destination: "Dubai Marina",
-    latitude: "25.0805",
-    longitude: "55.139",
+    // Placeholder drive time — replace once confirmed.
+    time: "[X] Min",
+    destination: "Sheikh Zayed Road",
+    latitude: "25.0701390212613",
+    longitude: "55.13773505527004",
   },
   {
-    time: "23 Min",
-    destination: "Dubai International Airport (DXB)",
-    latitude: "25.2532",
-    longitude: "55.3644",
+    // Placeholder drive time — replace once confirmed.
+    time: "[X] Min",
+    destination: "Mall of the Emirates",
+    latitude: "25.11831097706271",
+    longitude: "55.20109079391421",
   },
   {
-    // Time is an estimate (Motor City to Downtown Dubai via Sheikh
-    // Zayed Road) — confirm the actual drive time before publishing.
+    // Placeholder drive time — replace once confirmed.
+    time: "[X] Min",
+    destination: "Burj Al Arab",
+    latitude: "25.14137030878205",
+    longitude: "55.18558447817823",
+  },
+  {
     time: "20 Min",
     destination: "Burj Khalifa",
-    latitude: "25.197197",
-    longitude: "55.274376",
+    latitude: "25.19744938452987",
+    longitude: "55.27471971906346",
   },
 ];
 
@@ -116,16 +112,12 @@ export const LOCATION_FIELDS = [
 ];
 
 export function shapeLocationContent(content) {
-  const items = Array.from({ length: LOCATION_ITEM_COUNT }, (_, index) => {
-    const itemNumber = index + 1;
-
-    return {
-      time: content[itemFieldKey(itemNumber, "time")],
-      destination: content[itemFieldKey(itemNumber, "destination")],
-      latitude: content[itemFieldKey(itemNumber, "latitude")],
-      longitude: content[itemFieldKey(itemNumber, "longitude")],
-    };
-  });
+  /*
+   * Static on purpose: the destinations always come from LOCATION_ITEMS
+   * above, never from the admin panel's item fields, so the live map
+   * shows exactly these points whatever the panel has saved.
+   */
+  const items = LOCATION_ITEMS.map((item) => ({ ...item }));
 
   return {
     eyebrow: content.eyebrow,
