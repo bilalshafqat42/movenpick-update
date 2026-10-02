@@ -417,24 +417,6 @@ export default function ProjectGalleryClient({ slides }) {
 
           <div className={styles.overlay} aria-hidden="true" />
 
-          {hasMultiple && (
-            <>
-              <NavArrow
-                direction="prev"
-                className={styles.navPrev}
-                disabled={targetIndex === 0}
-                onClick={() => goTo(targetIndex - 1)}
-              />
-
-              <NavArrow
-                direction="next"
-                className={styles.navNext}
-                disabled={targetIndex === slideCount - 1}
-                onClick={() => goTo(targetIndex + 1)}
-              />
-            </>
-          )}
-
           <div className={styles.content}>
             <div ref={captionRef} className={styles.caption} aria-live="polite">
               <h2 className={styles.heading}>{activeSlide.heading}</h2>
@@ -443,6 +425,15 @@ export default function ProjectGalleryClient({ slides }) {
             </div>
 
             <div className={styles.pagination}>
+              {hasMultiple && (
+                <NavArrow
+                  variant="line"
+                  direction="prev"
+                  disabled={targetIndex === 0}
+                  onClick={() => goTo(targetIndex - 1)}
+                />
+              )}
+
               <div className={styles.track} aria-hidden="true">
                 <div ref={trackFillRef} className={styles.trackFill} />
               </div>
@@ -450,6 +441,15 @@ export default function ProjectGalleryClient({ slides }) {
               <span className={styles.counter}>
                 {String(activeIndex + 1).padStart(2, "0")}
               </span>
+
+              {hasMultiple && (
+                <NavArrow
+                  variant="line"
+                  direction="next"
+                  disabled={targetIndex === slideCount - 1}
+                  onClick={() => goTo(targetIndex + 1)}
+                />
+              )}
             </div>
           </div>
         </div>

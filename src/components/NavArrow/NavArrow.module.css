@@ -131,3 +131,45 @@
     height: 44px;
   }
 }
+
+/* =========================================================
+   "line" variant: a long thin arrow, no circle
+   ========================================================= */
+
+.navButton.line {
+  width: auto;
+  height: 32px;
+  padding: 0 4px;
+
+  border-radius: 0;
+
+  color: inherit;
+}
+
+.lineIcon {
+  display: block;
+
+  transition: transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The artwork points right; the previous arrow is its mirror image. */
+.line.prev .lineIcon {
+  transform: scaleX(-1);
+}
+
+/* On hover the arrow nudges the way it points. */
+.line.next:not(:disabled):hover .lineIcon,
+.line.next:focus-visible .lineIcon {
+  transform: translateX(4px);
+}
+
+.line.prev:not(:disabled):hover .lineIcon,
+.line.prev:focus-visible .lineIcon {
+  transform: scaleX(-1) translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lineIcon {
+    transition: none;
+  }
+}
