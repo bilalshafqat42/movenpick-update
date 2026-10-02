@@ -11,32 +11,34 @@
  * out entirely while the list is empty).
  *
  * `units` are the buttons under the intro. Choosing one shows its
- * `image` in the photo panel; every unit uses the same placeholder until
- * its own floor plan is added (e.g. "/images/floor-plan/studio.avif").
+ * `image` in the photo panel, whole and centred on the plans' own cream
+ * (see .imagePanel[data-plans] in Payment.module.css). Floor plans live
+ * in public/images/floor-plan/.
  */
 export const FLOOR_PLAN_CONTENT = {
   heading: "Floor Plan",
   text: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
   image: "/images/payment/payment-plan.avif",
   imageAlt: "[Add alt text for the floor plan image]",
-  columnLabels: ["Milestone", "%"],
+  columnLabels: ["Milestone", ""],
   units: [
     {
       label: "Studio",
-      image: "/images/payment/payment-plan.avif",
-      alt: "[Add alt text for the studio floor plan]",
+      image: "/images/floor-plan/studio.jpg",
+      alt: "Studio floor plan with balcony, living and sleeping area, kitchen and bathroom",
     },
     {
       label: "1 Bedroom",
-      image: "/images/payment/payment-plan.avif",
-      alt: "[Add alt text for the 1 bedroom floor plan]",
+      image: "/images/floor-plan/1-bedroom.jpg",
+      alt: "1 bedroom floor plan with balcony, living room, bedroom, kitchen and dining, dressing area, bathroom and guest WC",
     },
     {
       label: "2 Bedroom",
-      image: "/images/payment/payment-plan.avif",
-      alt: "[Add alt text for the 2 bedroom floor plan]",
+      image: "/images/floor-plan/2-bedroom-utility.jpg",
+      alt: "2 bedroom with utility floor plan with balcony, two bedrooms, living room, kitchen and dining, bathrooms and utility room",
     },
     {
+      // No floor plan supplied yet: still the placeholder photo.
       label: "3 Bedroom",
       image: "/images/payment/payment-plan.avif",
       alt: "[Add alt text for the 3 bedroom floor plan]",

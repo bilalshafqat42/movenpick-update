@@ -225,8 +225,17 @@ export default function PaymentClient({
         gsap.set(tableHeader, { autoAlpha: 0, y: 12 });
       }
 
-      gsap.set(rows, { autoAlpha: 0, y: 18 });
-      gsap.set(rules.filter(Boolean), { scaleX: 0 });
+      /*
+       * Guarded because a table can be empty (Floor Plan, until its rows
+       * are filled in), and GSAP warns about every set on no targets.
+       */
+      if (rows.length) {
+        gsap.set(rows, { autoAlpha: 0, y: 18 });
+      }
+
+      if (rules.some(Boolean)) {
+        gsap.set(rules.filter(Boolean), { scaleX: 0 });
+      }
 
       const rowsTrigger = revealOnArrival({
         trigger: table,
@@ -321,7 +330,11 @@ export default function PaymentClient({
       {!introInPanel && intro}
 
       <div className={styles.body}>
-        <div ref={imagePanelRef} className={styles.imagePanel}>
+        <div
+          ref={imagePanelRef}
+          className={styles.imagePanel}
+          data-plans={hasUnits || undefined}
+        >
           <div ref={imageLayerRef} className={styles.imageLayer}>
             <SafeImage
               src={shownImage}
