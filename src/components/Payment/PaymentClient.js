@@ -49,6 +49,7 @@ export default function PaymentClient({
   const tableRef = useRef(null);
   const tableHeaderRef = useRef(null);
   const unitsRef = useRef(null);
+  const unitDetailRef = useRef(null);
 
   useGSAP(
     () => {
@@ -66,7 +67,13 @@ export default function PaymentClient({
        * the table's own sequence further down.
        */
       const introEls = introInPanel
-        ? [tableHeader, headingEl, textEl, unitsRef.current].filter(Boolean)
+        ? [
+            tableHeader,
+            headingEl,
+            textEl,
+            unitsRef.current,
+            unitDetailRef.current,
+          ].filter(Boolean)
         : [headingEl, textEl];
 
       if (
@@ -308,6 +315,34 @@ export default function PaymentClient({
               {unit.label}
             </button>
           ))}
+        </div>
+      )}
+
+      {/*
+       * The chosen unit's own heading and description, under a rule.
+       * The wrapper is stable so the entrance animation has one element
+       * to reveal; the inner block is keyed on the selection so it
+       * remounts and fades in each time a different unit is chosen.
+       */}
+      {hasUnits && (units[activeUnit].heading || units[activeUnit].text) && (
+        <div ref={unitDetailRef} className={styles.unitDetail}>
+          <hr className={styles.unitDivider} />
+
+          <div
+            key={activeUnit}
+            className={styles.unitDetailBody}
+            aria-live="polite"
+          >
+            {units[activeUnit].heading && (
+              <h3 className={styles.unitHeading}>
+                {units[activeUnit].heading}
+              </h3>
+            )}
+
+            {units[activeUnit].text && (
+              <p className={styles.unitText}>{units[activeUnit].text}</p>
+            )}
+          </div>
         </div>
       )}
     </div>

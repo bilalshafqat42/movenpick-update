@@ -703,6 +703,74 @@
   object-fit: contain;
 }
 
+/*
+ * The chosen unit's heading and description, under a rule beneath the
+ * buttons. It fades in on each change of unit.
+ */
+.unitDetail {
+  margin-top: clamp(22px, 3.2vh, 36px);
+}
+
+.unitDivider {
+  height: 1px;
+  margin: 0 0 clamp(18px, 2.6vh, 28px);
+
+  border: 0;
+
+  background: rgba(137, 118, 85, 0.28);
+}
+
+.unitDetailBody {
+  animation: unitDetailIn 450ms ease both;
+}
+
+.unitHeading {
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 400;
+  line-height: 1.25;
+
+  color: var(--color-gold);
+}
+
+.unitText {
+  max-width: 620px;
+  margin: 10px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+@keyframes unitDetailIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .unitText {
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .unitDetailBody {
+    animation: none;
+  }
+}
+
 /* =========================================================
    Reduced motion
    ========================================================= */
