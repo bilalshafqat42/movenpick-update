@@ -185,6 +185,15 @@
   flex-direction: column;
 }
 
+/*
+ * No rows (Floor Plan, until its table is filled in): take no space, so
+ * the column's content centres beside the photo instead of being pushed
+ * up by an empty block that would otherwise grow to fill the column.
+ */
+.table:empty {
+  display: none;
+}
+
 .row {
   position: relative;
 
@@ -507,6 +516,191 @@
   .rowPercent {
     font-size: 17px;
   }
+}
+
+/* =========================================================
+   Heading in the table column (introInPanel, used by Floor Plan)
+
+   The heading and its text sit at the top of the right-hand column,
+   left-aligned over the table, instead of centred above both columns.
+   ========================================================= */
+
+.intro.panelIntro {
+  width: auto;
+  margin: 0 0 clamp(28px, 4vh, 48px);
+
+  text-align: left;
+}
+
+.panelIntro .text {
+  margin: 14px 0 0;
+}
+
+@media (min-width: 1025px) {
+  /*
+   * Nothing above the photo and table any more, so the section starts
+   * with them: the row is the whole section, a full screen tall.
+   */
+  .payment.introInPanel {
+    padding-top: 0;
+  }
+
+  .intro.panelIntro {
+    margin-bottom: clamp(20px, 3vh, 40px);
+  }
+
+  /*
+   * The heading now shares the column with the seven rows, so the rows
+   * give up some air to keep the whole column on one screen. Scaled on
+   * height: a tall window still gets generous rows, since .row grows to
+   * share out any space left over.
+   */
+  .introInPanel .row {
+    padding-block: clamp(6px, 1.2vh, 18px);
+  }
+
+  .introInPanel .rowSublabel {
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 767px) {
+  /*
+   * The phone's first screen was the intro over the photo; with the
+   * intro moved into the table's screen, the photo stands alone and
+   * clears the header itself.
+   */
+  .payment.introInPanel .imagePanel {
+    margin-top: var(--header-height, 90px);
+  }
+
+  /*
+   * The table's own full screen exists to give seven rows room. Here
+   * the column holds the intro (and the table only if it has rows), so
+   * it takes its natural height under the photo instead of centring a
+   * short block in a whole empty screen.
+   */
+  .payment.introInPanel .tablePanel {
+    min-height: 0;
+
+    padding-top: clamp(32px, 5svh, 48px);
+  }
+
+  .intro.panelIntro {
+    min-height: 0;
+    padding: 0;
+  }
+}
+
+/*
+ * The column headings as the eyebrow above the heading: same red, with
+ * space beneath instead of sitting tight on the first milestone.
+ */
+.introInPanel .tableHeader {
+  padding-bottom: 0;
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+
+/*
+ * The unit-type buttons: one horizontal row under the paragraph, in the
+ * site's red outline pill. The chosen unit is filled.
+ */
+.units {
+  display: flex;
+  gap: 10px;
+
+  margin-top: clamp(18px, 2.6vh, 28px);
+}
+
+/*
+ * Equal shares of the row, so the four always fit on one line in the
+ * narrow table column rather than the last one wrapping below.
+ */
+.unitButton {
+  flex: 1 1 0;
+  min-width: 0;
+
+  margin: 0;
+  padding: 12px 10px;
+
+  border: 1px solid var(--color-cta-red);
+  border-radius: 999px;
+
+  background: transparent;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  color: var(--color-cta-red);
+
+  cursor: pointer;
+
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.unitButton:hover,
+.unitButton:focus-visible,
+.unitButton[aria-pressed="true"] {
+  background: var(--color-cta-red);
+
+  color: var(--color-cream);
+}
+
+.unitButton:focus-visible {
+  outline: 1px solid var(--color-cta-red);
+  outline-offset: 3px;
+}
+
+/* Four pills are too wide for a phone; there the row scrolls sideways. */
+@media (max-width: 767px) {
+  .units {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .units::-webkit-scrollbar {
+    display: none;
+  }
+
+  .unitButton {
+    flex: 0 0 auto;
+
+    padding: 11px 18px;
+
+    font-size: 12px;
+  }
+}
+
+/*
+ * Floor plans rather than a photograph (Floor Plan's unit buttons).
+ * Shown whole, never cropped, on no background of their own: the plan
+ * files are transparent PNGs, so the drawing sits straight on the
+ * section's cream with no box or edge around it. Inset so the drawing
+ * does not run to the panel's edges.
+ */
+.imagePanel[data-plans] {
+  background: transparent;
+}
+
+.imagePanel[data-plans] .imageLayer {
+  inset: clamp(24px, 6%, 80px);
+
+  width: auto;
+  height: auto;
+}
+
+.imagePanel[data-plans] .image {
+  object-fit: contain;
 }
 
 /* =========================================================
