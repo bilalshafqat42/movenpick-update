@@ -486,7 +486,7 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
       const stage = carouselRef.current;
 
       if (stage) {
-        const { centreWidth, centreHeight } = getResponsiveSizes();
+        const { centreWidth, centreHeight, sideYOffset } = getResponsiveSizes();
 
         /*
          * Published before the caption is measured, not after: it is
@@ -496,6 +496,16 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
         stage.style.setProperty(
           "--gallery-caption-width",
           `${Math.round(centreWidth)}px`,
+        );
+
+        /*
+         * Where the side photos start, below the top of the stage. The
+         * desktop arrows sit in the middle of the empty space above them
+         * (see .stageArrows in the module CSS).
+         */
+        stage.style.setProperty(
+          "--gallery-side-top",
+          `${Math.round(sideYOffset)}px`,
         );
 
         stage.style.height = `${Math.round(centreHeight + getCaptionBlock())}px`;
@@ -807,6 +817,11 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
   const handlePointerDown = useCallback(
     (event) => {
       if (isAnimating || event.button > 0) {
+        return;
+      }
+
+      /* The arrows are buttons, not the start of a drag. */
+      if (event.target.closest("button[aria-label$='slide']")) {
         return;
       }
 
@@ -1343,12 +1358,37 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
             </article>
           );
         })}
+
+        {/*
+         * Tablet and desktop: the arrows on the page gutters, in the open
+         * space above the side photos. Phones use the pair in the row
+         * under the caption instead (each pair is hidden by CSS where the
+         * other is shown, so only one is ever on screen or in the tab
+         * order).
+         */}
+        {galleryItems.length > 1 && (
+          <div className={styles.stageArrows}>
+            <NavArrow
+              variant="line"
+              direction="prev"
+              className={styles.stagePrev}
+              onClick={showPrevious}
+            />
+
+            <NavArrow
+              variant="line"
+              direction="next"
+              className={styles.stageNext}
+              onClick={showNext}
+            />
+          </div>
+        )}
       </div>
 
       {/*
-       * The controls row under the carousel: long-line arrows either side
-       * of the slide indicator, the same arrangement as the project
-       * gallery's arrows around its progress bar.
+       * The slide indicator under the caption. On a phone the arrows sit
+       * either side of it, as in the project gallery; wider screens show
+       * them above the side photos instead.
        */}
       <div className={styles.pagination} aria-label="Gallery pagination">
         {galleryItems.length > 1 && (

@@ -377,24 +377,64 @@
 }
 
 /*
- * The long arrows either side of the indicator, about 50px from it (the
- * row's 9px gap plus this margin), less on a phone. Gold here, from the
- * section's text colour, where the project gallery's are white.
+ * Long-line arrows, gold from the section's text colour.
+ *
+ * Tablet and desktop: on the page gutters, in line with the header's
+ * MENU and REQUEST CALLBACK, centred in the open space above the side
+ * photos (--gallery-side-top is where those photos start, written by
+ * GalleryClient). Above every card, whose stacking goes up to 4.
  */
-.navPrev {
-  margin-right: 41px;
+.stageArrows {
+  display: contents;
 }
 
-.navNext {
-  margin-left: 41px;
+.stagePrev,
+.stageNext {
+  position: absolute;
+  top: calc(var(--gallery-side-top, 200px) / 2);
+  z-index: 6;
+
+  transform: translateY(-50%);
 }
 
+.stagePrev {
+  left: var(--page-gutter);
+}
+
+.stageNext {
+  right: var(--page-gutter);
+}
+
+/*
+ * The phone pair, in the indicator row; hidden on wider screens.
+ * Scoped under .pagination so it outranks NavArrow's own display rule
+ * instead of depending on which stylesheet loads last.
+ */
+.pagination .navPrev,
+.pagination .navNext {
+  display: none;
+}
+
+/*
+ * A phone's side photos are too narrow to hold an arrow above them, so
+ * there the arrows move into the row under the caption, either side of
+ * the indicator and about 24px from it.
+ */
 @media (max-width: 767px) {
-  .navPrev {
+  .stageArrows {
+    display: none;
+  }
+
+  .pagination .navPrev,
+  .pagination .navNext {
+    display: grid;
+  }
+
+  .pagination .navPrev {
     margin-right: 15px;
   }
 
-  .navNext {
+  .pagination .navNext {
     margin-left: 15px;
   }
 }
