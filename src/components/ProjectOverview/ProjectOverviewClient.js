@@ -36,8 +36,29 @@ export default function ProjectOverviewClient({
   const [activeDay, setActiveDay] = useState(0);
   const dayButtonRefs = useRef([]);
 
+  /*
+   * Which photos are mounted. Images are not optimised on this
+   * deployment (see next.config.mjs), so mounting all eight would make
+   * every visitor download eight full-size photos the moment the section
+   * appears. Instead a photo is mounted once it is chosen or is next to
+   * the chosen one (so the likely next pick is already loaded), and stays
+   * mounted afterwards so the crossfade back to it is instant.
+   */
+  const [seenDays, setSeenDays] = useState(() => new Set([0, 1]));
+
   const selectDay = (index) => {
     setActiveDay(index);
+    setSeenDays((current) => {
+      const next = new Set(current);
+
+      [index - 1, index, index + 1].forEach((n) => {
+        if (n >= 0 && n < dayItems.length) {
+          next.add(n);
+        }
+      });
+
+      return next.size === current.size ? current : next;
+    });
 
     /*
      * On a phone the row is a horizontal strip; keep the chosen time in
@@ -50,18 +71,27 @@ export default function ProjectOverviewClient({
     });
   };
 
-  /* Arrow keys move along the timeline, as in any tab list. */
+  /*
+   * Arrow keys move along the timeline and Home / End jump to either
+   * end, as in any tab list.
+   */
   const handleDayKeyDown = (event) => {
-    const step =
-      event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+    const last = dayItems.length - 1;
+    let next;
 
-    if (!step) {
+    if (event.key === "ArrowRight") {
+      next = activeDay === last ? 0 : activeDay + 1;
+    } else if (event.key === "ArrowLeft") {
+      next = activeDay === 0 ? last : activeDay - 1;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = last;
+    } else {
       return;
     }
 
     event.preventDefault();
-
-    const next = (activeDay + step + dayItems.length) % dayItems.length;
 
     selectDay(next);
     dayButtonRefs.current[next]?.focus();
@@ -333,19 +363,21 @@ export default function ProjectOverviewClient({
             role="tabpanel"
             aria-labelledby={`${id}-day-tab-${activeDay}`}
           >
-            {dayItems.map((item, index) => (
-              <Image
-                key={item.time}
-                src={item.image}
-                alt={index === activeDay ? item.alt : ""}
-                aria-hidden={index !== activeDay || undefined}
-                fill
-                sizes="(max-width: 767px) 100vw, 84vw"
-                quality={85}
-                className={styles.dayImage}
-                data-active={index === activeDay || undefined}
-              />
-            ))}
+            {dayItems.map((item, index) =>
+              seenDays.has(index) ? (
+                <Image
+                  key={item.time}
+                  src={item.image}
+                  alt={index === activeDay ? item.alt : ""}
+                  aria-hidden={index !== activeDay || undefined}
+                  fill
+                  sizes="(max-width: 767px) 100vw, 84vw"
+                  quality={85}
+                  className={styles.dayImage}
+                  data-active={index === activeDay || undefined}
+                />
+              ) : null,
+            )}
 
             {/*
              * The chosen time and name over the photo. Keyed on the

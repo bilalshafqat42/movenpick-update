@@ -44,7 +44,16 @@
   height: 100vh;
   height: 100svh;
 
+  /*
+   * clip, not just hidden. The parked slides sit a full width off to the
+   * right, and an overflow: hidden box is still scrollable from script —
+   * focusing an arrow made the browser scroll this box sideways to bring
+   * it into view, shifting every slide and the caption off centre.
+   * clip cannot be scrolled at all. hidden stays first as the fallback
+   * for browsers without clip.
+   */
   overflow: hidden;
+  overflow: clip;
 
   background: var(--color-gold);
 }
@@ -183,12 +192,20 @@
    Pagination
    ========================================================= */
 
+/*
+ * The previous / next arrows sit at either end of this row (long-line
+ * NavArrows), so the controls and the progress they drive read as one
+ * strip at the foot of the photo.
+ */
 .pagination {
   display: flex;
   align-items: center;
   gap: 20px;
 
-  width: min(600px, 70vw);
+  /* The caption block's full width (640px at most, see .content). */
+  width: 100%;
+
+  color: #ffffff;
   margin-top: 28px;
 
   pointer-events: auto;
@@ -258,27 +275,17 @@
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* =========================================================
-   Previous / next arrows
-
-   The button itself is the shared NavArrow; this only places it.
-   ========================================================= */
-
-.navPrev,
-.navNext {
-  position: absolute;
-  top: 50%;
-  z-index: 5;
-
-  transform: translateY(-50%);
-}
-
+/*
+ * The long arrows at either end of the bar, held off it by about 50px
+ * (the row's 20px gap plus this margin). Less on a phone, where the bar
+ * needs the room.
+ */
 .navPrev {
-  left: var(--page-gutter);
+  margin-right: 30px;
 }
 
 .navNext {
-  right: var(--page-gutter);
+  margin-left: 30px;
 }
 
 /* =========================================================
@@ -292,6 +299,28 @@
 
   .text {
     font-size: 13px;
+  }
+
+  .pagination {
+    gap: 14px;
+  }
+
+  .navPrev {
+    margin-right: 10px;
+  }
+
+  .navNext {
+    margin-left: 10px;
+  }
+
+  /*
+   * Lifted clear of the floating Back to Top and chat buttons (50px
+   * tall, 16px off the bottom on a phone), which otherwise sit on top
+   * of the next arrow and swallow the tap.
+   */
+  .content {
+    bottom: calc(16px + 50px + 24px);
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 50px + 24px);
   }
 }
 

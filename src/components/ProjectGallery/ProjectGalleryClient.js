@@ -81,16 +81,9 @@ export default function ProjectGalleryClient({ slides }) {
    */
   const visibleSlides = slides;
   const slideCount = visibleSlides.length;
-  const transitionCount = Math.max(1, slideCount - 1);
 
-  /*
-   * activeIndex is what the caption and counter show, and changes at the
-   * halfway point of a move. targetIndex is where the arrows are taking
-   * the gallery, and changes on the click, so the buttons' disabled
-   * state answers immediately.
-   */
+  /* The caption and counter, which change at the halfway point of a move. */
   const [activeIndex, setActiveIndex] = useState(0);
-  const [targetIndex, setTargetIndex] = useState(0);
 
   const railRef = useRef(null);
   const trackFillRef = useRef(null);
@@ -98,13 +91,22 @@ export default function ProjectGalleryClient({ slides }) {
   const activeIndexRef = useRef(0);
 
   /*
-   * The slide position as a 0–1 value across the whole gallery, and the
-   * function that renders it. Held in refs so the arrow handlers can
-   * tween it without re-running the setup.
+   * The gallery loops, so there is no single 0–1 position across it any
+   * more. Instead it is always either settled on `currentRef`, or part
+   * way through ONE move: from one slide to its neighbour (`to`), in a
+   * direction (`dir`, 1 forward / -1 back), `t` of the way through.
+   * Arrows and drag both drive that one move, through `renderRef`.
    */
-  const coverProxyRef = useRef({ value: 0 });
+  const currentRef = useRef(0);
+  const moveRef = useRef({ from: 0, to: 0, dir: 1, t: 0 });
   const renderRef = useRef(null);
   const tweenRef = useRef(null);
+  const tweenTargetRef = useRef(null);
+
+  const wrap = useCallback(
+    (index) => ((index % slideCount) + slideCount) % slideCount,
+    [slideCount],
+  );
 
   const setActive = useCallback((index) => {
     if (index === activeIndexRef.current) {
@@ -129,17 +131,12 @@ export default function ProjectGalleryClient({ slides }) {
       const slideImages = [...rail.querySelectorAll(`.${styles.image}`)];
 
       /*
-       * Later slides sit above earlier ones, so each new arrival covers
-       * what is already there rather than sliding underneath it.
-       *
        * x: 0 because the stylesheet parks every slide after the first
        * off to the right until this runs. GSAP reads that translateX
        * back as a pixel x, and left in place it would stack on top of
        * the xPercent below and hold the slides off screen for good.
        */
-      slideElements.forEach((slide, index) => {
-        gsap.set(slide, { x: 0, zIndex: index });
-      });
+      gsap.set(slideElements, { x: 0 });
 
       /* The overhang the photographs settle within. */
       gsap.set(slideImages, {
@@ -147,32 +144,49 @@ export default function ProjectGalleryClient({ slides }) {
         transformOrigin: "center center",
       });
 
+      /* How full the progress bar is on a given slide. */
+      const fillFor = (index) =>
+        TRACK_START_FRACTION +
+        (slideCount > 1 ? index / (slideCount - 1) : 1) *
+          (1 - TRACK_START_FRACTION);
+
+      const place = (index, xPercent, zIndex) => {
+        gsap.set(slideElements[index], { xPercent, zIndex });
+
+        if (slideImages[index]) {
+          gsap.set(slideImages[index], {
+            xPercent: -(xPercent / 100) * SLIDE_PARALLAX_PERCENT,
+          });
+        }
+      };
+
       /*
-       * Slide n is fully off to the right until the gallery reaches
-       * n - 1, then travels across as the move into it plays out, and
-       * stays put once it has arrived. Slide 0 never moves: it is the
-       * one everything else covers.
+       * One move between two neighbouring slides.
+       *
+       * Forward, the next slide travels in from the right and covers the
+       * current one, which holds still. Back, the current slide travels
+       * out to the right and uncovers the previous one waiting beneath.
+       * Either way the photo lags its frame a little (the parallax), and
+       * every other slide waits off to the right, out of sight.
        */
-      const render = (progress) => {
-        const clamped = gsap.utils.clamp(0, 1, progress);
-        const journey = clamped * transitionCount;
-
-        slideElements.forEach((slide, index) => {
-          const covered =
-            index === 0 ? 1 : gsap.utils.clamp(0, 1, journey - (index - 1));
-
-          gsap.set(slide, { xPercent: (1 - covered) * 100 });
-
-          const image = slideImages[index];
-
-          if (image) {
-            gsap.set(image, {
-              xPercent: -(1 - covered) * SLIDE_PARALLAX_PERCENT,
-            });
+      const render = ({ from, to, dir, t }) => {
+        slideElements.forEach((_, index) => {
+          if (index !== from && index !== to) {
+            place(index, 100, 0);
           }
         });
 
-        const distance = Math.abs(journey - Math.round(journey));
+        if (from === to) {
+          place(from, 0, 1);
+        } else if (dir > 0) {
+          place(from, 0, 1);
+          place(to, (1 - t) * 100, 2);
+        } else {
+          place(to, 0, 1);
+          place(from, t * 100, 2);
+        }
+
+        const distance = Math.min(t, 1 - t);
         const faded = gsap.utils.clamp(
           0,
           1,
@@ -185,14 +199,18 @@ export default function ProjectGalleryClient({ slides }) {
         });
 
         gsap.set(trackFill, {
-          scaleX: TRACK_START_FRACTION + clamped * (1 - TRACK_START_FRACTION),
+          scaleX: gsap.utils.interpolate(fillFor(from), fillFor(to), t),
         });
 
-        setActive(Math.round(journey));
+        setActive(t < 0.5 ? from : to);
       };
 
       renderRef.current = render;
-      render(coverProxyRef.current.value);
+
+      const current = currentRef.current;
+
+      moveRef.current = { from: current, to: current, dir: 1, t: 0 };
+      render(moveRef.current);
 
       return () => {
         tweenRef.current?.kill();
@@ -201,52 +219,104 @@ export default function ProjectGalleryClient({ slides }) {
       };
     },
     {
-      dependencies: [slideCount, transitionCount, setActive],
+      dependencies: [slideCount, setActive],
       revertOnUpdate: true,
     },
   );
 
-  const goTo = useCallback(
-    (index, { duration = SLIDE_DURATION, ease = SLIDE_EASE } = {}) => {
-      const next = gsap.utils.clamp(0, slideCount - 1, index);
-      const render = renderRef.current;
-      const proxy = coverProxyRef.current;
+  /*
+   * Ends whatever move is under way at once, so a new move or drag
+   * always starts from a settled slide. Returns that slide.
+   *
+   * `towardTarget` lands on wherever the running move was headed rather
+   * than on whichever slide is nearer. The arrows use it, so a quick run
+   * of clicks advances one slide per click instead of each click
+   * snapping back to where the last one started.
+   */
+  const settleNow = useCallback((towardTarget = false) => {
+    const running = tweenRef.current;
+    const heading = running ? tweenTargetRef.current : null;
 
-      setTargetIndex(next);
+    running?.kill();
+    tweenRef.current = null;
+
+    const move = moveRef.current;
+    const landed =
+      towardTarget && heading !== null
+        ? heading === 1
+          ? move.to
+          : move.from
+        : move.t >= 0.5
+          ? move.to
+          : move.from;
+
+    currentRef.current = landed;
+    moveRef.current = { from: landed, to: landed, dir: 1, t: 0 };
+    renderRef.current?.(moveRef.current);
+
+    return landed;
+  }, []);
+
+  /* Plays a move from `t` to 1 (commit) or 0 (spring back). */
+  const playMove = useCallback(
+    (target, { duration = SLIDE_DURATION, ease = SLIDE_EASE } = {}) => {
+      const render = renderRef.current;
+      const move = moveRef.current;
 
       if (!render) {
         return;
       }
 
+      const finish = () => {
+        const landed = target === 1 ? move.to : move.from;
+
+        tweenRef.current = null;
+        currentRef.current = landed;
+        moveRef.current = { from: landed, to: landed, dir: 1, t: 0 };
+        render(moveRef.current);
+      };
+
       const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
       ).matches;
 
-      tweenRef.current?.kill();
-
-      const value = next / transitionCount;
-
       if (reduceMotion) {
-        proxy.value = value;
-        render(value);
+        finish();
         return;
       }
 
-      tweenRef.current = gsap.to(proxy, {
-        value,
-        duration,
+      tweenTargetRef.current = target;
+      tweenRef.current = gsap.to(move, {
+        t: target,
+        duration: duration * Math.max(0.25, Math.abs(target - move.t)),
         ease,
-        onUpdate: () => render(proxy.value),
+        onUpdate: () => render(move),
+        onComplete: finish,
       });
     },
-    [slideCount, transitionCount],
+    [],
+  );
+
+  /* One slide forward (1) or back (-1), wrapping round at either end. */
+  const step = useCallback(
+    (dir) => {
+      if (slideCount <= 1) {
+        return;
+      }
+
+      const from = settleNow(true);
+
+      moveRef.current = { from, to: wrap(from + dir), dir, t: 0 };
+      playMove(1);
+    },
+    [slideCount, settleNow, wrap, playMove],
   );
 
   /*
    * Drag to change slide, with a mouse or a finger. The photos follow
    * the pointer 1:1 — a full gallery width of drag is one whole slide —
-   * and on release the gallery settles on whichever slide the drag
-   * committed to.
+   * and on release the move either completes or springs back. Dragging
+   * left goes forward, and it wraps round like the arrows.
    *
    * Vertical page scrolling is left to the browser (touch-action: pan-y
    * on .viewport), so a finger swiping up the page still scrolls it.
@@ -264,19 +334,15 @@ export default function ProjectGalleryClient({ slides }) {
         return;
       }
 
-      tweenRef.current?.kill();
-
       dragRef.current = {
         pointerId: event.pointerId,
         startX: event.clientX,
         startTime: performance.now(),
-        startValue: coverProxyRef.current.value,
-        fromIndex: Math.round(coverProxyRef.current.value * transitionCount),
         width: event.currentTarget.offsetWidth || window.innerWidth,
         moved: false,
       };
     },
-    [slideCount, transitionCount],
+    [slideCount],
   );
 
   const handlePointerMove = useCallback(
@@ -284,6 +350,18 @@ export default function ProjectGalleryClient({ slides }) {
       const drag = dragRef.current;
 
       if (!drag || drag.pointerId !== event.pointerId) {
+        return;
+      }
+
+      /*
+       * A mouse pressed here and released somewhere else before the drag
+       * threshold was reached never delivers its pointerup to this
+       * element (capture only starts once the drag is under way). With
+       * no button held, that press is over: drop it, or the next plain
+       * hover would start dragging the slides.
+       */
+      if (event.pointerType === "mouse" && event.buttons === 0) {
+        dragRef.current = null;
         return;
       }
 
@@ -295,21 +373,24 @@ export default function ProjectGalleryClient({ slides }) {
         }
 
         drag.moved = true;
+        drag.from = settleNow();
         event.currentTarget.setPointerCapture?.(event.pointerId);
         setIsDragging(true);
       }
 
-      const proxy = coverProxyRef.current;
+      const fraction = -dx / drag.width;
+      const dir = fraction >= 0 ? 1 : -1;
 
-      proxy.value = gsap.utils.clamp(
-        0,
-        1,
-        drag.startValue - dx / drag.width / transitionCount,
-      );
+      moveRef.current = {
+        from: drag.from,
+        to: wrap(drag.from + dir),
+        dir,
+        t: gsap.utils.clamp(0, 1, Math.abs(fraction)),
+      };
 
-      renderRef.current?.(proxy.value);
+      renderRef.current?.(moveRef.current);
     },
-    [transitionCount],
+    [settleNow, wrap],
   );
 
   const finishDrag = useCallback(
@@ -335,15 +416,12 @@ export default function ProjectGalleryClient({ slides }) {
         Math.abs(dx) > drag.width * DRAG_COMMIT_FRACTION ||
         Math.abs(dx) / elapsed > DRAG_FLICK_VELOCITY;
 
-      /* Dragging left moves forward, as on any touch carousel. */
-      const step = committed ? (dx < 0 ? 1 : -1) : 0;
-
-      goTo(drag.fromIndex + step, {
+      playMove(committed ? 1 : 0, {
         duration: DRAG_SETTLE_DURATION,
         ease: "power3.out",
       });
     },
-    [goTo],
+    [playMove],
   );
 
   /*
@@ -351,10 +429,12 @@ export default function ProjectGalleryClient({ slides }) {
    * stale index (content edit, hot reload).
    */
   useEffect(() => {
-    if (activeIndexRef.current > slideCount - 1) {
-      goTo(slideCount - 1);
+    if (currentRef.current > slideCount - 1) {
+      currentRef.current = 0;
+      moveRef.current = { from: 0, to: 0, dir: 1, t: 0 };
+      renderRef.current?.(moveRef.current);
     }
-  }, [slideCount, goTo]);
+  }, [slideCount]);
 
   const activeSlide = visibleSlides[activeIndex] ?? visibleSlides[0];
 
@@ -405,24 +485,6 @@ export default function ProjectGalleryClient({ slides }) {
 
           <div className={styles.overlay} aria-hidden="true" />
 
-          {hasMultiple && (
-            <>
-              <NavArrow
-                direction="prev"
-                className={styles.navPrev}
-                disabled={targetIndex === 0}
-                onClick={() => goTo(targetIndex - 1)}
-              />
-
-              <NavArrow
-                direction="next"
-                className={styles.navNext}
-                disabled={targetIndex === slideCount - 1}
-                onClick={() => goTo(targetIndex + 1)}
-              />
-            </>
-          )}
-
           <div className={styles.content}>
             <div ref={captionRef} className={styles.caption} aria-live="polite">
               <h2 className={styles.heading}>{activeSlide.heading}</h2>
@@ -431,6 +493,15 @@ export default function ProjectGalleryClient({ slides }) {
             </div>
 
             <div className={styles.pagination}>
+              {hasMultiple && (
+                <NavArrow
+                  variant="line"
+                  direction="prev"
+                  className={styles.navPrev}
+                  onClick={() => step(-1)}
+                />
+              )}
+
               <div className={styles.track} aria-hidden="true">
                 <div ref={trackFillRef} className={styles.trackFill} />
               </div>
@@ -438,6 +509,15 @@ export default function ProjectGalleryClient({ slides }) {
               <span className={styles.counter}>
                 {String(activeIndex + 1).padStart(2, "0")}
               </span>
+
+              {hasMultiple && (
+                <NavArrow
+                  variant="line"
+                  direction="next"
+                  className={styles.navNext}
+                  onClick={() => step(1)}
+                />
+              )}
             </div>
           </div>
         </div>
