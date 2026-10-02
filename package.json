@@ -1,0 +1,42 @@
+{
+  "name": "movenpick",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test:e2e": "dotenv -e .env.local -- playwright test",
+    "test:e2e:ui": "dotenv -e .env.local -- playwright test --ui",
+    "test:e2e:report": "playwright show-report",
+    "schema:export": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/export-content-schema.mjs",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/register-alias.mjs --test \"test/*.test.mjs\"",
+    "test:all": "npm test && npm run test:e2e"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.25",
+    "libphonenumber-js": "^1.13.8",
+    "mapbox-gl": "^3.26.0",
+    "mermaid": "^11.16.1",
+    "next": "^16.2.10",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-phone-number-input": "^3.4.17",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/postcss": "^4",
+    "babel-plugin-react-compiler": "1.0.0",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "tailwindcss": "^4"
+  }
+}

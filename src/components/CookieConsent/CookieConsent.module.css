@@ -1,0 +1,365 @@
+/*
+ * A full-width bar across the foot of the screen rather than a floating
+ * card. No padding of its own: the cream has to reach both edges, so the
+ * gutter belongs to .inner, inside the background.
+ *
+ * Above the page, below the corner controls. 900 puts it under the chat
+ * widget and the back-to-top button, which both sit at 999; at 2000 it
+ * hid them completely for as long as the banner was open.
+ *
+ * There is no cost to giving way here. The copy and the buttons occupy
+ * the left six columns and those controls sit bottom-right, so nothing
+ * that has to be read or clicked ends up underneath them.
+ *
+ * Still below the navigation overlay at 1000 — an open menu should cover
+ * this rather than compete with it.
+ */
+.banner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 900;
+
+  pointer-events: none;
+}
+
+/*
+ * The page's twelve-column grid, so the banner lines up with the
+ * sections above it rather than being centred on its own axis.
+ *
+ * The copy sits in columns 1 to 6, which puts its left edge on the
+ * header's MENU. Measured, MENU starts exactly on column 1 — the page
+ * gutter — at every desktop width: 140px at 1990, 120px at 1440, 107px
+ * at 1280, 85px at 1025, 0px off the column start in every case. So
+ * "aligned with the menu" and "column 1" are the same instruction, and
+ * any left offset at all would break it: one column would have left the
+ * banner 143px right of MENU at 1990.
+ *
+ * Six columns wide, unchanged — the block keeps its measure and simply
+ * moves to the left edge.
+ *
+ * Every child is placed on the same span, which is what keeps the
+ * heading, the toggles and the buttons on one left edge.
+ */
+.inner {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 24px;
+  row-gap: 20px;
+
+  width: 100%;
+
+  padding: 28px var(--page-gutter) max(28px, env(safe-area-inset-bottom));
+
+  /*
+   * A single rule along the top, not a box. Edge to edge, the border
+   * that made it read as a card now reads as a seam.
+   */
+  border-top: 1px solid rgba(var(--color-gold-rgb), 0.25);
+
+  background: var(--color-cream);
+
+  /*
+   * Cast upward, since the bar is anchored to the bottom edge — the
+   * page it needs separating from is above it.
+   */
+  box-shadow: 0 -14px 40px rgba(var(--color-gold-rgb), 0.18);
+
+  pointer-events: auto;
+}
+
+.copy,
+.categories,
+.actions {
+  grid-column: 1 / span 6;
+}
+
+/*
+ * A little more room on desktop.
+ *
+ * 33px rather than 28px top and bottom, which is 10px on a bar that
+ * measures 202px closed at every width from 1280 up — 5% taller, as
+ * asked. Added as padding rather than a height so it applies equally to
+ * the closed bar and the taller one with the category toggles open,
+ * where a fixed height would have had to be two numbers.
+ *
+ * Desktop only. Below 1025px the bar is already a larger share of a
+ * smaller screen, and the mobile block further down keeps its own
+ * tighter padding.
+ */
+@media (min-width: 1025px) {
+  .inner {
+    padding-top: 33px;
+    padding-bottom: max(33px, env(safe-area-inset-bottom));
+  }
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  text-align: left;
+}
+
+.title {
+  margin: 0;
+
+  color: var(--color-gold);
+
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/*
+ * The heading takes focus when the banner opens so the reason for the
+ * interruption is announced first. It is not an interactive control, so
+ * it gets no focus ring — the ring would suggest it does something.
+ */
+.title:focus {
+  outline: none;
+}
+
+/*
+ * Full-strength gold, not the 60-70% used decoratively elsewhere on the
+ * site. This is the one block of text on the page with a legal purpose,
+ * so it is the one that must not be quiet: at 14px it needs 4.5:1, which
+ * the softened tone does not reach.
+ */
+.body {
+  margin: 0;
+
+  color: var(--color-gold);
+
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.privacyLink {
+  color: var(--color-gold);
+
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.privacyLink:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* =========================================================
+   Categories
+   ========================================================= */
+
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.category + .category {
+  border-top: 1px solid rgba(var(--color-gold-rgb), 0.16);
+}
+
+/*
+ * The whole row is the label, so the description is part of the target
+ * rather than text beside a small box. The padding is what takes the row
+ * past the 44px minimum without a visibly oversized control.
+ */
+.categoryLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  min-height: 44px;
+
+  padding: 12px 0;
+
+  cursor: pointer;
+}
+
+.checkbox {
+  flex-shrink: 0;
+
+  width: 20px;
+  height: 20px;
+
+  margin: 0;
+
+  accent-color: var(--color-gold);
+
+  cursor: pointer;
+}
+
+.checkbox:disabled {
+  cursor: default;
+}
+
+.categoryText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.categoryTitle {
+  color: var(--color-gold);
+
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.always {
+  font-weight: 400;
+  font-style: italic;
+}
+
+.categoryBody {
+  color: var(--color-gold);
+
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Actions
+   ========================================================= */
+
+/*
+ * Left aligned and sized to their labels, so the row starts on the same
+ * edge as the copy above it. Wraps rather than shrinks: a button
+ * squeezed to fit is worse than one on its own line.
+ */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+/*
+ * Accept and Reject are the same size, weight and prominence.
+ *
+ * Only their fill differs, and only so the pair reads as two options
+ * rather than one. Making refusal smaller, greyer or slower to find is
+ * exactly what "freely given" rules out, and it is the most common thing
+ * wrong with a consent banner.
+ */
+.primary,
+.secondary {
+  /*
+   * Sized to the label rather than stretched to fill the row. Stretching
+   * pushed the three buttons apart to the full width of the column,
+   * which broke the left edge the copy sets.
+   */
+  flex: 0 0 auto;
+
+  /*
+   * 44px is the accessible minimum for a touch target; this is the one
+   * new surface on the site that meets it from the start.
+   */
+  min-height: 44px;
+  min-width: 132px;
+
+  padding: 12px 20px;
+
+  border: 1px solid var(--color-gold);
+  border-radius: 999px;
+
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+
+  cursor: pointer;
+
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+.primary {
+  background: var(--color-gold);
+  color: var(--color-cream);
+}
+
+.secondary {
+  background: transparent;
+  color: var(--color-gold);
+}
+
+.primary:hover,
+.secondary:hover {
+  background: rgba(var(--color-gold-rgb), 0.85);
+  color: var(--color-cream);
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+/*
+ * Below the desktop tier the copy takes the full width between the
+ * gutters. Six of twelve columns on a phone is about 150px, which is
+ * narrower than the words.
+ */
+@media (max-width: 1024px) {
+  .copy,
+  .categories,
+  .actions {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767px) {
+  .inner {
+    row-gap: 16px;
+
+    padding: 20px var(--page-gutter) max(20px, env(safe-area-inset-bottom));
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  /*
+   * One per line below 768px. Side by side, three buttons on a 360px
+   * screen leave each about 100px wide, which truncates the labels.
+   */
+  .actions {
+    flex-direction: column;
+  }
+
+  .primary,
+  .secondary {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .primary,
+  .secondary {
+    transition: none;
+  }
+}

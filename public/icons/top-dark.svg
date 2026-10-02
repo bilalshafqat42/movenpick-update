@@ -1,0 +1,21 @@
+<svg width="162" height="162" viewBox="0 -4 162 162" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!--
+  No baked drop shadow.
+
+  The Figma export wrapped the circle in a filter whose region was
+  x="0" y="0" width="162" height="162" - the exact bounds of the
+  viewBox. The shadow (dy 4, blur 2) therefore ran straight off that
+  region and was sliced flat at the bottom and sides, which is what
+  read as a broken, faceted border. The shadow now comes from the CSS
+  drop-shadow() in BackToTop.module.css, which has no such region and
+  follows the circle's real alpha.
+
+  viewBox y starts at -4 so the circle (cy 77, r 77) is centred in its
+  own box with 4 units of clearance all round. At y="0" its top edge
+  sat flush against the box boundary.
+-->
+<g>
+<circle cx="81" cy="77" r="77" transform="rotate(-180 81 77)" fill="#897655"/>
+</g>
+<path d="M106.664 82.7031L81.3982 61.0462C80.628 60.386 79.4855 60.407 78.7401 61.095L55.3307 82.7031" stroke="#FFF0E7" stroke-width="2" stroke-linecap="round"/>
+</svg>

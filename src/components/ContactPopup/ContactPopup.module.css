@@ -1,0 +1,822 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+
+  display: grid;
+  place-items: center;
+
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+
+  padding: 24px;
+
+  overflow: hidden;
+
+  background: rgba(10, 17, 20, 0.68);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* =========================================================
+   Popup dialog
+   ========================================================= */
+
+.dialog {
+  position: relative;
+
+  width: min(670px, 100%);
+  max-height: calc(100dvh - 48px);
+
+  padding: 48px 56px 40px;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background: var(--color-cream);
+
+  color: var(--color-gold);
+
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.28);
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(137, 118, 85, 0.36) transparent;
+
+  will-change: transform, opacity;
+}
+
+.dialog::-webkit-scrollbar {
+  width: 5px;
+}
+
+.dialog::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dialog::-webkit-scrollbar-thumb {
+  background: rgba(137, 118, 85, 0.34);
+  border-radius: 20px;
+}
+
+/* =========================================================
+   Close button
+   ========================================================= */
+
+.closeButton {
+  position: absolute;
+  top: 28px;
+  right: 34px;
+  z-index: 5;
+
+  display: grid;
+  place-items: center;
+
+  width: 44px;
+  height: 44px;
+
+  padding: 0;
+  border: 0;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  cursor: pointer;
+}
+
+.closeButton:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.closeIcon {
+  display: block;
+
+  width: 34px;
+  height: 34px;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: url("/icons/cross.svg");
+  mask-image: url("/icons/cross.svg");
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.closeButton:hover:not(:disabled) .closeIcon,
+.closeButton:focus-visible:not(:disabled) .closeIcon {
+  transform: rotate(90deg);
+}
+
+.closeButton:focus-visible {
+  outline: 1px solid var(--color-gold);
+  outline-offset: 4px;
+}
+
+/* =========================================================
+   Form
+   ========================================================= */
+
+.form {
+  position: relative;
+
+  width: 100%;
+}
+
+.headingGroup {
+  margin: 0 0 56px;
+  padding-right: 54px;
+}
+
+/*
+ * Part of the heading now, not a red kicker above it — "Reach Out To
+ * Us" runs as one gold serif line, matching the Contact section. It
+ * stays its own element so the two content fields remain
+ * independently editable.
+ */
+.eyebrow {
+  font: inherit;
+  color: inherit;
+}
+
+.heading {
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.2;
+
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Accessible hidden labels
+   ========================================================= */
+
+.visuallyHidden {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+}
+
+/* =========================================================
+   Form rows
+   ========================================================= */
+
+.nameRow {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 26px;
+
+  width: 100%;
+  margin: 0 0 44px;
+}
+
+.fieldRow {
+  width: 100%;
+  margin: 0 0 44px;
+}
+
+.field {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  margin: 0;
+}
+
+/* =========================================================
+   Inputs
+   ========================================================= */
+
+.input,
+.select {
+  display: block;
+
+  width: 100%;
+  height: 40px;
+
+  padding: 0 0 11px;
+
+  border: 0;
+  border-bottom: 1px solid rgba(137, 118, 85, 0.4);
+  border-radius: 0;
+  outline: 0;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  font-family: var(--font-gloock);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+
+  transition:
+    border-color 350ms ease,
+    box-shadow 350ms ease;
+}
+
+.input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.input::placeholder {
+  /* Full gold, matching the selects and the Contact section. */
+  color: var(--color-gold);
+  opacity: 1;
+}
+
+.input:focus,
+.select:focus {
+  border-bottom-color: var(--color-gold);
+
+  box-shadow: 0 1px 0 var(--color-gold);
+}
+
+/* =========================================================
+   Field-level validation popup
+   ========================================================= */
+
+.fieldError {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 5;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  max-width: min(320px, 100%);
+  padding: 10px 14px;
+
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+
+  color: #1a1a1a;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.4;
+
+  animation: fieldErrorIn 150ms ease-out;
+}
+
+.fieldError::before {
+  content: "";
+
+  position: absolute;
+  top: -6px;
+  left: 18px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #ffffff;
+  transform: rotate(45deg);
+}
+
+.fieldErrorIcon {
+  flex-shrink: 0;
+
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes fieldErrorIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   Terms / privacy consent lines
+   ========================================================= */
+
+.consent {
+  margin: 30px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 12.5px;
+  line-height: 1.5;
+
+  color: rgba(137, 118, 85, 0.65);
+}
+
+.consentLink {
+  color: var(--color-gold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.consentLink:hover,
+.consentLink:focus-visible {
+  color: var(--color-cta-red);
+}
+
+@media (max-width: 480px) {
+  .fieldError {
+    font-size: 12.5px;
+  }
+}
+
+/* =========================================================
+   User-type select
+   ========================================================= */
+
+.selectWrapper {
+  position: relative;
+
+  width: 100%;
+}
+
+.select {
+  position: relative;
+  z-index: 1;
+
+  padding-right: 34px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+}
+
+.selectWrapper::after {
+  content: "";
+
+  position: absolute;
+  top: 10px;
+  right: 3px;
+  z-index: 2;
+
+  width: 8px;
+  height: 8px;
+
+  border-right: 1px solid rgba(137, 118, 85, 0.7);
+  border-bottom: 1px solid rgba(137, 118, 85, 0.7);
+
+  transform: rotate(45deg);
+
+  pointer-events: none;
+}
+
+.select option {
+  background: var(--color-cream);
+  color: var(--color-gold);
+
+  font-family: Arial, sans-serif;
+}
+
+/* =========================================================
+   Worldwide phone field
+   ========================================================= */
+
+.phoneInput {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 40px;
+
+  padding: 0 0 11px;
+
+  border-bottom: 1px solid rgba(137, 118, 85, 0.4);
+
+  transition:
+    border-color 350ms ease,
+    box-shadow 350ms ease;
+}
+
+.phoneInput:focus-within {
+  border-bottom-color: var(--color-gold);
+
+  box-shadow: 0 1px 0 var(--color-gold);
+}
+
+/* Country selector */
+
+.phoneInput :global(.PhoneInputCountry) {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  margin-right: 14px;
+}
+
+.phoneInput :global(.PhoneInputCountrySelect) {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+  outline: 0;
+
+  cursor: pointer;
+
+  opacity: 0;
+}
+
+.phoneInput :global(.PhoneInputCountryIcon) {
+  width: 25px;
+  height: 18px;
+
+  overflow: hidden;
+
+  border-radius: 1px;
+
+  background: transparent;
+
+  box-shadow: none;
+}
+
+.phoneInput :global(.PhoneInputCountryIconImg) {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.phoneInput :global(.PhoneInputCountrySelectArrow) {
+  display: block;
+
+  width: 7px;
+  height: 7px;
+
+  margin-left: 10px;
+
+  border-right: 1px solid rgba(137, 118, 85, 0.7);
+  border-bottom: 1px solid rgba(137, 118, 85, 0.7);
+
+  opacity: 1;
+
+  transform: rotate(45deg);
+}
+
+/* Phone number input */
+
+.phoneInput :global(.PhoneInputInput) {
+  flex: 1;
+
+  min-width: 0;
+  height: 29px;
+
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  font-family: var(--font-gloock);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.phoneInput :global(.PhoneInputInput::placeholder) {
+  /* Same golden tone as every other field. */
+  color: var(--color-gold);
+  opacity: 1;
+}
+
+/* =========================================================
+   Submit button
+   ========================================================= */
+
+.submitButton {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 206px;
+  height: 56px;
+
+  margin-top: 2px;
+  padding: 0 30px;
+
+  gap: 12px;
+
+  /*
+   * The site's golden CTA, same treatment as the Contact section and
+   * TrustedPartner, rather than the red it used to be.
+   */
+  border: 1px solid var(--color-gold);
+  border-radius: 999px;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  font-family: var(--font-noto-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  cursor: pointer;
+  overflow: hidden;
+
+  transition:
+    color 500ms ease,
+    opacity 300ms ease;
+}
+
+/*
+ * Fill animation: a gold layer sweeps in from the left on hover, the
+ * same technique and timing as every other CTA on the site (see
+ * Amenities' .requestButton and the Contact section's own).
+ */
+.submitButton::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  background: var(--color-gold);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.submitButton:hover:not(:disabled)::before,
+.submitButton:focus-visible:not(:disabled)::before {
+  transform: scaleX(1);
+}
+
+/*
+ * The arrow the design pairs with the label, nudged on hover so the
+ * button reads as pointing somewhere rather than just filling in.
+ */
+.submitIcon {
+  position: relative;
+  z-index: 1;
+
+  font-size: 15px;
+  line-height: 1;
+
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.submitButton:hover:not(:disabled) .submitIcon,
+.submitButton:focus-visible:not(:disabled) .submitIcon {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submitButton::before,
+  .submitIcon {
+    transition: none;
+  }
+
+  .submitButton:hover:not(:disabled) .submitIcon,
+  .submitButton:focus-visible:not(:disabled) .submitIcon {
+    transform: none;
+  }
+}
+
+.submitButton:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.submitButton span {
+  position: relative;
+  z-index: 1;
+}
+
+.submitButton:hover:not(:disabled),
+.submitButton:focus-visible:not(:disabled) {
+  color: var(--color-cream);
+}
+
+.submitButton:focus-visible {
+  /* Gold, to match the button it rings. */
+  outline: 1px solid var(--color-gold);
+  outline-offset: 5px;
+}
+
+/* =========================================================
+   Status message
+   ========================================================= */
+
+.status {
+  min-height: 20px;
+  margin: 15px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  line-height: 1.4;
+
+  color: rgba(137, 118, 85, 0.85);
+}
+
+.status[data-status="error"] {
+  color: var(--color-cta-red);
+}
+
+.status[data-status="success"] {
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .overlay {
+    padding: 18px;
+  }
+
+  .dialog {
+    width: 100%;
+    max-height: calc(100dvh - 36px);
+
+    padding: 42px 32px 30px;
+  }
+
+  .closeButton {
+    top: 20px;
+    right: 20px;
+
+    width: 42px;
+    height: 42px;
+  }
+
+  .closeIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .headingGroup {
+    margin-bottom: 38px;
+  }
+
+  .nameRow,
+  .fieldRow {
+    margin-bottom: 26px;
+  }
+
+  .nameRow {
+    gap: 20px;
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .nameRow {
+    grid-template-columns: 1fr;
+
+    gap: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 0;
+  }
+
+  .dialog {
+    width: 100%;
+    min-height: 100dvh;
+    max-height: 100dvh;
+
+    padding: 38px 22px 28px;
+
+    box-shadow: none;
+  }
+
+  .closeButton {
+    top: 16px;
+    right: 14px;
+  }
+
+  .eyebrow {
+    font-size: 29px;
+  }
+
+  .heading {
+    font-size: 34px;
+  }
+
+  .headingGroup {
+    margin-bottom: 36px;
+  }
+
+  .nameRow {
+    gap: 22px;
+  }
+
+  .nameRow,
+  .fieldRow {
+    margin-bottom: 24px;
+  }
+
+  .input,
+  .select,
+  .phoneInput :global(.PhoneInputInput) {
+    font-size: 15px;
+  }
+
+  .submitButton {
+    width: 100%;
+    height: 54px;
+
+    font-size: 15px;
+  }
+}
+
+/* =========================================================
+   Autofill
+   ========================================================= */
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.phoneInput :global(.PhoneInputInput:-webkit-autofill),
+.phoneInput :global(.PhoneInputInput:-webkit-autofill:hover),
+.phoneInput :global(.PhoneInputInput:-webkit-autofill:focus) {
+  -webkit-text-fill-color: var(--color-gold);
+
+  caret-color: var(--color-gold);
+
+  box-shadow: 0 0 0 1000px transparent inset;
+
+  transition: background-color 9999s ease-out;
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .dialog,
+  .form > * {
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    transform: none !important;
+  }
+
+  .submitButton,
+  .closeIcon {
+    transition: none;
+  }
+}

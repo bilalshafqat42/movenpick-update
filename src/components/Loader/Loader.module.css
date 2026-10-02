@@ -1,0 +1,108 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--color-cream);
+
+  will-change: opacity;
+
+  /*
+   * The splash lifts itself, without JavaScript.
+   *
+   * It is server-rendered, so until React has hydrated there is nothing
+   * that can take it away — and hydration is exactly what is late on a
+   * slow connection. Measured against a production build over Fast 3G:
+   * the splash painted at 313ms and JavaScript did not reach it until
+   * 16.7 SECONDS later. No amount of retiming the script helps, because
+   * the script is the thing that is missing.
+   *
+   * This timer starts when the stylesheet is parsed instead, which
+   * happens with the first paint. JavaScript normally dismisses the
+   * splash at around 1.1s and unmounts the element, so this never
+   * fires; when it cannot, the visitor still gets the page.
+   *
+   * The delay clears the scripted path's worst case (1.2s held plus a
+   * 0.52s exit) so the two never animate over each other.
+   */
+  animation: splash-cap 400ms ease 1800ms forwards;
+}
+
+/*
+ * No `backwards` fill: during the delay the animation must leave the
+ * element alone, so the scripted fade has the opacity to itself.
+ */
+@keyframes splash-cap {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* =========================================================
+   Logo
+
+   350px desktop / 210px mobile (30% smaller than the original
+   500px / 300px). Rendered as a CSS mask (background-color:
+   currentColor + mask-image) rather than an <img>, so it takes
+   the brand gold regardless of whatever colour is baked into
+   the source SVG — the mask only cares about the shape's alpha
+   channel, same technique used for the header/footer logo.
+   ========================================================= */
+
+.logoWrapper {
+  display: block;
+
+  width: 350px;
+  max-width: 80vw;
+  aspect-ratio: 128 / 45;
+
+  color: var(--color-gold);
+
+  will-change: transform, opacity;
+}
+
+.logo {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: var(--logo-mask-url);
+  mask-image: var(--logo-mask-url);
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .logoWrapper {
+    width: 210px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    display: none;
+  }
+}

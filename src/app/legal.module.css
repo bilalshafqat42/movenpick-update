@@ -1,0 +1,230 @@
+/*
+ * Shared by /privacy and /terms: a plain, readable legal document layout,
+ * unlike the marketing sections it sits alongside. Long-form body copy
+ * needs a comfortable reading width and left-aligned text, not the
+ * centred, full-bleed treatment the rest of the site uses.
+ *
+ * BRANDING
+ *
+ * These two pages arrived from the Oceara template and kept its palette:
+ * a white ground, slate text (#14212b / #354552) and blue links
+ * (#0d78a6). Sitting between the site's own header and footer, they were
+ * the only screens that looked like a different company.
+ *
+ * They are cream and gold now, from the same tokens as everything else.
+ *
+ * READABILITY
+ *
+ * The one place the brand gold is NOT used at full strength is the body
+ * copy. Measured against the cream ground:
+ *
+ *   brand gold  #897655   3.94:1   fails AA for body text
+ *   deep gold   #75654A   5.08:1   passes
+ *
+ * WCAG asks 4.5:1 for body text and 3:1 for large text, so the brand
+ * gold is fine for the heading and short of it for paragraphs. On a
+ * marketing page that is a judgement call; on the page that sets out
+ * someone's data rights it is not — this is the one document on the site
+ * that has to be legible to everybody. The deep gold reads as the same
+ * colour a shade further down, and clears the threshold with room spare.
+ */
+
+/*
+ * The site grid, not a centred reading column.
+ *
+ * These pages used to be `width: min(100%, 760px); margin: 0 auto`, which
+ * is the ordinary way to set a legal document but left it floating in the
+ * middle of the viewport, lining up with nothing else on the site. The
+ * header is a full-bleed row with `padding-inline: var(--page-gutter)`,
+ * so its MENU sits hard against the gutter and the document started far
+ * to the right of it.
+ *
+ * Same gutter and the same twelve columns as the header and the cookie
+ * banner now, with the text taking the first ten. Column 1 puts the
+ * heading directly under MENU; the two columns left free on the right
+ * keep the measure from running the full width, which is what the old
+ * 760px cap was really for.
+ */
+.page {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  padding-inline: var(--page-gutter);
+
+  box-sizing: border-box;
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+}
+
+.content {
+  grid-column: 1 / span 10;
+
+  /* Horizontal padding would break the alignment; the gutter and the two
+     free columns already do that job. */
+  padding: clamp(96px, 12vw, 148px) 0 clamp(72px, 8vw, 120px);
+}
+
+/*
+ * Full brand gold. At clamp(34px … 52px) this is large text, which needs
+ * 3:1 — it measures 3.94:1.
+ */
+.heading {
+  margin: 0 0 32px;
+
+  font-family: var(--font-gloock), Georgia, serif;
+  font-size: clamp(34px, 4vw, 52px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+
+  color: var(--color-gold);
+
+  text-wrap: balance;
+}
+
+.body {
+  font-family: var(--font-noto-sans), Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.75;
+
+  /* See the readability note above: 5.08:1 rather than 3.94:1. */
+  color: #75654a;
+}
+
+.body p {
+  margin: 0 0 20px;
+}
+
+.body p:last-child {
+  margin-bottom: 0;
+}
+
+/*
+ * Sub-headings inside the admin-authored HTML. The panel's editor can
+ * emit h2/h3, and without a rule here they fell back to the browser's
+ * bold Times — the one place on these pages where the type stopped
+ * matching the rest of the site.
+ */
+.body h2,
+.body h3,
+.body h4 {
+  margin: 36px 0 14px;
+
+  font-family: var(--font-gloock), Georgia, serif;
+  font-weight: 400;
+  line-height: 1.25;
+
+  color: var(--color-gold);
+}
+
+.body h2 {
+  font-size: 26px;
+}
+
+.body h3 {
+  font-size: 21px;
+}
+
+.body h4 {
+  font-size: 18px;
+}
+
+.body h2:first-child,
+.body h3:first-child,
+.body h4:first-child {
+  margin-top: 0;
+}
+
+.body strong,
+.body b {
+  font-weight: 600;
+
+  color: var(--color-gold);
+}
+
+/*
+ * Underlined, not merely tinted. Gold on gold gives a link almost no
+ * colour difference to announce itself with, and colour alone is not an
+ * accessible way to mark one in any case — the underline is what makes
+ * it a link.
+ */
+.body a {
+  color: #75654a;
+
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+
+  transition: text-decoration-thickness 200ms ease;
+}
+
+.body a:hover,
+.body a:focus-visible {
+  text-decoration-thickness: 2px;
+}
+
+.body a:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+.body ul,
+.body ol {
+  margin: 0 0 20px;
+  padding-left: 22px;
+}
+
+.body li {
+  margin-bottom: 8px;
+}
+
+.body li:last-child {
+  margin-bottom: 0;
+}
+
+/* A rule between clauses, in the same gold at the weight the site uses. */
+.body hr {
+  height: 1px;
+  margin: 36px 0;
+
+  border: 0;
+
+  background: rgba(var(--color-gold-rgb), 0.28);
+}
+
+/*
+ * Below the desktop grid there is no room to give two columns away: the
+ * ten-column measure would leave the copy in a narrow strip. Full width
+ * inside the gutter from here down.
+ */
+@media (max-width: 1024px) {
+  .content {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767px) {
+  .content {
+    padding: 88px 0 64px;
+  }
+
+  .body h2 {
+    font-size: 23px;
+  }
+
+  .body h3 {
+    font-size: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body a {
+    transition: none;
+  }
+}

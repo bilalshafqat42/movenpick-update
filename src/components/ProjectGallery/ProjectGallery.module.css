@@ -1,0 +1,383 @@
+/*
+ * Scroll-driven horizontal gallery.
+ *
+ * Built on position: sticky rather than GSAP's own pinning, the same
+ * pattern Amenities uses for its stage journey. A pin-spacer would sit
+ * between this section and the page's scroll-snap points, and sticky
+ * keeps the snap anchor on an element that never moves.
+ *
+ * --pg-slides is set inline by ProjectGalleryClient from the actual
+ * slide count it received, so the wrapper height, the rail width and
+ * the JS travel distance can never drift apart.
+ */
+
+.gallery {
+  position: relative;
+
+  width: 100%;
+
+  color: #ffffff;
+
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.scrollWrapper {
+  position: relative;
+
+  /*
+   * One viewport to arrive in, plus a runway per slide transition. The
+   * runway is longer than a viewport (see
+   * SCROLL_VIEWPORTS_PER_TRANSITION in ProjectGalleryClient) so the
+   * photos move less per unit of scroll and the section reads as
+   * deliberate rather than skittish.
+   *
+   * No overflow here or on .gallery: overflow other than `visible`
+   * makes an element a scroll container, which would trap the sticky
+   * .viewport inside it instead of letting it stick to the page.
+   */
+  height: calc(var(--pg-scroll-viewports, 3) * 100vh);
+  height: calc(var(--pg-scroll-viewports, 3) * 100svh);
+
+  /*
+   * Exit snap point for Amenities' pinned scroll journey (see
+   * Amenities.module.css .stageWrapper) — this section's own top edge
+   * is the clean "fully arrived" resting point right after it. It
+   * lives on the wrapper, not the sticky child, so the anchor stays
+   * put while the journey plays.
+   *
+   * The negative scroll-margin cancels the global scroll-padding-top
+   * that keeps ordinary sections clear of the fixed header (see
+   * globals.css). Without it this section snapped 90px short of full
+   * coverage, so "arrived" was never actually full screen and the very
+   * next nudge started sliding the photos. This is a full-bleed
+   * section: the header is meant to float over it, not sit above it.
+   */
+  scroll-snap-align: start;
+  scroll-margin-top: -90px;
+}
+
+.viewport {
+  position: sticky;
+  top: 0;
+
+  height: 100vh;
+  height: 100svh;
+
+  overflow: hidden;
+
+  background: var(--color-gold);
+}
+
+/* =========================================================
+   Rail and slides
+   ========================================================= */
+
+.rail {
+  display: flex;
+
+  /*
+   * Sized in percentages of .viewport rather than vw: on desktop, vw
+   * includes the scrollbar's width, so each slide would sit a few
+   * pixels wider than the visible area and the travel would creep out
+   * of alignment by the last slide.
+   */
+  width: calc(var(--pg-slides, 3) * 100%);
+  height: 100%;
+
+  will-change: transform;
+}
+
+/*
+ * The stacked layout the scroll-driven transition uses, switched on by
+ * ProjectGalleryClient.
+ *
+ * The strip above is still what reduced motion gets: it turns .rail into
+ * a native horizontal scroller, and absolutely positioned children would
+ * leave it nothing to scroll. Both layouts have to exist, so the one
+ * that only applies to the animated path is keyed off the attribute
+ * rather than replacing the other.
+ */
+.rail[data-stacked="true"] {
+  width: 100%;
+}
+
+.rail[data-stacked="true"] .slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * flex: 1 0 0 over a rail that is already --pg-slides viewports wide
+ * gives every slide an equal share, which is exactly one viewport
+ * each. No per-slide width calc to keep in step with the count.
+ */
+.slide {
+  position: relative;
+
+  flex: 1 0 0;
+  height: 100%;
+
+  /*
+   * The frame the photograph drifts inside. Without this the overhang
+   * below would simply spill into the neighbouring slide instead of
+   * being cropped, and the parallax would read as the photos overlapping
+   * rather than as depth.
+   */
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  background: linear-gradient(
+    0deg,
+    rgba(10, 8, 5, 0.68) 0%,
+    rgba(10, 8, 5, 0.18) 42%,
+    rgba(10, 8, 5, 0) 68%
+  );
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   Content
+   ========================================================= */
+
+/*
+ * Chrome, not slide content: it stays put in the sticky viewport while
+ * the photos travel underneath, and only its text crossfades as each
+ * slide comes to rest.
+ */
+.content {
+  position: absolute;
+  right: var(--page-gutter);
+  bottom: clamp(36px, 6vw, 72px);
+  left: var(--page-gutter);
+  z-index: 4;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  max-width: 640px;
+  margin-inline: auto;
+
+  text-align: center;
+
+  pointer-events: none;
+}
+
+/*
+ * The heading and body together, so the caption can step aside while a
+ * photo travels without taking the scrubber and counter with it — those
+ * report progress and have to stay legible throughout.
+ */
+.caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heading {
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.25;
+
+  color: #ffffff;
+}
+
+.text {
+  max-width: 520px;
+  margin: 14px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* =========================================================
+   Pagination
+   ========================================================= */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  width: min(600px, 70vw);
+  margin-top: 28px;
+
+  pointer-events: auto;
+}
+
+/*
+ * One continuous line with a single highlighted segment sliding along
+ * it to the current scroll position, rather than a separate dash per
+ * slide — a scrubber, not a row of dots. Its position is written every
+ * scroll frame by ProjectGalleryClient, so there is deliberately no
+ * transition on it: one would lag behind the scroll it is meant to
+ * report.
+ */
+.track {
+  position: relative;
+  overflow: hidden;
+
+  flex: 1;
+  height: 2px;
+
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.trackFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  /*
+   * Full width, scaled from the left by ProjectGalleryClient, so the
+   * part of the path already travelled stays filled behind the leading
+   * edge. It used to be a 16%-wide thumb slid along with `x`, which
+   * marked the position but left the track empty on both sides.
+   */
+  width: 100%;
+  height: 100%;
+
+  transform-origin: left center;
+
+  background: #ffffff;
+
+  /*
+   * Scaled by ProjectGalleryClient, never sized with `width`: width is
+   * not compositable, so animating it would invalidate layout for the
+   * whole pagination row on every scroll frame.
+   */
+  will-change: transform;
+}
+
+/*
+ * The 150px desktop width this used to carry is gone deliberately.
+ *
+ * It sized the old sliding thumb. Now that the fill is scaled from the
+ * left to show the travelled path, a fixed width is a ceiling: at scale
+ * 1 the bar could only ever reach 150px of a 550px track, so desktop
+ * topped out at 27% filled while mobile reached 100%. The fill is full
+ * width at every size and the scale alone decides how much of it shows.
+ */
+
+.counter {
+  flex-shrink: 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .heading {
+    font-size: 22px;
+  }
+
+  .text {
+    font-size: 13px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+
+   No scroll-driven movement: the section collapses to a single
+   viewport and .rail becomes a plain horizontal scroller with x
+   snapping, so the same three slides stay reachable by swipe, wheel or
+   keyboard without the page scroll moving anything.
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollWrapper {
+    height: auto;
+  }
+
+  .viewport {
+    position: static;
+  }
+
+  .rail {
+    width: 100%;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+
+    will-change: auto;
+  }
+
+  .slide {
+    flex: 0 0 100%;
+
+    scroll-snap-align: center;
+  }
+}
+
+/* =========================================================
+   Desktop: rides over the amenities' held screen
+
+   The amenities section holds its final screen for one extra viewport
+   (see .stageWrapper in the desktop block of Amenities.module.css).
+   This section is pulled back up by exactly that much, so the document
+   is no taller than before and the runway is spent with this section
+   sliding up over the amenities rather than the amenities scrolling
+   away first.
+
+   z-index is what puts it in front: the held screen is a positioned
+   element, and the amenities section carries a stacking position of its
+   own, so without a higher index here this section would slide up
+   UNDERNEATH it and never be seen.
+
+   Same pattern the project overview uses over the hero's pinned
+   photograph — see the note at the end of ProjectOverview.module.css.
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  .gallery {
+    z-index: 4;
+
+    margin-top: -100vh;
+    margin-top: -100svh;
+  }
+}
+
+/*
+ * The same on a phone. Not on the tablet tier in between, where the
+ * amenities lay out flat with nothing held on screen to ride over.
+ */
+@media (max-width: 767px) {
+  .gallery {
+    z-index: 4;
+
+    margin-top: -100vh;
+    margin-top: -100svh;
+  }
+}

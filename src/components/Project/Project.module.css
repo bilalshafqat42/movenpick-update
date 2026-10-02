@@ -1,0 +1,898 @@
+.project {
+  position: relative;
+
+  width: 100%;
+
+  height: 500vh;
+  height: 500svh;
+
+  background: #f2ede5;
+}
+
+.stickyViewport {
+  position: sticky;
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+
+  overflow: hidden;
+  isolation: isolate;
+
+  background: #f2ede5;
+
+  clip-path: inset(100% 0% 0% 0%);
+
+  will-change: clip-path;
+}
+
+/* =========================================================
+   Desktop building scene
+   ========================================================= */
+
+.imageScene {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #d9e4eb;
+
+  will-change: transform;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+}
+
+.backgroundImage {
+  object-fit: cover;
+  object-position: center center;
+
+  transform-origin: center center;
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  will-change: transform;
+}
+
+.backgroundOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  background:
+    linear-gradient(90deg, rgba(4, 31, 44, 0.035) 0%, transparent 42%),
+    linear-gradient(0deg, rgba(6, 31, 42, 0.14) 0%, transparent 46%);
+
+  pointer-events: none;
+
+  will-change: opacity;
+}
+
+/* =========================================================
+   Desktop intro card
+   ========================================================= */
+
+.introCard {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+
+  width: min(50vw, 740px);
+  min-height: min(54vh, 520px);
+
+  margin: 0;
+  padding: 0;
+
+  overflow: hidden;
+
+  background: #f2ede5;
+  color: #18191b;
+
+  box-shadow: 0 12px 45px rgba(24, 25, 27, 0.04);
+
+  will-change: transform, opacity;
+}
+
+.introContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 100%;
+  min-height: min(54vh, 520px);
+
+  padding: clamp(64px, 8vw, 120px) clamp(52px, 8vw, 125px)
+    clamp(52px, 7vw, 94px);
+}
+
+.eyebrow {
+  margin: 0 0 11px;
+
+  font-family: var(--font-curve);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+
+  color: #18191b;
+}
+
+.title {
+  max-width: 520px;
+  margin: 0;
+
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+
+  color: #18191b;
+}
+
+/* =========================================================
+   Download brochure
+   ========================================================= */
+
+.requestLink,
+.mobileBrochureLink {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 0;
+  padding: 0 0 7px;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+
+  color: #18191b;
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.requestLink {
+  align-self: flex-start;
+}
+
+.brochureIcon {
+  display: inline-block;
+  flex-shrink: 0;
+
+  width: 18px;
+  height: 18px;
+
+  background-image: url("/icons/download-icon.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.requestLink::before,
+.requestLink::after,
+.mobileBrochureLink::before,
+.mobileBrochureLink::after {
+  content: "";
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  height: 1px;
+}
+
+.requestLink::before,
+.mobileBrochureLink::before {
+  background: rgba(24, 25, 27, 0.3);
+}
+
+.requestLink::after,
+.mobileBrochureLink::after {
+  background: #18191b;
+
+  transform: scaleX(0);
+  transform-origin: right center;
+
+  transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.requestLink:hover::after,
+.requestLink:focus-visible::after,
+.mobileBrochureLink:hover::after,
+.mobileBrochureLink:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.requestLink:focus-visible,
+.mobileBrochureLink:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 6px;
+}
+
+/* =========================================================
+   Editorial scene
+   ========================================================= */
+
+.beigeScene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #f2ede5;
+  color: #18191b;
+
+  will-change: transform;
+}
+
+.descriptionBlock {
+  position: absolute;
+  inset: 0;
+
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  /* color: #18191b; */
+  color: #18191b9e;
+
+  will-change: transform, opacity;
+}
+
+.descriptionBlock p {
+  margin: 0;
+}
+
+/* =========================================================
+   Shared image styling
+   ========================================================= */
+
+.editorialImage {
+  position: relative;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  background: #d8d0c6;
+
+  /*
+   * GSAP animates this property.
+   */
+  will-change: clip-path;
+}
+
+.editorialImageMedia {
+  object-fit: cover;
+  object-position: center center;
+
+  transform-origin: center center;
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  transition: transform 900ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.descriptionBlock:hover .editorialImageMedia {
+  transform: scale(1.015);
+}
+
+/* =========================================================
+   Horizontal image
+   ========================================================= */
+
+.editorialImageLandscapeCell {
+  position: relative;
+  grid-column: 1;
+
+  align-self: stretch;
+  justify-self: stretch;
+
+  width: 100%;
+  height: 100%;
+}
+
+.editorialImageLandscape {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  /*
+   * Keeps the same top position the previous
+   * vertically-centered layout produced, then
+   * stretches the bottom down to the section edge
+   * instead of stopping at a fixed height.
+   */
+  top: calc((100% - clamp(300px, 55vh, 470px)) / 2);
+
+  width: 100%;
+  max-width: none;
+
+  aspect-ratio: auto;
+}
+
+.editorialImageLandscape .editorialImageMedia {
+  object-position: center 53%;
+}
+
+/* =========================================================
+   Vertical image
+   ========================================================= */
+
+.editorialImagePortrait {
+  grid-column: 2;
+  grid-row: 1;
+
+  align-self: stretch;
+  justify-self: stretch;
+
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+
+  aspect-ratio: auto;
+}
+
+.editorialImagePortrait .editorialImageMedia {
+  object-position: center center;
+}
+
+/* =========================================================
+   Editorial text
+   ========================================================= */
+
+.editorialText {
+  width: min(calc(100% - clamp(80px, 12vw, 210px)), 410px);
+
+  max-width: 410px;
+
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.58;
+  letter-spacing: 0;
+
+  color: #868380;
+}
+
+/* =========================================================
+   First state
+   ========================================================= */
+
+.descriptionRight .editorialImageLandscapeCell {
+  grid-column: 1;
+}
+
+.descriptionRight .editorialText {
+  grid-column: 2;
+
+  justify-self: start;
+
+  margin-right: clamp(52px, 7vw, 110px);
+
+  margin-left: clamp(52px, 8vw, 125px);
+}
+
+/* =========================================================
+   Second state
+   ========================================================= */
+
+.descriptionLeft .editorialText {
+  grid-column: 1;
+  grid-row: 1;
+
+  justify-self: end;
+
+  margin-right: clamp(52px, 8vw, 125px);
+
+  margin-left: clamp(52px, 7vw, 110px);
+}
+
+.descriptionLeft .editorialImagePortrait {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* =========================================================
+   Mobile hidden on desktop
+   ========================================================= */
+
+.mobileScene {
+  display: none;
+}
+
+/* =========================================================
+   Progress hidden
+   ========================================================= */
+
+.progress,
+.progressLine {
+  display: none;
+}
+
+/* =========================================================
+   Accessible heading
+   ========================================================= */
+
+.visuallyHidden {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  margin: -1px !important;
+  padding: 0 !important;
+
+  overflow: hidden !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .introCard,
+  .introContent {
+    min-height: min(50vh, 480px);
+  }
+
+  .introCard {
+    width: 56vw;
+  }
+
+  .introContent {
+    padding: 70px 54px 58px;
+  }
+
+  .editorialImageLandscape {
+    top: calc((100% - clamp(280px, 42vh, 410px)) / 2);
+  }
+
+  .editorialText {
+    width: min(calc(100% - 88px), 320px);
+
+    max-width: 320px;
+
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .descriptionRight .editorialText {
+    margin-right: 40px;
+    margin-left: 44px;
+  }
+
+  .descriptionLeft .editorialText {
+    margin-right: 44px;
+    margin-left: 40px;
+  }
+}
+
+/* =========================================================
+   Mobile — unchanged
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .project {
+    height: 410svh;
+
+    background: #f2ede5;
+  }
+
+  .stickyViewport {
+    background: #f2ede5;
+
+    clip-path: none;
+  }
+
+  .imageScene,
+  .beigeScene {
+    display: none;
+  }
+
+  .mobileScene {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    display: grid;
+    grid-template-rows: 53% 47%;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #f2ede5;
+    color: #18191b;
+  }
+
+  .mobileImageReveal {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+
+    overflow: hidden;
+
+    background: #d9e4eb;
+
+    clip-path: inset(0% 100% 0% 0%);
+
+    will-change: clip-path;
+  }
+
+  .mobileImage {
+    object-fit: cover;
+    object-position: 44% center;
+
+    transform-origin: center center;
+
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+
+    will-change: transform;
+  }
+
+  .mobileImageOverlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+      linear-gradient(90deg, rgba(5, 33, 45, 0.08) 0%, transparent 48%),
+      linear-gradient(0deg, rgba(5, 33, 45, 0.2) 0%, transparent 54%);
+
+    pointer-events: none;
+
+    will-change: opacity;
+  }
+
+  .mobileStoryPanel {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 54px 28px;
+
+    overflow: hidden;
+
+    background: #f2ede5;
+    color: #18191b;
+  }
+
+  .mobileStoryItems {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+    min-height: 230px;
+  }
+
+  .mobileStoryItem {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+
+    visibility: hidden;
+    opacity: 0;
+
+    will-change: transform, opacity;
+  }
+
+  .mobileStoryItem:first-child {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .mobileEyebrow {
+    margin: 0 0 10px;
+
+    font-family: var(--font-curve);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1;
+
+    color: #18191b;
+  }
+
+  .mobileTitle {
+    max-width: 340px;
+    margin: 0;
+
+    font-family: var(--font-heading);
+    font-size: 34px;
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+
+    color: #18191b;
+  }
+
+  .mobileDescription {
+    max-width: 100%;
+    margin: 0;
+
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.62;
+
+    color: #18191b;
+  }
+
+  .mobileBrochureLink {
+    align-self: flex-start;
+
+    margin-top: auto;
+
+    font-size: 15px;
+  }
+}
+
+/* =========================================================
+   Small mobile — unchanged
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .mobileScene {
+    grid-template-rows: 60% 40%;
+  }
+
+  .mobileImageReveal {
+    width: 100%;
+    height: 100%;
+
+    margin: 0;
+  }
+
+  .mobileImage {
+    object-position: 44% center;
+  }
+
+  .mobileStoryPanel {
+    padding: 46px 22px;
+  }
+
+  .mobileEyebrow {
+    font-size: 28px;
+  }
+
+  .mobileTitle {
+    max-width: 320px;
+
+    font-size: 31px;
+  }
+
+  .mobileDescription {
+    font-size: 14px;
+    line-height: 1.6;
+    color:#868380;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .project {
+    height: auto;
+  }
+
+  .stickyViewport {
+    position: relative;
+    top: auto;
+
+    height: auto;
+    min-height: auto;
+
+    overflow: visible;
+
+    clip-path: none !important;
+  }
+
+  .progress {
+    display: none;
+  }
+
+  .requestLink::after,
+  .mobileBrochureLink::after,
+  .editorialImageMedia {
+    transition: none;
+  }
+}
+
+/* =========================================================
+   Reduced-motion desktop
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  .imageScene,
+  .beigeScene {
+    position: relative;
+    inset: auto;
+
+    width: 100%;
+    min-height: 100svh;
+
+    transform: none !important;
+  }
+
+  .introCard {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .beigeScene {
+    display: grid;
+    gap: 0;
+
+    min-height: auto;
+
+    padding: 0;
+  }
+
+  .descriptionBlock {
+    position: relative;
+    inset: auto;
+
+    width: 100%;
+    min-height: 100svh;
+
+    margin: 0;
+    padding: 0;
+
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .editorialImageLandscape,
+  .editorialImagePortrait {
+    clip-path: none !important;
+  }
+
+  /*
+   * The description block no longer stretches to a
+   * definite height here, so the landscape image falls
+   * back to a normal fixed-height box instead of the
+   * percentage-based stretch used in the pinned layout.
+   */
+  .editorialImageLandscapeCell {
+    position: static;
+
+    height: auto;
+  }
+
+  .editorialImageLandscape {
+    position: relative;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+
+    height: clamp(300px, 55vh, 470px);
+  }
+}
+
+/* =========================================================
+   Reduced-motion mobile
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) and (max-width: 767px) {
+  .mobileScene {
+    position: relative;
+    inset: auto;
+
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    padding: 0;
+
+    overflow: visible;
+  }
+
+  .mobileImageReveal {
+    width: 100%;
+    height: 60svh;
+
+    margin: 0;
+
+    clip-path: none !important;
+  }
+
+  .mobileImage {
+    object-position: 44% center;
+  }
+
+  .mobileStoryPanel {
+    height: auto;
+
+    padding: 60px 22px;
+  }
+
+  .mobileStoryItems {
+    display: grid;
+    gap: 54px;
+
+    height: auto;
+    min-height: auto;
+  }
+
+  .mobileStoryItem {
+    position: relative;
+    inset: auto;
+
+    height: auto;
+
+    visibility: visible;
+    opacity: 1;
+
+    transform: none !important;
+  }
+
+  .mobileBrochureLink {
+    margin-top: 36px;
+  }
+}

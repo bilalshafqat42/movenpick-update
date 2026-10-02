@@ -1,0 +1,407 @@
+.projectOverview {
+  width: 100%;
+
+  padding: clamp(60px, 8vw, 110px) var(--page-gutter);
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Description
+   ========================================================= */
+
+.description {
+  max-width: min(83.333vw, 1400px);
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.35;
+
+  /*
+   * 60% gold, written as a colour rather than `opacity: 0.6`.
+   *
+   * This paragraph fades in on scroll, and that entrance drives
+   * `opacity` from 0 to 1 as an inline style — which beats any opacity
+   * set here, so the softening would have survived until the animation
+   * ran and then been wiped out. Putting the alpha in the colour keeps
+   * the two out of each other's way.
+   *
+   * This is the resting strength of the SECOND half. On desktop only
+   * the opening sentence is brought up to full gold (see
+   * ProjectOverviewClient), and everything after the first full stop
+   * stays here.
+   */
+  color: rgba(var(--color-gold-rgb), 0.6);
+}
+
+/*
+ * One word of the heading. It inherits the 70% above, and
+ * ProjectOverviewClient brings each one up to full --color-gold in
+ * turn as the section arrives.
+ *
+ * No display change: left inline, so the words wrap and justify
+ * exactly as the unsplit sentence did. Making them inline-block would
+ * have been the easy way to animate them and would also have changed
+ * where every line broke.
+ */
+.descriptionWord {
+  color: inherit;
+}
+
+/* =========================================================
+   Divider
+   ========================================================= */
+
+.divider {
+  width: 100%;
+  height: 1px;
+  margin: clamp(32px, 4vw, 48px) 0;
+
+  border: 0;
+
+  background: rgba(137, 118, 85, 0.28);
+}
+
+/* =========================================================
+   Key facts
+   ========================================================= */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+.stat {
+  padding-inline: clamp(16px, 2vw, 32px);
+
+  border-left: 1px dotted rgba(137, 118, 85, 0.5);
+}
+
+.stat:first-child {
+  padding-left: 0;
+
+  border-left: 0;
+}
+
+.statValue {
+  margin: 0 0 8px;
+
+  font-family: var(--font-gloock);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.15;
+
+  color: var(--color-gold);
+}
+
+.statLabel {
+  margin: 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  /* text-transform: ; */
+
+  color: var(--color-red);
+}
+
+/* =========================================================
+   Calls to action
+   ========================================================= */
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ctaButton {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 26px;
+
+  border: 1px solid var(--color-cta-red);
+  border-radius: 999px;
+
+  font-family: var(--font-noto-sans);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  color: var(--color-cta-red);
+
+  overflow: hidden;
+
+  transition: color 500ms ease;
+}
+
+/*
+ * Fill animation: a red layer sweeps in from the left on hover, rather
+ * than the background just snapping to solid red.
+ */
+.ctaButton::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  background: var(--color-cta-red);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ctaButton:hover::before,
+.ctaButton:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.ctaButton > span {
+  position: relative;
+  z-index: 1;
+}
+
+.ctaButton:hover,
+.ctaButton:focus-visible {
+  color: var(--color-cream);
+}
+
+.ctaIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  line-height: 1;
+}
+
+.downloadIcon {
+  display: inline-block;
+  flex-shrink: 0;
+
+  width: 15px;
+  height: 15px;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: url("/icons/download-icon.svg");
+  mask-image: url("/icons/download-icon.svg");
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* =========================================================
+   Desktop: rides over the hero's pinned photograph
+
+   The hero holds its photo panel on screen for one more viewport (see
+   .hero's padding-bottom in Hero.module.css). This section is pulled
+   back up by exactly that much, so the document is no taller than
+   before and the runway is spent with this section sliding up over the
+   photo rather than the photo scrolling away first.
+
+   z-index is what puts it in front: the pinned panel is a positioned
+   element, and without a higher index of its own this section's
+   background would paint beneath it. The section keeps its natural
+   height — a full screen of it left too much empty space.
+
+   The cream background is doing real work here too — it is what the
+   photo disappears behind. Take it away and the photo reads through
+   the copy.
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  .projectOverview {
+    position: relative;
+    z-index: 3;
+
+    margin-top: -100vh;
+    margin-top: -100svh;
+
+    /*
+     * Equal space above and below, set outright rather than left to the
+     * section's 8vw clamp, which capped at 110px and varied with the
+     * viewport. 90px matches the header's own height, so the rhythm at
+     * the top of the section echoes the bar above it.
+     */
+    padding-top: 90px;
+    padding-bottom: 90px;
+  }
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .description {
+    max-width: 100%;
+    font-size: 32px;
+  }
+
+  .statValue {
+    font-size: 26px;
+  }
+
+  .statLabel {
+    font-size: 12px;
+  }
+
+  .ctaButton {
+    font-size: 12px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: clamp(28px, 4vw, 40px);
+  }
+
+  .stat:nth-child(2n + 1) {
+    padding-left: 0;
+
+    border-left: 0;
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  /*
+   * Its own full screen, so it snaps as one. The block padding carries
+   * the header clearance itself, because globals.css cancels this
+   * section's scroll-padding on mobile to let a 100svh section rest
+   * flush against the top of the screen.
+   */
+  .projectOverview {
+    display: flex;
+    flex-direction: column;
+
+    /*
+     * The four blocks share the screen rather than sitting as one
+     * centred clump.
+     *
+     * Centring left 187px of dead cream above the heading and 106px
+     * below the buttons on a 956px screen while the blocks stayed
+     * bunched together. space-between hands that same space to the gaps
+     * between them instead, and adapts on its own to however the long
+     * heading happens to wrap — no figure to keep in step with the copy.
+     *
+     * The `gap` is the floor underneath it, so on a short handset where
+     * there is no slack to distribute the blocks still never touch.
+     */
+    justify-content: space-between;
+    gap: clamp(20px, 3svh, 32px);
+
+    min-height: 100svh;
+
+    padding-top: calc(var(--header-height, 90px) + clamp(16px, 3svh, 40px));
+    padding-bottom: clamp(24px, 4svh, 48px);
+  }
+
+  .description {
+    font-size: 26px;
+  }
+
+  /*
+   * A 2 x 2 block: completion and payment plan on the first row, unit
+   * types and starting price on the second.
+   *
+   * The row gap is deliberately larger than the column gap. Each figure
+   * and its label are one unit, and the eye groups by whatever is
+   * closest — a uniform gap makes the four read as a loose cluster,
+   * whereas 20 across and 32 down reads unmistakably as two rows of
+   * two.
+   */
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    column-gap: 20px;
+    row-gap: 32px;
+  }
+
+  /*
+   * padding-inline, not just padding-left: the base rule pads both
+   * sides, and leaving the right-hand 16px in place ate into the column
+   * the figure had to fit — which is what was still wrapping
+   * "From 799,000" after the type was sized for the full column width.
+   */
+  .stat {
+    padding-inline: 0;
+
+    border-left: 0;
+  }
+
+  /*
+   * Sized so the longest figure holds on one line in half a phone's
+   * width. When one cell's figure wrapped and its neighbour's did not,
+   * their labels fell out of line and the row looked broken.
+   *
+   * The formula is measured, not guessed. "From 799,000" renders at
+   * 6.57x its font size in Gloock, and each column is
+   * (100vw - 2 gutters - 20px gap) / 2, which reduces to
+   * 0.4167vw - 10px. Dividing one by the other gives ~6.1vw - 1.5px as
+   * the largest size that always fits, with the 26px cap keeping it
+   * from outgrowing the tablet tier above.
+   */
+  .statValue {
+    font-size: clamp(17px, calc(6.1vw - 1.5px), 26px);
+  }
+
+  /* Kept tight to its own figure, so each pair stays one unit. */
+  .statLabel {
+    font-size: 12px;
+  }
+
+  .ctaRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ctaButton {
+    justify-content: center;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .description,
+  .divider,
+  .stat,
+  .ctaRow {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .ctaButton::before {
+    transition: none;
+  }
+}

@@ -1,0 +1,21 @@
+<svg width="162" height="162" viewBox="-4 -4 162 162" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!--
+  No baked drop shadow.
+
+  The Figma export wrapped the circle in a filter whose region was
+  x="0" y="0" width="162" height="162" - the exact bounds of the old
+  viewBox. The shadow (dy 4, blur 2) ran straight off that region and
+  was sliced flat along the bottom and sides, which read as a broken,
+  faceted border. The shadow now comes from the CSS drop-shadow() in
+  Chat.module.css, which has no region to clip against.
+
+  Circle recentred from cx 81 to cx 77 so this matches chat-light.svg
+  and chat-dark.svg; without that the close state swapped in about 5%
+  smaller than the bubble it replaced. The chevron was authored around
+  x 81, so it is shifted by the same 4 units.
+-->
+<circle cx="77" cy="77" r="77" fill="#897655"/>
+<g transform="translate(-4, 0)">
+<path d="M55.3359 71.2969L80.6018 92.9538C81.372 93.614 82.5145 93.593 83.2599 92.905L106.669 71.2969" stroke="#FFF0E7" stroke-width="2" stroke-linecap="round"/>
+</g>
+</svg>

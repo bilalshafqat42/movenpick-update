@@ -1,0 +1,932 @@
+/*
+ * Held while the footer rides up over it — the same move the gallery
+ * makes over the amenities and the photo makes over the gold panel, so
+ * the page has one idea of what a section transition is.
+ *
+ * TWO things make that safe, because this section runs taller than the
+ * screen at most sizes (1.12 screens at 1440x900, 1.30 at 1366x768,
+ * 1.41 at 375x667):
+ *
+ * 1. It sticks by its BOTTOM edge, via a negative --contact-sticky-top
+ *    measured in ContactClient (see the comment there). Sticking the top
+ *    of something taller than the screen pins it the moment its top
+ *    arrives and strands the rest below the fold forever. The submit
+ *    button is the last thing in the form, so it was exactly what got
+ *    stranded — unreachable at 1366x768 and 1280x800, and clickable in
+ *    only 2 of 19 scroll positions at 1440x900.
+ *
+ * 2. --contact-hold buys a beat before the footer arrives. The footer is
+ *    the next thing in the flow, so without it the footer starts
+ *    covering the button at the same instant the button finishes
+ *    arriving — a window of zero. The hold is flow space after this
+ *    section; the section is stuck across it, so nothing shows through,
+ *    it simply gives the reader room to finish the form.
+ */
+.contact {
+  position: sticky;
+  top: var(--contact-sticky-top, 0px);
+  z-index: 0;
+
+  width: 100%;
+  /* The runway before the footer starts to overlap. */
+  margin-bottom: var(--contact-hold, 45vh);
+
+  overflow: hidden;
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+}
+
+.viewport {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+    minmax(320px, 600px)
+    minmax(460px, 800px);
+
+  justify-content: space-between;
+  align-items: stretch;
+
+  column-gap: clamp(48px, 6vw, 90px);
+
+  width: 100%;
+  min-height: 768px;
+
+  padding: 72px var(--page-gutter) 78px;
+
+  overflow: hidden;
+
+  background: linear-gradient(
+    180deg,
+    rgba(var(--color-gold-rgb), 0.4) 0%,
+    rgba(var(--color-cream-rgb), 1) 100%
+  );
+
+  will-change: clip-path;
+}
+
+/* =========================================================
+   Left paragraph
+   ========================================================= */
+
+.intro {
+  display: flex;
+  /*
+   * Top-aligned, level with the heading across the gutter, per the
+   * design. It was bottom-aligned, which on a tall form left the
+   * paragraph stranded at the foot of the column a long way from
+   * anything it relates to.
+   */
+  align-items: flex-start;
+
+  min-width: 0;
+  height: 100%;
+}
+
+.description {
+  width: 100%;
+  max-width: 600px;
+  margin: 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.8);
+}
+
+/* =========================================================
+   Right form
+   ========================================================= */
+
+.form {
+  position: relative;
+
+  align-self: center;
+
+  width: 100%;
+  max-width: 800px;
+  margin: 0;
+}
+
+.headingGroup {
+  margin: 0 0 44px;
+}
+
+/*
+ * Part of the heading now, not a separate red kicker above it — the
+ * design runs "Reach Out To Us" as one serif line. It stays its own
+ * element so the two content fields behind it remain independently
+ * editable.
+ */
+.eyebrow {
+  font: inherit;
+  color: inherit;
+}
+
+.heading {
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.2;
+
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Form rows
+   ========================================================= */
+
+.nameRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+
+  width: 100%;
+  margin: 0 0 34px;
+}
+
+.fieldRow {
+  width: 100%;
+  margin: 0 0 34px;
+}
+
+.field {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  margin: 0;
+}
+/* =========================================================
+   Field-level validation popup
+   ========================================================= */
+
+.fieldError {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 5;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  max-width: min(320px, 100%);
+  padding: 10px 14px;
+
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+
+  color: #1a1a1a;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.4;
+
+  animation: fieldErrorIn 150ms ease-out;
+}
+
+.fieldError::before {
+  content: "";
+
+  position: absolute;
+  top: -6px;
+  left: 18px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #ffffff;
+  transform: rotate(45deg);
+}
+
+.fieldErrorIcon {
+  flex-shrink: 0;
+
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes fieldErrorIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .fieldError {
+    font-size: 12.5px;
+  }
+}
+/* =========================================================
+   Accessible hidden labels
+   ========================================================= */
+
+.visuallyHidden {
+  position: absolute !important;
+
+  width: 1px !important;
+  height: 1px !important;
+
+  padding: 0 !important;
+  margin: -1px !important;
+
+  overflow: hidden !important;
+
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+
+  white-space: nowrap !important;
+
+  border: 0 !important;
+}
+
+/* =========================================================
+   Standard inputs
+   ========================================================= */
+
+.input,
+.select {
+  display: block;
+
+  width: 100%;
+  height: 42px;
+
+  padding: 0 0 12px;
+
+  border: 0;
+  border-bottom: 1px solid rgba(137, 118, 85, 0.4);
+  border-radius: 0;
+  outline: 0;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  font-family: var(--font-gloock);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+
+  transition:
+    border-color 350ms ease,
+    box-shadow 350ms ease;
+}
+
+.input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.input::placeholder {
+  /*
+   * Full gold, matching the selects. These were at 60% opacity while
+   * the "I'm a" and country selects rendered at full strength, so the
+   * fields in one column read as two different tones.
+   */
+  color: var(--color-gold);
+  opacity: 1;
+}
+
+.input:focus,
+.select:focus {
+  border-bottom-color: var(--color-gold);
+
+  box-shadow: 0 1px 0 var(--color-gold);
+}
+
+/* =========================================================
+   User-type select
+   ========================================================= */
+
+.selectWrapper {
+  position: relative;
+
+  width: 100%;
+}
+
+.select {
+  position: relative;
+  z-index: 1;
+
+  padding-right: 34px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+}
+
+.selectWrapper::after {
+  content: "";
+
+  position: absolute;
+  top: 11px;
+  right: 3px;
+  z-index: 2;
+
+  width: 8px;
+  height: 8px;
+
+  border-right: 1px solid rgba(137, 118, 85, 0.7);
+  border-bottom: 1px solid rgba(137, 118, 85, 0.7);
+
+  transform: rotate(45deg);
+
+  pointer-events: none;
+}
+
+.select option {
+  background: var(--color-cream);
+  color: var(--color-gold);
+
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+/* =========================================================
+   Worldwide international phone input
+   ========================================================= */
+
+.phoneInput {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 42px;
+
+  padding: 0 0 12px;
+
+  border-bottom: 1px solid rgba(137, 118, 85, 0.4);
+
+  transition:
+    border-color 350ms ease,
+    box-shadow 350ms ease;
+}
+
+.phoneInput:focus-within {
+  border-bottom-color: var(--color-gold);
+
+  box-shadow: 0 1px 0 var(--color-gold);
+}
+
+/*
+ * Country selector area.
+ */
+
+.phoneInput :global(.PhoneInputCountry) {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  margin-right: 14px;
+}
+
+.phoneInput :global(.PhoneInputCountrySelect) {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+  outline: 0;
+
+  cursor: pointer;
+
+  opacity: 0;
+}
+
+.phoneInput :global(.PhoneInputCountryIcon) {
+  width: 25px;
+  height: 18px;
+
+  overflow: hidden;
+
+  border-radius: 1px;
+
+  background: transparent;
+
+  box-shadow: none;
+}
+
+.phoneInput :global(.PhoneInputCountryIconImg) {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.phoneInput :global(.PhoneInputCountrySelectArrow) {
+  display: block;
+
+  width: 7px;
+  height: 7px;
+
+  margin-left: 10px;
+
+  border-right: 1px solid rgba(137, 118, 85, 0.7);
+  border-bottom: 1px solid rgba(137, 118, 85, 0.7);
+
+  opacity: 1;
+
+  transform: rotate(45deg);
+}
+
+/*
+ * Phone text input.
+ */
+
+.phoneInput :global(.PhoneInputInput) {
+  flex: 1;
+
+  min-width: 0;
+  height: 30px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  font-family: var(--font-gloock);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.phoneInput :global(.PhoneInputInput::placeholder) {
+  /* Same golden tone as every other field. */
+  color: var(--color-gold);
+  opacity: 1;
+}
+
+/* =========================================================
+   Submit button
+   ========================================================= */
+
+.submitButton {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  min-width: 206px;
+  height: 54px;
+
+  margin-top: 2px;
+  padding: 0 28px;
+
+  /*
+   * The site's golden CTA, same treatment as TrustedPartner's
+   * .ctaButton, rather than the red it used to be.
+   */
+  border: 1px solid var(--color-gold);
+  border-radius: 999px;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  font-family: var(--font-noto-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+
+  cursor: pointer;
+  overflow: hidden;
+
+  transition: color 500ms ease;
+}
+
+/*
+ * Fill animation: a gold layer sweeps in from the left on hover, the
+ * same technique and timing as the red CTAs elsewhere on the site (see
+ * Amenities' .requestButton and the Project Overview buttons) — this
+ * one just wears the golden palette.
+ */
+.submitButton::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  background: var(--color-gold);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.submitButton:hover::before,
+.submitButton:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.submitButton span {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * The arrow the design pairs with the label. Nudged on hover so the
+ * button reads as pointing somewhere rather than just filling in.
+ */
+.submitIcon {
+  font-size: 15px;
+  line-height: 1;
+
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.submitButton:hover .submitIcon,
+.submitButton:focus-visible .submitIcon {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .submitIcon {
+    transition: none;
+  }
+
+  .submitButton:hover .submitIcon,
+  .submitButton:focus-visible .submitIcon {
+    transform: none;
+  }
+}
+
+.submitButton:hover,
+.submitButton:focus-visible {
+  color: var(--color-cream);
+}
+
+.submitButton:focus-visible {
+  outline: 1px solid var(--color-gold);
+  outline-offset: 5px;
+}
+
+.submitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* =========================================================
+   Terms / privacy consent lines
+   ========================================================= */
+
+.consent {
+  margin: 30px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 12.5px;
+  line-height: 1.5;
+
+  color: rgba(137, 118, 85, 0.65);
+}
+
+.consentLink {
+  color: var(--color-gold);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.consentLink:hover,
+.consentLink:focus-visible {
+  color: var(--color-cta-red);
+}
+
+/* =========================================================
+   Form submission status
+   ========================================================= */
+
+.status {
+  margin: 10px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  line-height: 1.4;
+
+  color: rgba(137, 118, 85, 0.85);
+
+  min-height: 18px;
+}
+
+.status[data-status="error"] {
+  color: var(--color-cta-red);
+}
+
+.status[data-status="success"] {
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Medium desktop
+   ========================================================= */
+
+/* =========================================================
+   Desktop
+
+   Placed here, after every base rule it overrides. At equal
+   specificity the later rule wins whether or not it sits in a media
+   query, so leading the file with this block left the type sizes and
+   spacing below silently winning over it.
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  /*
+   * Full height, and the two columns laid out on the page's own
+   * 12-column grid: --page-gutter is exactly one column
+   * (8.3334vw, capped), so padding a column either side leaves ten,
+   * and a one-column gap between two equal halves gives each of them
+   * four and a half.
+   *
+   * Using the gutter variable rather than its own clamp is what keeps
+   * the gap a true column at every width instead of drifting out of
+   * step with the page grid.
+   */
+  .viewport {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--page-gutter);
+
+    min-height: 100vh;
+    min-height: 100svh;
+
+    /*
+     * Cleared past the fixed header. This section is a full viewport
+     * tall and carries one of the page's scroll-snap points, so it
+     * comes to rest with its top edge at the top of the screen — at the
+     * old 72px the left paragraph, which is top-aligned, sat behind the
+     * header bar and its first two lines were unreadable.
+     */
+    padding-top: calc(var(--header-height, 90px) + clamp(24px, 4vh, 56px));
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+  /*
+   * Roomier than the 34px the base rule gives these, matching the
+   * design's rhythm. The heading sits further from the first field
+   * than the fields sit from each other, so it does not read as
+   * another label in the list.
+   */
+  .headingGroup {
+    margin-bottom: 100px;
+  }
+
+  .nameRow,
+  .fieldRow {
+    margin-bottom: 80px;
+  }
+
+  .nameRow {
+    column-gap: 40px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .viewport {
+    grid-template-columns:
+      minmax(280px, 400px)
+      minmax(420px, 540px);
+
+    column-gap: 44px;
+
+    min-height: 720px;
+
+    padding: 64px var(--page-gutter) 68px;
+  }
+
+  .description {
+    max-width: 400px;
+
+    font-size: 17px;
+  }
+
+  .form {
+    max-width: 540px;
+  }
+
+  .nameRow {
+    gap: 22px;
+  }
+}
+
+/* =========================================================
+   Short desktop screens
+   ========================================================= */
+
+@media (max-height: 760px) and (min-width: 961px) {
+  .viewport {
+    min-height: 700px;
+
+    padding-top: 46px;
+    padding-bottom: 46px;
+  }
+
+  .headingGroup {
+    margin-bottom: 28px;
+  }
+
+  .nameRow,
+  .fieldRow {
+    margin-bottom: 26px;
+  }
+
+  .submitButton {
+    height: 50px;
+  }
+}
+
+/* =========================================================
+   Tablet and mobile
+   ========================================================= */
+
+@media (max-width: 960px) {
+  .viewport {
+    grid-template-columns: 1fr;
+    row-gap: 54px;
+
+    min-height: auto;
+
+    padding: 82px var(--page-gutter) 70px;
+  }
+
+  .form {
+    grid-row: 1;
+
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .intro {
+    grid-row: 2;
+
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .description {
+    width: 100%;
+    max-width: 520px;
+
+    font-size: 16px;
+  }
+
+  .headingGroup {
+    margin-bottom: 36px;
+  }
+
+  .eyebrow {
+    font-size: 30px;
+  }
+
+  .heading {
+    font-size: 34px;
+  }
+
+  .nameRow,
+  .fieldRow {
+    margin-bottom: 28px;
+  }
+
+  .input,
+  .select,
+  .phoneInput :global(.PhoneInputInput) {
+    font-size: 15px;
+  }
+
+  .submitButton {
+    min-width: 200px;
+    height: 52px;
+
+    font-size: 15px;
+  }
+
+  .status {
+    min-height: 20px;
+    margin-top: 14px;
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .nameRow {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+}
+
+/* =========================================================
+   Small mobile
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .viewport {
+    row-gap: 48px;
+
+    padding: 72px var(--page-gutter) 60px;
+  }
+
+  .eyebrow {
+    font-size: 28px;
+  }
+
+  .heading {
+    font-size: 32px;
+  }
+
+  .nameRow {
+    gap: 24px;
+  }
+
+  .nameRow,
+  .fieldRow {
+    margin-bottom: 26px;
+  }
+
+  .submitButton {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   Browser autofill
+   ========================================================= */
+
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.phoneInput :global(.PhoneInputInput:-webkit-autofill),
+.phoneInput :global(.PhoneInputInput:-webkit-autofill:hover),
+.phoneInput :global(.PhoneInputInput:-webkit-autofill:focus) {
+  -webkit-text-fill-color: var(--color-gold);
+
+  caret-color: var(--color-gold);
+
+  box-shadow: 0 0 0 1000px transparent inset;
+
+  transition: background-color 9999s ease-out;
+}
+
+.input:autofill,
+.phoneInput :global(.PhoneInputInput:autofill) {
+  -webkit-text-fill-color: var(--color-gold);
+  caret-color: var(--color-gold);
+  box-shadow: 0 0 0 1000px transparent inset;
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .viewport {
+    clip-path: none !important;
+  }
+
+  .intro > *,
+  .form > * {
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    transform: none !important;
+  }
+
+  .submitButton {
+    transition: none;
+  }
+}

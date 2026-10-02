@@ -1,0 +1,1351 @@
+/* MAPSECTION.MODULE.CSS
+  ============================================================ */
+  .mapSection {
+  position: relative;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  background: var(--color-cream);
+  color: #18191b;
+}
+
+/*
+ * Animated wrapper for the complete section.
+ */
+.sectionInner {
+  position: relative;
+
+  width: 100%;
+
+  background: var(--color-cream);
+
+  will-change: transform, opacity;
+}
+
+/* =========================================================
+   Full-width heading
+   ========================================================= */
+
+.sectionHeader {
+  position: relative;
+  z-index: 3;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  padding: clamp(110px, 10vw, 165px) var(--page-gutter) clamp(82px, 8vw, 122px);
+
+  background: var(--color-cream);
+
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+
+  font-family: var(--font-curve);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+
+  color: #18191b;
+}
+
+.heading {
+  margin: 0;
+
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+
+  color: var(--color-gold);
+}
+
+.description {
+  width: min(100%, 850px);
+
+  margin: clamp(18px, 4vw, 18px) auto 0;
+
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.55;
+
+  /* color: rgba(24, 25, 27, 0.86); */
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Map stage
+   ========================================================= */
+
+.mapStage {
+  position: relative;
+
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+
+  /*
+   * No min-height here on desktop any more — a 900px floor meant this
+   * section rendered taller than one full viewport on any screen
+   * shorter than that (a 13" laptop's ~830-850px browser viewport,
+   * for instance), rather than genuinely being 100% of the screen.
+   */
+  overflow: hidden;
+  isolation: isolate;
+
+  /*
+   * Was a light blue (#d9e4eb) — visible briefly before the map
+   * finishes loading, or in any gap around it, so it needs to match
+   * the same warm cream tone the loaded map is now filtered toward.
+   */
+  background: var(--color-cream);
+}
+
+.map {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+}
+
+.map :global(.mapboxgl-map),
+.map :global(.mapboxgl-canvas-container),
+.map :global(.mapboxgl-canvas) {
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * No CSS filter here any more: the map now loads a custom Mapbox
+ * Studio style (see NEXT_PUBLIC_MAPBOX_STYLE_URL in MapSection.js)
+ * that's already designed in the brand's cream/beige palette natively
+ * — a CSS filter on top of that would just distort an already-correct
+ * render, which is exactly the workaround this replaced.
+ */
+.map :global(.mapboxgl-canvas) {
+  outline: none;
+}
+
+.mapStage :global(.mapboxgl-ctrl-group) {
+  display: none !important;
+}
+
+/* =========================================================
+   Loading state
+   ========================================================= */
+
+.mapLoading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  display: grid;
+  place-items: center;
+
+  background: var(--color-cream);
+
+  pointer-events: none;
+}
+
+.mapLoading span {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  color: rgba(24, 25, 27, 0.55);
+}
+
+/* =========================================================
+   Desktop travel overlay
+   ========================================================= */
+
+.travelOverlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+
+  width: min(43vw, 640px);
+
+  pointer-events: none;
+}
+
+.overlayBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+
+  width: 100%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    rgba(255, 240, 231, 1) 0%,
+    rgba(255, 240, 231, 0.99) 48%,
+    rgba(255, 240, 231, 0.86) 68%,
+    rgba(255, 240, 231, 0.42) 84%,
+    rgba(255, 240, 231, 0) 100%
+  );
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+
+  clip-path: inset(0% 100% 0% 0%);
+
+  pointer-events: none;
+
+  will-change: clip-path;
+}
+
+.travelContent {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  padding: clamp(70px, 8vw, 120px) var(--page-gutter);
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   Travel list
+   ========================================================= */
+
+.travelList {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(32px, 4.5vh, 54px);
+
+  width: min(100%, 390px);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+
+  pointer-events: auto;
+}
+
+.travelListItem {
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+}
+
+.travelItem {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+
+  background: transparent;
+  color: #18191b;
+
+  text-align: left;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  transition:
+    padding-left 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 350ms ease,
+    background-color 350ms ease,
+    border-color 350ms ease,
+    box-shadow 350ms ease,
+    transform 350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.travelItem::before {
+  content: "";
+
+  position: absolute;
+  top: 17px;
+  left: 0;
+
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--color-gold);
+
+  opacity: 0;
+
+  transform: translateY(-50%) scale(0);
+
+  transition:
+    opacity 300ms ease,
+    transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.travelItem:hover,
+.travelItem:focus-visible,
+.travelItem[data-active="true"] {
+  padding-left: 20px;
+}
+
+.travelItem:hover::before,
+.travelItem:focus-visible::before,
+.travelItem[data-active="true"]::before {
+  opacity: 1;
+
+  transform: translateY(-50%) scale(1);
+}
+
+.travelItem:focus-visible {
+  outline: 1px solid #18191b;
+  outline-offset: 8px;
+}
+
+.travelTime {
+  font-family: var(--font-gloock);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1;
+
+  color: var(--color-gold);
+}
+
+.travelName {
+  font-family: var(--font-noto-sans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.35;
+
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Reset View — part of the destination group
+   ========================================================= */
+
+.resetButton {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  margin: clamp(28px, 3.5vh, 42px) 0 0;
+  padding: 0 0 7px;
+
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+
+  background: transparent;
+
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+
+  color: var(--color-gold);
+  white-space: nowrap;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+  pointer-events: auto;
+
+  -webkit-tap-highlight-color: transparent;
+
+  will-change: transform, opacity;
+}
+
+/* =========================================================
+   See Directions — separate secondary action
+   ========================================================= */
+
+.directionsLink {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  /*
+   * Intentionally separated from the destination group.
+   */
+  margin-top: clamp(78px, 11vh, 150px);
+  padding: 0 0 7px;
+
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+
+  color: var(--color-gold);
+  text-decoration: none;
+  white-space: nowrap;
+
+  pointer-events: auto;
+
+  will-change: transform, opacity;
+}
+
+/* =========================================================
+   Shared underline animation
+   ========================================================= */
+
+.resetButton::before,
+.resetButton::after,
+.directionsLink::before,
+.directionsLink::after {
+  content: "";
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  height: 1px;
+}
+
+.resetButton::before,
+.directionsLink::before {
+  background: rgba(137, 118, 85, 0.3);
+}
+
+.resetButton::after,
+.directionsLink::after {
+  background: var(--color-gold);
+
+  transform: scaleX(0);
+  transform-origin: right center;
+
+  transition: transform 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resetButton:hover::after,
+.resetButton:focus-visible::after,
+.directionsLink:hover::after,
+.directionsLink:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* =========================================================
+   Action icons
+   ========================================================= */
+
+.linkIcon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+
+  width: 17px;
+  height: 17px;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1;
+
+  transform-origin: center;
+
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resetButton:hover .linkIcon,
+.resetButton:focus-visible .linkIcon {
+  transform: rotate(-180deg);
+}
+
+.directionsLink:hover .linkIcon,
+.directionsLink:focus-visible .linkIcon {
+  transform: translateX(4px);
+}
+
+.resetButton:focus-visible,
+.directionsLink:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 6px;
+}
+
+/* =========================================================
+   Project marker
+   ========================================================= */
+
+.projectMarker,
+.locationMarker {
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.projectMarker {
+  display: grid;
+  place-items: center;
+
+  width: 84px;
+  height: 108px;
+}
+
+.projectMarkerInner {
+  position: relative;
+
+  display: block;
+
+  width: 70px;
+  height: 70px;
+
+  border: 3px solid var(--color-cream);
+  border-radius: 50% 50% 50% 0;
+
+  background: var(--color-gold);
+
+  transform: rotate(-45deg) scale(0.94);
+
+  /*
+   * A larger, more saturated glow than a plain drop shadow — this is
+   * the site's one project marker among several destination pins, so
+   * it needs to read as clearly more important at a glance, not just
+   * slightly different.
+   */
+  box-shadow:
+    0 0 0 8px rgba(137, 118, 85, 0.16),
+    0 18px 40px rgba(137, 118, 85, 0.45);
+
+  transition:
+    transform 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 450ms ease;
+}
+
+/*
+ * The pin itself is rotated -45deg for its teardrop shape; the icon
+ * needs the opposite +45deg so it reads upright on screen instead of
+ * rotating along with it.
+ */
+.projectMarkerInner::before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 32px;
+  height: 32px;
+
+  background-image: url("/icons/moven-white.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.projectMarker:hover .projectMarkerInner,
+.projectMarker:focus-visible .projectMarkerInner,
+.projectMarker[data-active="true"] .projectMarkerInner {
+  transform: rotate(-45deg) scale(1);
+
+  box-shadow:
+    0 0 0 10px rgba(137, 118, 85, 0.2),
+    0 22px 46px rgba(137, 118, 85, 0.55);
+}
+
+.projectMarker:focus-visible,
+.locationMarker:focus-visible {
+  outline: 1px solid var(--color-gold);
+  outline-offset: 5px;
+}
+
+/* =========================================================
+   Destination markers
+   ========================================================= */
+
+.locationMarker {
+  display: grid;
+  place-items: center;
+
+  width: 26px;
+  height: 26px;
+}
+
+.locationMarkerInner {
+  display: block;
+
+  width: 10px;
+  height: 10px;
+
+  border: 2px solid var(--color-cream);
+  border-radius: 50%;
+
+  background: var(--color-gold);
+
+  box-shadow: 0 3px 10px rgba(137, 118, 85, 0.26);
+
+  transition:
+    transform 400ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 400ms ease;
+}
+
+.locationMarker:hover .locationMarkerInner,
+.locationMarker:focus-visible .locationMarkerInner,
+.locationMarker[data-active="true"] .locationMarkerInner {
+  transform: scale(1.65);
+
+  box-shadow: 0 6px 17px rgba(137, 118, 85, 0.38);
+}
+
+/* =========================================================
+   Permanent map labels
+   ========================================================= */
+
+.map :global(.mapboxgl-popup) {
+  pointer-events: none;
+}
+
+.map :global(.mapboxgl-popup-content) {
+  min-width: 178px;
+
+  padding: 13px 16px;
+
+  border-radius: 0;
+
+  background: rgba(var(--color-cream-rgb), 0.95);
+  color: #18191b;
+
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+
+  box-shadow: 0 14px 38px rgba(24, 25, 27, 0.1);
+}
+
+.map :global(.mapboxgl-popup-tip) {
+  display: none;
+}
+
+.mapLabelContent strong,
+.mapLabelContent span {
+  display: block;
+}
+
+.mapLabelContent strong {
+  margin: 0 0 4px;
+
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+
+  color: #18191b;
+}
+
+.mapLabelContent span {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+
+  color: rgba(24, 25, 27, 0.58);
+}
+
+.projectLabelContent strong {
+  font-size: 15px;
+}
+
+/* =========================================================
+   Mapbox attribution
+   ========================================================= */
+
+.mapStage :global(.mapboxgl-ctrl-bottom-left) {
+  left: 5px;
+  bottom: 4px;
+}
+
+.mapStage :global(.mapboxgl-ctrl-bottom-right) {
+  right: 5px;
+  bottom: 4px;
+}
+
+.mapStage :global(.mapboxgl-ctrl-logo) {
+  width: 65px;
+  height: 20px;
+
+  margin: 0;
+
+  opacity: 0.45;
+
+  transform: scale(0.68);
+  transform-origin: left bottom;
+}
+
+.mapStage :global(.mapboxgl-ctrl-attrib) {
+  display: block;
+
+  margin: 0;
+  padding: 2px 5px;
+
+  border: 0;
+  border-radius: 0;
+
+  background: rgba(var(--color-cream-rgb), 0.72);
+
+  font-family: var(--font-body);
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 1.2;
+
+  color: rgba(24, 25, 27, 0.58);
+
+  box-shadow: none;
+}
+
+.mapStage :global(.mapboxgl-ctrl-attrib a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.mapStage :global(.mapboxgl-ctrl-attrib-button) {
+  display: none !important;
+}
+
+/* =========================================================
+   Error state
+   ========================================================= */
+
+.mapError {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+
+  display: grid;
+  place-items: center;
+
+  padding: 40px;
+
+  background: var(--color-cream);
+}
+
+.mapError p {
+  max-width: 460px;
+  margin: 0;
+
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+
+  color: #18191b;
+
+  text-align: center;
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .sectionHeader {
+    padding-top: 120px;
+    padding-bottom: 90px;
+  }
+
+  .travelOverlay {
+    width: min(49vw, 510px);
+  }
+
+  .travelContent {
+    padding-inline: 50px;
+  }
+
+  .travelList {
+    max-width: 335px;
+  }
+
+  .travelTime {
+    font-size: 38px;
+  }
+
+  .travelName {
+    font-size: 16px;
+  }
+
+  .resetButton {
+    margin-top: 30px;
+  }
+
+  .directionsLink {
+    margin-top: clamp(72px, 10vh, 125px);
+  }
+}
+
+/* =========================================================
+   Mobile — full-screen map with overlay cards
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .sectionHeader {
+    padding: 96px 22px 72px;
+  }
+
+  .eyebrow {
+    font-size: 30px;
+  }
+
+  .heading {
+    font-size: 34px;
+  }
+
+  .description {
+    max-width: 560px;
+    margin-top: 30px;
+
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .mapStage {
+    position: relative;
+
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+
+    overflow: hidden;
+    isolation: isolate;
+
+    background: var(--color-cream);
+  }
+
+  .map {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .mapLoading {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .travelOverlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: auto;
+    left: 0;
+    z-index: 6;
+
+    width: 100%;
+    height: auto;
+    min-height: 320px;
+
+    pointer-events: none;
+  }
+
+  .overlayBackground {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    width: 100%;
+    height: 100%;
+
+    background: linear-gradient(
+      180deg,
+      rgba(var(--color-cream-rgb), 1) 0%,
+      rgba(var(--color-cream-rgb), 0.99) 54%,
+      rgba(var(--color-cream-rgb), 0.9) 70%,
+      rgba(var(--color-cream-rgb), 0.54) 86%,
+      rgba(var(--color-cream-rgb), 0) 100%
+    );
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    clip-path: inset(0% 0% 100% 0%);
+
+    pointer-events: none;
+
+    will-change: clip-path;
+  }
+
+  .travelContent {
+    position: relative;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    width: 100%;
+    height: auto;
+    min-height: 320px;
+
+    padding: 24px 18px 70px;
+
+    pointer-events: none;
+  }
+
+  .travelList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+
+    width: 100%;
+    max-width: none;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    pointer-events: auto;
+  }
+
+  .travelListItem {
+    min-width: 0;
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  .travelItem {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 5px;
+
+    width: 100%;
+    min-height: 78px;
+
+    margin: 0;
+    padding: 13px 12px;
+
+    border: 1px solid rgba(24, 25, 27, 0.035);
+    border-radius: 0;
+
+    background: rgba(255, 255, 255, 0.64);
+    color: #18191b;
+
+    box-shadow: 0 8px 24px rgba(24, 25, 27, 0.035);
+
+    text-align: left;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    cursor: pointer;
+
+    transition:
+      padding-left 450ms cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 350ms ease,
+      border-color 350ms ease,
+      box-shadow 350ms ease;
+  }
+
+  .travelItem::before {
+    content: "";
+
+    position: absolute;
+    top: 17px;
+    left: 10px;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: var(--color-gold);
+
+    opacity: 0;
+
+    transform: scale(0);
+
+    transition:
+      opacity 300ms ease,
+      transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .travelItem:hover,
+  .travelItem:focus-visible,
+  .travelItem[data-active="true"] {
+    padding-left: 23px;
+
+    border-color: rgba(137, 118, 85, 0.12);
+
+    background: rgba(255, 255, 255, 0.92);
+
+    box-shadow: 0 12px 30px rgba(24, 25, 27, 0.08);
+
+    /*
+     * No persistent vertical movement on touch devices.
+     */
+    transform: none;
+  }
+
+  .travelItem:hover::before,
+  .travelItem:focus-visible::before,
+  .travelItem[data-active="true"]::before {
+    opacity: 1;
+
+    transform: scale(1);
+  }
+
+  .travelItem:focus-visible {
+    outline: 1px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+
+  .travelTime {
+    font-size: 21px;
+    line-height: 1;
+  }
+
+  .travelName {
+    display: -webkit-box;
+
+    width: 100%;
+
+    overflow: hidden;
+
+    font-size: 10px;
+    line-height: 1.3;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .resetButton {
+    align-self: flex-start;
+
+    margin-top: 14px;
+    padding-bottom: 6px;
+
+    font-size: 12px;
+  }
+
+  .directionsLink {
+    align-self: flex-start;
+
+    margin-top: 42px;
+    padding-bottom: 6px;
+
+    font-size: 12px;
+  }
+
+  .linkIcon {
+    width: 14px;
+    height: 14px;
+
+    font-size: 15px;
+  }
+
+  .projectMarker {
+    width: 62px;
+    height: 80px;
+  }
+
+  .projectMarkerInner {
+    width: 52px;
+    height: 52px;
+  }
+
+  .projectMarkerInner::before {
+    width: 22px;
+    height: 22px;
+  }
+
+  .locationMarker {
+    width: 22px;
+    height: 22px;
+  }
+
+  .locationMarkerInner {
+    width: 8px;
+    height: 8px;
+  }
+
+  .map :global(.mapboxgl-popup-content) {
+    min-width: 126px;
+    max-width: 150px;
+
+    padding: 9px 10px;
+
+    background: rgba(var(--color-cream-rgb), 0.94);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+
+  .mapLabelContent strong {
+    font-size: 11px;
+    line-height: 1.22;
+  }
+
+  .mapLabelContent span {
+    font-size: 9px;
+  }
+
+  .projectLabelContent strong {
+    font-size: 12px;
+  }
+
+  .mapStage :global(.mapboxgl-ctrl-bottom-left) {
+    left: 4px;
+    bottom: 4px;
+  }
+
+  .mapStage :global(.mapboxgl-ctrl-bottom-right) {
+    right: 4px;
+    bottom: 4px;
+  }
+}
+
+/* =========================================================
+   Small mobile
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .sectionHeader {
+    padding: 88px 18px 64px;
+  }
+
+  .eyebrow {
+    font-size: 28px;
+  }
+
+  .heading {
+    font-size: 31px;
+  }
+
+  .description {
+    font-size: 15px;
+  }
+
+  .travelOverlay,
+  .travelContent {
+    min-height: 305px;
+  }
+
+  .travelContent {
+    padding: 20px 14px 64px;
+  }
+
+  .travelList {
+    gap: 10px;
+  }
+
+  .travelItem {
+    min-height: 70px;
+
+    padding: 11px 10px;
+  }
+
+  .travelItem:hover,
+  .travelItem:focus-visible,
+  .travelItem[data-active="true"] {
+    padding-left: 21px;
+  }
+
+  .travelTime {
+    font-size: 19px;
+  }
+
+  .travelName {
+    font-size: 9px;
+  }
+
+  .resetButton {
+    margin-top: 20px;
+
+    font-size: 11px;
+  }
+
+  .directionsLink {
+    margin-top: 20px;
+
+    font-size: 11px;
+  }
+
+  .linkIcon {
+    width: 13px;
+    height: 13px;
+
+    font-size: 14px;
+  }
+}
+
+/* =========================================================
+   Very small mobile
+   ========================================================= */
+
+@media (max-width: 390px) {
+  .travelOverlay,
+  .travelContent {
+    min-height: 295px;
+  }
+
+  .travelContent {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .travelList {
+    gap: 8px;
+  }
+
+  .travelItem {
+    min-height: 66px;
+  }
+
+  .travelTime {
+    font-size: 18px;
+  }
+
+  .travelName {
+    font-size: 8.5px;
+  }
+}
+
+/* =========================================================
+   Short mobile screens
+   ========================================================= */
+
+@media (max-width: 767px) and (max-height: 720px) {
+  .travelOverlay,
+  .travelContent {
+    min-height: 280px;
+  }
+
+  .travelContent {
+    padding-top: 15px;
+    padding-bottom: 52px;
+  }
+
+  .travelItem {
+    min-height: 62px;
+
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  .travelTime {
+    font-size: 18px;
+  }
+
+  .resetButton {
+    margin-top: 8px;
+  }
+
+  .directionsLink {
+    margin-top: 28px;
+  }
+}
+
+/* =========================================================
+   Desktop: the space around the section's heading
+
+   Set outright rather than left to the 10vw/8vw clamps in the base
+   rule, which capped at 165px and 122px and varied with the window's
+   width in between. 90/80 matches the flat figures the sections above
+   now use.
+
+   This sits AFTER the max-width tiers on purpose: placed with the base
+   rule it would still win here, but keeping every flat desktop
+   override in one place below them is what stops the next change to a
+   narrower tier silently undoing it.
+   ========================================================= */
+
+@media (min-width: 1101px) {
+  .sectionHeader {
+    padding-top: 90px;
+    padding-bottom: 80px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .sectionInner {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .overlayBackground {
+    clip-path: none !important;
+  }
+
+  .eyebrow,
+  .heading,
+  .description,
+  .travelItem,
+  .resetButton,
+  .directionsLink {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .travelItem,
+  .travelItem::before,
+  .resetButton::after,
+  .directionsLink::after,
+  .projectMarkerInner,
+  .locationMarkerInner {
+    transition: none;
+  }
+}

@@ -1,0 +1,161 @@
+# Render Blueprint — the Movenpick landing page.
+#
+# One web service. No database, no object storage, no scheduled jobs, no
+# secrets beyond the tokens for talking to the admin panel.
+#
+# Movenpick is a pure consumer of a central, multi-site admin panel that owns
+# the database and image storage (see INTEGRATION.md). Its own admin panel,
+# Postgres database, and Vercel Blob storage were removed once that became
+# the architecture, which is why this file is as short as it is.
+#
+# It deploys and runs correctly with the admin panel NOT yet connected: the
+# site renders the content defaults committed in src/content/sections/,
+# which are the copy currently live. It just cannot be edited until
+# CONTENT_API_URL is set. So there is nothing to wait for before deploying.
+#
+# REGION: frankfurt, the closest of Render's regions to Dubai. There is no
+# longer a database to co-locate with, so this is now purely a
+# visitor-latency choice. Ideally deploy the admin panel in the same region
+# so the content API call between them stays local. Region cannot be
+# changed after a service is created.
+#
+# Blueprint syntax changes over time; validate this in Render's dashboard
+# on first import rather than trusting it blind.
+
+services:
+  - type: web
+    name: movenpick-web
+    runtime: node
+    plan: starter
+    region: frankfurt
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /
+
+    # Deliberately one instance, and this is load-bearing in two places.
+    #
+    # 1. Cache coherence. Self-hosted Next.js keeps its rendered-page and
+    #    data caches on each instance's own local disk, so the admin
+    #    panel's "content changed" webhook only reaches whichever instance
+    #    answered it. A second instance would keep serving old content
+    #    until its timer expired, and an editor would watch their change
+    #    appear, vanish on refresh, and reappear at random.
+    # 2. Rate limiting. src/lib/rate-limit.js counts submissions in memory,
+    #    which is only meaningful within one process. With two instances the
+    #    effective limit silently doubles.
+    #
+    # Raising this requires a shared cache handler (Redis) and a shared
+    # rate-limit store first. It is not a slider to nudge.
+    numInstances: 1
+
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+
+      # ---------------------------------------------------------------
+      # Required now
+      # ---------------------------------------------------------------
+
+      # The site's own absolute base URL, e.g. https://movenpick.ae
+      #
+      # This is the one variable whose absence is invisible. Unset, nothing
+      # errors and no test fails, but sitemap.xml advertises localhost URLs
+      # to search engines and every WhatsApp and social share preview
+      # resolves against localhost and shows nothing.
+      - key: SITE_URL
+        sync: false
+
+      # Baked into the browser bundle at BUILD time, not read at runtime.
+      # Missing before the first build means the map and the call and
+      # WhatsApp buttons fail silently in visitors' browsers — and fixing it
+      # needs a REBUILD, not just a restart.
+      - key: NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+        sync: false
+      - key: NEXT_PUBLIC_WHATSAPP_NUMBER
+        sync: false
+      - key: NEXT_PUBLIC_CALL_NUMBER
+        sync: false
+
+      # Movenpick keeps its own outbound Zapier forward permanently. It is
+      # what makes an enquiry survive the admin panel being unreachable, or
+      # not yet connected: submissions still reach the sales team and the
+      # visitor sees a normal success.
+      - key: ZAPIER_MOVENPICK_LEAD_WEBHOOK
+        sync: false
+      - key: ZAPIER_MOVENPICK_SLOT_WEBHOOK
+        sync: false
+      - key: ZAPIER_BOT_SECRET
+        sync: false
+
+      # ---------------------------------------------------------------
+      # Add when the central admin panel is live
+      #
+      # Setting CONTENT_API_URL is the switch: content starts arriving from
+      # the panel instead of from the committed defaults. No code change and
+      # no redeploy. Clearing it switches straight back, so the cutover is
+      # reversible in both directions.
+      # ---------------------------------------------------------------
+
+      - key: SITE_KEY
+        value: movenpick
+
+      # - key: CONTENT_API_URL     # panel base URL
+      #   sync: false
+      # - key: LEAD_API_URL        # same base URL
+      #   sync: false
+      # - key: CONTENT_API_TOKEN   # token the panel issued for Movenpick
+      #   sync: false
+      # - key: LEAD_INTAKE_TOKEN   # token the panel issued for Movenpick
+      #   sync: false
+      # - key: REVALIDATE_SECRET   # panel calls /api/revalidate with this
+      #   sync: false
+      #
+      # Safety net only — the panel pushes an instant refresh on save. This
+      # bounds how long a missed webhook can leave the site stale.
+      # MUST NOT be 0: that makes the prerendered homepage dynamic at
+      # runtime and returns a 500 on every request. See content-api.js.
+      # - key: CONTENT_CACHE_SECONDS
+      #   value: "300"
+      #
+      # Comma-separated hosts allowed to serve images, i.e. wherever the
+      # panel stores uploads. Read at BUILD time, so changing it needs a
+      # rebuild.
+      #
+      # SET THIS BEFORE EDITORS START UPLOADING IMAGES. Next.js refuses to
+      # load an image from a host that is not allowlisted, and the failure
+      # is abrupt rather than graceful: every page using a replaced image
+      # breaks. Nothing warns beforehand, because every default is a local
+      # /images path and so the site looks perfect right up to the first
+      # upload.
+      # - key: IMAGE_HOSTS         # e.g. cdn.refinedubai.com
+      #   sync: false
+
+      # ---------------------------------------------------------------
+      # Zoho (optional, independent of everything above)
+      #
+      # Every enquiry fans out concurrently to the admin panel, Zoho, and
+      # Zapier. The visitor only sees an error if ALL configured
+      # destinations fail, so adding Zoho cannot make submissions less
+      # reliable — only more.
+      #
+      # Mode 1, recommended: a Zoho Flow webhook URL. No OAuth, no token
+      # expiry, and the field mapping lives in Flow where a non-developer
+      # can change it.
+      # - key: ZOHO_WEBHOOK_URL
+      #   sync: false
+      # - key: ZOHO_WEBHOOK_SECRET
+      #   sync: false
+      #
+      # Mode 2: create records directly in the CRM Leads module. All three
+      # are required together. Set ZOHO_DC to your regional data centre
+      # (com, eu, in, sa, ...) — the wrong one fails as an authentication
+      # error, which does not point at the real cause.
+      # - key: ZOHO_CRM_CLIENT_ID
+      #   sync: false
+      # - key: ZOHO_CRM_CLIENT_SECRET
+      #   sync: false
+      # - key: ZOHO_CRM_REFRESH_TOKEN
+      #   sync: false
+      # - key: ZOHO_DC
+      #   value: "com"

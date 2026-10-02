@@ -1,0 +1,15 @@
+<svg width="162" height="162" viewBox="-4 -4 162 162" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!--
+  viewBox is inset by 4 units on every side so the circle (cx 77,
+  cy 77, r 77) sits centred with 4 units of clearance all round. At
+  "0 0 154 154" it was flush against the box on all four edges, which
+  left the rim with nowhere to antialias and made the CSS
+  border-radius clip shave the whole outline.
+
+  Geometry matches top-light.svg / top-dark.svg exactly, so the chat
+  and back-to-top buttons render at the same diameter side by side.
+-->
+<circle opacity="0.7" cx="77" cy="77" r="77" fill="#897655"/>
+<path d="M105.37 42.7812H48.6289C46.9721 42.7812 45.6289 44.1244 45.6289 45.7812V99.6701C45.6289 101.327 46.972 102.67 48.6289 102.67H85.6723C85.9833 102.67 86.2924 102.718 86.5886 102.813L107.064 109.381C107.71 109.588 108.37 109.107 108.37 108.429V102.67V45.7812C108.37 44.1244 107.027 42.7812 105.37 42.7812Z" fill="#FFF0E7"/>
+<path d="M59.8867 74.1484C59.8867 74.1484 66.4769 79.8521 77.6311 79.8521C88.7853 79.8521 94.1089 74.1484 94.1089 74.1484" stroke="#897655" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

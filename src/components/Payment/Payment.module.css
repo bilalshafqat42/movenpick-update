@@ -1,0 +1,529 @@
+.payment {
+  width: 100%;
+
+  /*
+   * Named, because .imagePanel below bleeds to the section's true
+   * bottom edge by cancelling exactly this value with a negative
+   * margin. Two hard-coded copies of the same clamp would drift the
+   * moment either changed.
+   */
+  --payment-pad-block: clamp(60px, 8vw, 110px);
+
+  padding: var(--payment-pad-block) var(--page-gutter);
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Intro
+   ========================================================= */
+
+.intro {
+  /*
+   * 10 of the page's 12 columns wide (83.333vw), matching the width
+   * other sections' headings use, rather than the narrower fixed
+   * 760px this had before.
+   */
+  width: min(83.333vw, 1400px);
+  max-width: 100%;
+  margin: 0 auto clamp(48px, 6vw, 80px);
+
+  text-align: center;
+}
+
+.heading {
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 400;
+  line-height: 1.2;
+
+  color: var(--color-gold);
+}
+
+.text {
+  max-width: 620px;
+  margin: 18px auto 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+/* =========================================================
+   Body: photo + milestone table
+   ========================================================= */
+
+.body {
+  display: flex;
+  /*
+   * Stretch (the default, made explicit here) rather than flex-start:
+   * the two columns need to match height, with whichever is naturally
+   * taller (usually the milestone table, at 7 rows) setting it for
+   * both — the image then fills that height via object-fit: cover.
+   */
+  align-items: stretch;
+  gap: 0;
+
+  width: 100%;
+}
+
+.imagePanel {
+  position: relative;
+
+  /*
+   * A literal 50vw, bled to the true left edge of the viewport with a
+   * negative margin — same full-bleed technique used elsewhere on the
+   * site (e.g. Amenities) — rather than a flex-sized column inset by
+   * the section's own page-gutter padding like the table beside it.
+   * .tablePanel's own padding-left below replaces the old flex `gap`,
+   * since a gap would eat into this now-fixed-width column.
+   */
+  flex: none;
+  width: 50vw;
+  margin-left: calc(-1 * var(--page-gutter));
+  /*
+   * Bled to the section's true bottom edge too, cancelling .payment's
+   * own bottom padding — otherwise the image stopped short of the
+   * section boundary, leaving a visible gap of plain background below
+   * it before the next section started.
+   */
+  margin-bottom: calc(-1 * var(--payment-pad-block));
+
+  overflow: hidden;
+
+  background: var(--color-gold);
+
+  /*
+   * Fully hidden as a plain fallback before JS computes the real
+   * 30-band venetian mask (see PaymentClient's buildVenetianMask) —
+   * this is just here to prevent a flash of the unmasked image before
+   * that runs, not the actual reveal shape.
+   */
+  mask-image: linear-gradient(0deg, transparent 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(0deg, transparent 0%, transparent 100%);
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+
+  will-change: mask-image;
+}
+
+.imageLayer {
+  position: absolute;
+  inset: -5%;
+
+  width: 110%;
+  height: 110%;
+
+  overflow: hidden;
+
+  transform-origin: center center;
+
+  will-change: transform;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center center;
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  transform: translateZ(0);
+}
+
+/* =========================================================
+   Milestone table
+   ========================================================= */
+
+.tablePanel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  flex: 1;
+  min-width: 0;
+
+  /*
+   * Replaces the old flex `gap` on .body — that gap would have eaten
+   * into .imagePanel's now-fixed 50vw width instead of just spacing
+   * the table away from it.
+   */
+  padding-left: clamp(40px, 6vw, 90px);
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+
+  padding-bottom: 10px;
+
+  /*
+   * Deliberately no border-bottom. The design rules between milestones,
+   * not under the column headings, so the first line falls below the
+   * Booking row rather than separating the heading from it.
+   */
+
+  font-family: var(--font-noto-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  color: var(--color-cta-red);
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  position: relative;
+
+  padding: 18px 0;
+}
+
+/*
+ * The rule between milestones, as an element rather than the row's
+ * border-bottom. A border cannot be revealed separately from the box it
+ * sits on — it fades with the row — and the sequence calls for the line
+ * to arrive as its own beat after the milestone above it. Absolutely
+ * positioned so it stays pinned to the row's bottom edge whatever the
+ * row's content does.
+ *
+ * Scaled from the left by PaymentClient, so it draws in rather than
+ * fading, which reads as a line being ruled.
+ */
+.rowRule {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  height: 1px;
+
+  background: rgba(137, 118, 85, 0.18);
+
+  transform-origin: left center;
+}
+
+.rowTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rowLabel {
+  font-family: var(--font-gloock);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+
+  color: var(--color-gold);
+}
+
+.rowPercent {
+  flex: 0 0 auto;
+
+  font-family: var(--font-gloock);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+
+  color: var(--color-gold);
+}
+
+.rowSublabel {
+  margin: 4px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+
+  color: rgba(137, 118, 85, 0.65);
+}
+
+/* =========================================================
+   Desktop: two rows — the intro, then a full-height photo/table row
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  .payment {
+    display: flex;
+    flex-direction: column;
+
+    /*
+     * No height on the section itself. The intro takes the height its
+     * text needs and the row below it takes a full viewport, so the
+     * section comes to intro + 100vh rather than the two competing for
+     * one screen. An earlier version put min-height: 100vh here
+     * instead, which meant the milestone table had to share a single
+     * viewport with the heading and never got the room to breathe.
+     */
+    /*
+     * Flat, not a 6vh clamp. Tied to the window's height it measured
+     * 59px on a 990px-tall screen and less on a shorter one, so the
+     * space above the heading changed from machine to machine. 90px is
+     * the figure the sections above now use.
+     */
+    padding-top: 90px;
+
+    /*
+     * Zero, because .body below now ends exactly where the section
+     * does. The photo used to reach the section's true bottom edge by
+     * cancelling this padding with a negative margin; with no padding
+     * left to cancel, that margin goes too (further down).
+     */
+    padding-bottom: 0;
+  }
+
+  .intro {
+    /*
+     * Flat for the same reason: the 4vh clamp put 40px between the
+     * heading block and the table on a 990px-tall window, which read as
+     * cramped against the 90px above it.
+     */
+    margin-bottom: 80px;
+  }
+
+  /*
+   * The second row, a full viewport tall, so both the photo and the
+   * milestone table fill the screen when scrolled to.
+   *
+   * min-height rather than height: the table is seven rows of real
+   * content, and on an unusually short desktop window it needs more
+   * than a viewport. A fixed height would clip the final instalment;
+   * this way the row is never shorter than the screen and grows the
+   * little it needs to.
+   */
+  .body {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  .imagePanel {
+    margin-bottom: 0;
+  }
+
+  /*
+   * The milestones spread across the whole column instead of stacking
+   * at their natural height and leaving the block floating in the
+   * middle of it. The table takes the height left under the heading,
+   * and every row takes an equal share of that.
+   */
+  .table {
+    flex: 1;
+    min-height: 0;
+  }
+
+  /*
+   * `1 1 auto`, not `1`: basing the share on each row's own content
+   * height means a row can never be squeezed below the text it holds,
+   * however short the window. The rows carry near-identical content, so
+   * the bands still come out even.
+   *
+   * Centring within the band is what keeps the rules evenly spaced —
+   * each row's text sits in the middle of its share, with its rule on
+   * the band's bottom edge.
+   */
+  .row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /*
+   * Inset from the row's top and bottom edges.
+   *
+   * The top inset clears the fixed header. This row is a full viewport
+   * tall, so when it fills the screen its top edge is at the very top —
+   * without this the MILESTONE heading and the Booking milestone sat
+   * underneath the header bar and were unreadable. The photo column
+   * beside it deliberately keeps running edge to edge underneath the
+   * header, as a full-bleed photo should.
+   */
+  .tablePanel {
+    padding-top: calc(var(--header-height, 90px) + clamp(16px, 3vh, 44px));
+    padding-bottom: clamp(24px, 5vh, 72px);
+  }
+
+  /* Type sizes for the desktop composition. */
+  .tableHeader {
+    font-size: 14px;
+  }
+
+  .rowLabel,
+  .rowPercent {
+    font-size: 24px;
+  }
+
+  .rowSublabel {
+    font-size: 16px;
+
+    /*
+     * More air under the milestone line than the 4px the base rule
+     * gives it. That gap was set against a 20px label and a 13px
+     * sublabel; at the desktop sizes above (24px and 16px) the two
+     * lines sat too close to read as separate pieces of information.
+     *
+     * A margin rather than a gap on .row: the rule is absolutely
+     * positioned, so it is out of flow and a flex gap would space only
+     * these two anyway — this says the same thing in one property and
+     * holds even where .row is not a flex column.
+     */
+    margin-top: 10px;
+  }
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .body {
+    flex-direction: column;
+  }
+
+  .imagePanel {
+    /*
+     * Cancels the desktop-only 50vw bleed — stacked layout, so the
+     * image is just a normal full-width block again.
+     */
+    flex: none;
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 0;
+    min-height: 380px;
+  }
+
+  .tablePanel {
+    padding-left: 0;
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  /*
+   * Two screens on mobile.
+   *
+   *   Screen 1: the intro at 35svh, the photo at 65svh.
+   *   Screen 2: the milestone table on its own full screen.
+   *
+   * The section's own block padding goes to zero and the header
+   * clearance moves inside each screen instead. Keeping it on .payment
+   * would sit OUTSIDE the two 100svh screens and push the photo's
+   * bottom edge below the fold by exactly that much.
+   */
+  .payment {
+    display: flex;
+    flex-direction: column;
+
+    padding-block: 0;
+  }
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    min-height: 35svh;
+
+    /* Clears the fixed header, since this screen's top edge is the
+       viewport's top edge. */
+    padding-top: calc(var(--header-height, 90px) + 16px);
+
+    /*
+     * A stated gap above the photo, not one left over from centring.
+     * Relying on the slack inside 35svh gave 29px on a 956px screen and
+     * nothing at all on a 844px one, because there the copy fills the
+     * box and there is no slack to centre within.
+     */
+    padding-bottom: clamp(24px, 4svh, 44px);
+
+    margin-bottom: 0;
+  }
+
+  .imagePanel {
+    height: 65svh;
+  }
+
+  /*
+   * Screen two. The rows are already centred by the base rule, so the
+   * padding only guarantees clearance on a short handset where the
+   * table nearly fills the screen on its own.
+   */
+  .tablePanel {
+    min-height: 100svh;
+
+    padding-top: var(--header-height, 90px);
+    padding-bottom: clamp(24px, 4svh, 48px);
+  }
+
+  .heading {
+    font-size: 26px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+
+  /*
+   * Full bleed. `width: 100%` resolved against the padded .body, so the
+   * photo stopped a page-gutter short of each screen edge — measured 37px
+   * of cream either side on a 440px handset.
+   *
+   * The standard break-out: 100vw is the true viewport width whatever any
+   * ancestor's padding is, and margin-left: calc(50% - 50vw) walks the
+   * left edge back to the viewport's from wherever the padded parent put
+   * it. Written against 50% of the parent rather than cancelling a
+   * specific padding value, so it holds however deeply nested it is —
+   * same technique as Amenities' mobile photo.
+   */
+  .imagePanel {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    min-height: 280px;
+  }
+
+  .rowLabel,
+  .rowPercent {
+    font-size: 17px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .imagePanel {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  .imageLayer,
+  .heading,
+  .text,
+  .row {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

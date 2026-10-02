@@ -1,0 +1,562 @@
+.gallery {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  /*
+   * Padding scales with the viewport rather than sitting at a fixed
+   * 140px/82px. On a 900px-tall laptop those two alone were 222px of
+   * the 900 available, which is a quarter of the screen spent on
+   * whitespace while the caption was pushed off the bottom.
+   *
+   * The old `min-height: 1120px` is gone with them: it forced the
+   * section taller than its contents on every screen, and the height
+   * budget in GalleryClient now sizes the composition to fit instead.
+   */
+  padding: clamp(56px, 8vh, 140px) 0 clamp(40px, 5vh, 82px);
+
+  overflow: hidden;
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Section heading
+   ========================================================= */
+
+.headingGroup {
+  position: relative;
+  z-index: 10;
+
+  flex: 0 0 auto;
+
+  width: min(calc(100% - 48px), 760px);
+  /*
+   * The gap below the heading scales with the viewport. A flat 72px is
+   * 72px the photograph does not get, and on a short screen the
+   * photograph is what the height budget has to take it from.
+   */
+  margin: 0 auto clamp(32px, 5.5vh, 72px);
+
+  text-align: center;
+}
+
+.heading {
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+
+  color: var(--color-gold);
+}
+
+.text {
+  max-width: 620px;
+  margin: 18px auto 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+/* =========================================================
+   Carousel stage
+   ========================================================= */
+
+.carousel {
+  position: relative;
+
+  flex: 0 0 auto;
+
+  width: 100vw;
+
+  /*
+   * The centre card is absolutely positioned, so it contributes nothing
+   * to this element's own height, and .gallery's flex layout sizes
+   * around whatever is set here.
+   *
+   * GalleryClient writes the real figure inline on every layout pass,
+   * measured from the photo it just sized plus the caption block. This
+   * value is only the pre-hydration fallback. It used to be the actual
+   * source of truth, hand-tuned twice — first 740px, then 960px — and
+   * wrong both times, because a fixed number cannot track a photo whose
+   * height depends on the viewport.
+   */
+  height: 720px;
+
+  margin: 0;
+
+  overflow: visible;
+
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+/*
+ * The native cursor is hidden ONLY over the photographs themselves, not
+ * across the whole stage. The drag icon is an invitation to drag a
+ * photo, so it belongs on the photos; the cream space around them, and
+ * the caption beneath, are not draggable and keep the ordinary arrow.
+ *
+ * The dragging case is separate on purpose: a drag that starts on a
+ * photo and travels off it still owns the pointer (setPointerCapture),
+ * so the icon has to stay and the native arrow has to stay hidden until
+ * the gesture ends. Without this the two would swap back and forth
+ * mid-drag.
+ */
+.imageWrapper,
+.imageWrapper * {
+  cursor: none !important;
+}
+
+.carousel[data-dragging="true"],
+.carousel[data-dragging="true"] * {
+  cursor: none !important;
+}
+
+/* =========================================================
+   Custom cursor
+   ========================================================= */
+
+.customCursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+
+  width: 200px;
+  height: 200px;
+  margin-top: -100px;
+  margin-left: -100px;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  transition: opacity 100ms ease;
+}
+
+.customCursor[data-visible="true"] {
+  opacity: 1;
+}
+
+.card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+
+  width: 900px;
+  margin: 0;
+
+  text-align: center;
+
+  transform: translateX(-50%);
+  transform-origin: center top;
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  /*
+   * `width` is deliberately absent. will-change only helps properties
+   * the compositor can handle on its own, and width is not one — every
+   * change relayouts the card and the photo inside it regardless. All
+   * the hint bought was five permanently promoted layers.
+   */
+  will-change: transform, opacity;
+}
+
+.card[data-position="centre"] {
+  z-index: 4;
+}
+
+.card[data-position="left"],
+.card[data-position="right"] {
+  z-index: 2;
+}
+
+.card[data-position="hidden"] {
+  z-index: 1;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   Image button
+   ========================================================= */
+
+.cardButton {
+  display: block;
+
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+  color: inherit;
+
+  cursor: pointer;
+
+  touch-action: pan-y;
+}
+
+.cardButton:disabled {
+  cursor: default;
+}
+
+.cardButton:focus-visible {
+  outline: 1px solid var(--color-gold);
+  outline-offset: 7px;
+}
+
+/* =========================================================
+   Images
+   ========================================================= */
+
+.imageWrapper {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  height: 600px;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  background: #d8d0c6;
+
+  transform-origin: center bottom;
+
+  will-change: height;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center center;
+
+  pointer-events: none;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  -webkit-user-drag: none;
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+
+  transform: translateZ(0);
+
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card[data-position="left"]:hover .image,
+.card[data-position="right"]:hover .image {
+  transform: translateZ(0) scale(1.025);
+}
+
+/*
+ * Disable hover zoom while actively dragging.
+ */
+.carousel[data-dragging="true"] .image {
+  transform: translateZ(0) scale(1) !important;
+}
+
+/* =========================================================
+   Centre-card text
+   ========================================================= */
+
+/*
+ * The wrap width comes from --gallery-caption-width, which GalleryClient
+ * sets on .carousel from the centre card's width on every layout pass.
+ * NOT from `100%`.
+ *
+ * `100%` is the width of whichever card the caption happens to sit in,
+ * and the side cards are a fraction of the centre one. Every caption is
+ * laid out, including the hidden ones, so a side card's copy wrapped
+ * into three times as many lines — and the stage height is measured from
+ * a caption (see getCaptionBlock), so once a swipe moved card 0 out to
+ * the side, the section reserved that side card's caption height and
+ * left a few hundred pixels of dead cream under the photo.
+ *
+ * Pinning the wrap width to the centre card's makes every caption
+ * measure the same, so it no longer matters which one is read, and the
+ * visible caption also stops re-wrapping while the card widths tween
+ * through a transition.
+ */
+.cardContent {
+  width: min(var(--gallery-caption-width, 100%), 620px);
+  min-height: 110px;
+
+  /*
+   * The gap above the caption scales with the viewport: on a short
+   * screen a flat 48px is 48px the photograph does not get, and the
+   * photograph is what the section is for.
+   */
+  margin: clamp(22px, 3.5vh, 48px) auto 0;
+  padding: 0 12px;
+
+  opacity: 0;
+  visibility: hidden;
+
+  pointer-events: none;
+
+  will-change: transform, opacity;
+}
+
+.card[data-position="centre"] .cardContent {
+  visibility: visible;
+}
+
+.cardTitle {
+  margin: 0 0 14px;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+
+  color: var(--color-red);
+}
+
+.cardDescription {
+  max-width: 620px;
+  margin: 0 auto;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+/* =========================================================
+   Pagination
+   ========================================================= */
+
+.pagination {
+  position: relative;
+  z-index: 10;
+
+  display: none;
+  /* display: flex; */
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  margin-top: 28px;
+}
+
+.paginationButton {
+  display: block;
+
+  width: 20px;
+  height: 2px;
+
+  padding: 0;
+  border: 0;
+
+  background: rgba(137, 118, 85, 0.24);
+
+  cursor: pointer;
+
+  transition:
+    width 450ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 450ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.paginationButton[data-active="true"] {
+  width: 40px;
+
+  background: var(--color-gold);
+}
+
+.paginationButton:focus-visible {
+  outline: 1px solid var(--color-gold);
+  outline-offset: 5px;
+}
+
+.paginationButton:disabled {
+  cursor: default;
+}
+
+/* =========================================================
+   Medium desktop
+   ========================================================= */
+
+@media (max-width: 1350px) {
+  .gallery {
+    min-height: 1040px;
+
+    padding-top: 132px;
+  }
+
+  .headingGroup {
+    margin-bottom: 58px;
+  }
+
+  .carousel {
+    height: 560px;
+  }
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .gallery {
+    min-height: auto;
+
+    padding: 124px 0 72px;
+  }
+
+  .headingGroup {
+    margin-bottom: 48px;
+  }
+
+  .carousel {
+    height: min(calc(38.7vw + 150px), 560px);
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .gallery {
+    min-height: auto;
+
+    padding: 100px 0 64px;
+  }
+
+  .headingGroup {
+    width: calc(100% - 40px);
+
+    margin-bottom: 40px;
+  }
+
+  .heading {
+    font-size: 32px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+
+  .carousel {
+    /*
+     * Matches GalleryClient's mobile centre-card height (50% of the
+     * viewport's height, a tall portrait card) plus room for the
+     * caption below it.
+     */
+    height: calc(50vh + 144px);
+  }
+
+  .cardContent {
+    width: min(var(--gallery-caption-width, 100%), 560px);
+    min-height: 104px;
+
+    margin-top: 20px;
+    padding-inline: 8px;
+  }
+
+  .cardTitle {
+    margin-bottom: 10px;
+
+    font-size: 16px;
+    letter-spacing: 0.18em;
+  }
+
+  .cardDescription {
+    max-width: 94%;
+
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .pagination {
+    margin-top: 22px;
+  }
+}
+
+/* =========================================================
+   Small mobile
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .gallery {
+    padding-top: 92px;
+  }
+
+  .headingGroup {
+    margin-bottom: 34px;
+  }
+
+  .heading {
+    font-size: 29px;
+  }
+
+  .carousel {
+    height: calc(48vh + 132px);
+  }
+}
+
+/* =========================================================
+   Desktop: the gap between the caption block and the carousel
+
+   Set outright rather than left to the 5.5vh clamp above, which tied
+   the gap to the window's height — 54px on a 990px-tall window, less on
+   a shorter one — so the spacing changed from screen to screen with
+   nothing about the design asking it to.
+
+   This sits AFTER the max-width blocks on purpose. Placed with the
+   other desktop rules further up, the 1350px tier below it won on
+   source order at equal specificity and 1280 and 1025 stayed at 58px.
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  .headingGroup {
+    margin-bottom: 80px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .headingGroup > *,
+  .card,
+  .imageWrapper,
+  .cardContent,
+  .image {
+    transition: none !important;
+  }
+
+  .carousel {
+    scroll-behavior: auto;
+  }
+}

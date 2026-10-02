@@ -1,0 +1,427 @@
+/*
+ * Rides up over the contact section, which is held behind it (see
+ * .contact in Contact.module.css).
+ *
+ * z-index is what puts it in front: both are positioned elements, so the
+ * later sibling would win on source order alone — but the order is what
+ * the effect depends on, which is worth stating rather than inheriting.
+ *
+ * The gold fill is doing real work here too. It is what the cream
+ * section disappears behind; without an opaque background the form would
+ * read straight through the footer's copy.
+ */
+.footer {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+
+  background: var(--color-gold);
+  color: var(--color-cream);
+}
+
+.inner {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+    minmax(250px, 1.3fr)
+    minmax(150px, 0.65fr)
+    minmax(260px, 1fr);
+  grid-template-rows:
+    auto
+    1fr
+    auto;
+
+  column-gap: clamp(70px, 8vw, 150px);
+  row-gap: 0;
+
+  width: 100%;
+  min-height: 645px;
+
+  padding: 116px var(--page-gutter) 76px;
+
+  will-change: transform;
+}
+
+/* Logo */
+
+.logo {
+  grid-column: 1;
+  grid-row: 1;
+
+  align-self: start;
+  justify-self: start;
+
+  display: inline-flex;
+
+  color: var(--color-cream);
+}
+
+.logoMark {
+  display: block;
+
+  width: 240px;
+  aspect-ratio: 147 / 40;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: var(--logo-mask-url, url("/logos/movenpick-logo.svg"));
+  mask-image: var(--logo-mask-url, url("/logos/movenpick-logo.svg"));
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Contact blocks */
+
+.contactBlock {
+  min-width: 0;
+}
+
+.telephone {
+  grid-column: 2;
+  grid-row: 1;
+
+  align-self: start;
+}
+
+.tollFree {
+  grid-column: 3;
+  grid-row: 1;
+
+  align-self: start;
+}
+
+.email {
+  grid-column: 2;
+  grid-row: 2;
+
+  align-self: center;
+}
+
+.address {
+  grid-column: 3;
+  grid-row: 2;
+
+  align-self: center;
+}
+
+.label {
+  margin: 0 0 10px;
+
+  font-family: var(--font-gloock);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1;
+
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  color: rgba(var(--color-cream-rgb), 0.5);
+}
+
+.value {
+  margin: 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.45;
+
+  color: rgba(var(--color-cream-rgb), 0.85);
+  text-decoration: none;
+  font-style: normal;
+
+  transition: color 300ms ease;
+}
+
+a.value:hover,
+a.value:focus-visible {
+  color: var(--color-cream);
+}
+
+a.value:focus-visible,
+.logo:focus-visible,
+.cookiesButton:focus-visible {
+  outline: 1px solid var(--color-cream);
+  outline-offset: 6px;
+}
+
+/* Bottom row */
+
+.copyright {
+  grid-column: 1;
+  grid-row: 3;
+
+  align-self: end;
+
+  margin: 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+
+  color: rgba(var(--color-cream-rgb), 0.5);
+}
+
+.legalRow {
+  /*
+   * Spans to the last column rather than sitting inside column 2. The
+   * three links need about 342px and column 2 is only 210-310px wide,
+   * so they wrapped onto a second line at every desktop width. Given
+   * the room they now sit on one line.
+   *
+   * flex-wrap stays as a safety net for the narrowest screens — the
+   * point is that it no longer has to fire on desktop.
+   */
+  grid-column: 2 / -1;
+  grid-row: 3;
+
+  align-self: end;
+  justify-self: start;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 150px;
+}
+
+.legalLink {
+  color: rgba(var(--color-cream-rgb), 0.5);
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-decoration: none;
+
+  transition: color 300ms ease;
+}
+
+.legalLink:hover,
+.legalLink:focus-visible {
+  color: var(--color-cream);
+}
+
+.cookiesButton {
+  padding: 0;
+  border: 0;
+
+  background: transparent;
+  color: rgba(var(--color-cream-rgb), 0.5);
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+
+  cursor: pointer;
+
+  transition: color 300ms ease;
+}
+
+.cookiesButton:hover,
+.cookiesButton:focus-visible {
+  color: var(--color-cream);
+}
+
+/* Medium desktop */
+
+@media (max-width: 1180px) {
+  .inner {
+    grid-template-columns:
+      minmax(220px, 1.1fr)
+      minmax(140px, 0.7fr)
+      minmax(220px, 1fr);
+
+    column-gap: 56px;
+
+    min-height: 600px;
+
+    padding: 96px var(--page-gutter) 66px;
+  }
+
+  .logoMark {
+    width: 210px;
+  }
+
+  .value {
+    font-size: 15px;
+  }
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .inner {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto;
+
+    min-height: auto;
+
+    padding: 82px var(--page-gutter) 58px;
+
+    column-gap: 48px;
+    row-gap: 58px;
+  }
+
+  .logo {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .telephone {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .tollFree {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .email {
+    grid-column: 1;
+    grid-row: 3;
+
+    align-self: start;
+  }
+
+  .address {
+    grid-column: 2;
+    grid-row: 3;
+
+    align-self: start;
+  }
+
+  .copyright {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .legalRow {
+    grid-column: 2 / -1;
+    grid-row: 4;
+
+    /*
+     * The desktop rule sets `gap: 150px`, which is BOTH axes. Below
+     * desktop the three links no longer fit on one line, so that figure
+     * stopped being a gap between links and became 150px of empty
+     * footer between wrapped lines: measured 355px of legal row at
+     * 768px wide, three lines of 13px text spread over a third of the
+     * footer's height.
+     *
+     * Two axes, two values. The column gap is what separates the links;
+     * the row gap only ever applies to a wrap, so it is sized for one.
+     */
+    column-gap: 24px;
+    row-gap: 12px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  /*
+   * Spacing scales with the screen rather than sitting at a flat
+   * 70/48/42. Those figures were set for a large handset; on a 568px
+   * screen the same seven stacked blocks and their fixed gaps ran the
+   * footer well past the viewport for no gain in legibility.
+   *
+   * The bottom padding is the exception, and is deliberately not a
+   * proportion of anything. It exists to clear the floating
+   * back-to-top and chat controls, which are fixed to the
+   * bottom-right of the screen and sit directly over the footer's last
+   * row once the page is scrolled to the end: measured before this, the
+   * back-to-top button covered "Terms & Conditions" at 440px wide and
+   * "Privacy Policy" at 320px, making a legal link untappable.
+   *
+   * It is built from the control's own metrics so the two cannot drift
+   * apart — its offset from the bottom edge, its height, and a little
+   * breathing room. 24px and 56px are the figures in
+   * BackToTop.module.css for this tier; the 480px tier below matches
+   * its smaller ones, safe-area inset included, because on a notched
+   * handset the button sits higher than its nominal offset.
+   */
+  .inner {
+    display: flex;
+    flex-direction: column;
+
+    min-height: auto;
+
+    padding: clamp(48px, 8svh, 70px) var(--page-gutter) calc(24px + 56px + 14px);
+
+    gap: clamp(28px, 4.2svh, 42px);
+  }
+
+  .logoMark {
+    width: 180px;
+  }
+
+  .contactBlock {
+    width: 100%;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+
+  .value {
+    font-size: 15px;
+  }
+
+  .copyright {
+    /*
+     * The base rule sets `align-self: end`, which means "bottom" in the
+     * desktop grid but "right" in this flex column, where the cross
+     * axis is horizontal. That is what was pushing the copyright line
+     * over to the right edge while everything above it stayed left.
+     */
+    align-self: flex-start;
+
+    margin-top: clamp(12px, 2.4svh, 24px);
+  }
+
+  /*
+   * Same fix as the tablet tier above, tightened again: at 18px the
+   * three links still hold one line on a large handset (302px of text
+   * plus 36px of gap inside 367px of usable width) and fall to two tidy
+   * lines below that, instead of the two- and three-line stacks 150px
+   * apart that were adding 186px at 440px wide and 355px at 375.
+   */
+  .legalRow {
+    align-self: flex-start;
+
+    column-gap: 18px;
+    row-gap: 12px;
+  }
+}
+
+/* Small mobile — matches BackToTop's own 480px tier */
+
+@media (max-width: 480px) {
+  .inner {
+    padding-bottom: calc(max(16px, env(safe-area-inset-bottom)) + 50px + 14px);
+  }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .inner {
+    transform: none !important;
+  }
+
+  .inner > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,1022 @@
+.amenities {
+  width: 100%;
+
+  padding: clamp(60px, 8vw, 110px) var(--page-gutter);
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+}
+
+/* =========================================================
+   Intro
+   ========================================================= */
+
+.intro {
+  max-width: 760px;
+  margin: 0 auto clamp(48px, 6vw, 80px);
+
+  text-align: center;
+}
+
+.heading {
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 400;
+  line-height: 1.2;
+
+  color: var(--color-gold);
+}
+
+.introText {
+  max-width: 620px;
+  margin: 18px auto 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+/* =========================================================
+   Stage wrapper: pins .stickyViewport on screen for the whole
+   scroll-driven journey through the 4 items (desktop only —
+   see the tablet override further down).
+   ========================================================= */
+
+.stageWrapper {
+  position: relative;
+
+  /*
+   * One screen per stage. --stage-count is set inline by
+   * AmenitiesClient from the item count it actually received, so the
+   * scroll distance and the number of stages cannot drift apart.
+   */
+  height: calc(var(--stage-count, 1) * 100vh);
+  height: calc(var(--stage-count, 1) * 100svh);
+
+  /*
+   * No snap point. This used to have a "magnetic" entry that pulled a
+   * gesture landing near its top into a page-aligned start, but the
+   * section is scrolled through freely now and the pull was fighting
+   * the reader rather than helping them. The exit snap on ProjectGallery
+   * still gives the journey a clean resting point at the far end.
+   */
+}
+
+/*
+ * Sits exactly where the stages finish. Everything below it in the
+ * wrapper is the overlay runway that the gallery travels across, and
+ * the stage journey's ScrollTrigger ends here rather than at the
+ * wrapper's bottom edge — see stagesEndRef in AmenitiesClient.
+ *
+ * Zero-sized and absolutely positioned, so it takes part in no layout
+ * and adds no height of its own; it is a position, not a box.
+ */
+.stagesEnd {
+  position: absolute;
+  top: calc(var(--stage-count, 1) * 100vh);
+  top: calc(var(--stage-count, 1) * 100svh);
+  left: 0;
+
+  width: 0;
+  height: 0;
+}
+
+.stickyViewport {
+  position: sticky;
+
+  /*
+   * 90px matches the fixed header's height (see Header.module.css
+   * .inner). Sticking at top: 0 put this content's top edge directly
+   * under the header, which is solid now rather than transparent, so
+   * the first heading was hidden behind it.
+   */
+  top: 90px;
+
+  height: 80vh;
+  height: 80svh;
+}
+
+/* =========================================================
+   Body: item list + photo
+   ========================================================= */
+
+.body {
+  position: relative;
+
+  display: flex;
+
+  height: 100%;
+}
+
+.content {
+  /*
+   * Named because the divider's gap below the list is measured against
+   * it: the column's own gap and the divider's margin stack, so the
+   * margin has to subtract this to land on the figure it says.
+   */
+  --content-gap: 48px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--content-gap);
+
+  /*
+   * Stretched to the row's full height by .body's flex default
+   * (align-items: stretch), which is what lets .divider's margin-top:
+   * auto below push the closing group all the way to the bottom.
+   */
+  /*
+   * --page-gutter is 8.3334vw until it caps at 140px, so three of them
+   * is 25vw and this formula is really `50vw - 25vw` — a flat QUARTER of
+   * the window at every width below 1680px. The photo takes the other
+   * half, so the text column narrowed in step with the screen while the
+   * 24px display type did not, and the titles wrapped further at every
+   * size down: 2 lines at 1366, 3 lines at 1152. That extra height is
+   * what drove the closing group up into the list.
+   *
+   * Measured column widths under the old formula: 540px at 1920, 384px
+   * at 1536, 341px at 1366, 288px at 1152.
+   *
+   * One gutter, not three, plus a fixed 60px channel before the photo's
+   * edge — capped at the 540px the design was drawn at, so 1920 is
+   * unchanged and the sizes below it stop collapsing: 540 at 1536, 509
+   * at 1366, 420 at 1152.
+   */
+  max-width: min(540px, calc(50vw - var(--page-gutter) - 60px));
+}
+
+/*
+ * A single continuous track running the full height of the list,
+ * rather than a separate on/off marker per item. .progressFill grows
+ * from the top (scaleY 0 → 1, transform-origin: top) as the pinned
+ * scroll journey advances, so it reads as one steadily-filling
+ * indicator rather than four independent switches.
+ */
+.itemsWrapper {
+  position: relative;
+
+  margin-top: 40px;
+  padding-left: 20px;
+}
+
+.progressTrack {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  z-index: 1;
+
+  width: 2px;
+
+  background: rgba(137, 118, 85, 0.22);
+}
+
+.progressFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background: var(--color-gold);
+
+  transform: scaleY(0);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.item {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  padding: 10px 0;
+
+  border: 0;
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.itemTitle {
+  font-family: var(--font-gloock);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.35;
+
+  color: rgba(137, 118, 85, 0.55);
+
+  transition: color 250ms ease;
+}
+
+/*
+ * Selected (the item whose photo is currently shown) reads in black;
+ * actively hovering — even a different item, mid-transition — always
+ * shows gold, which is why this rule comes after the selected one: the
+ * two states can apply to the same element at once when hovering is
+ * literally what selects it.
+ */
+.item[data-active="true"] .itemTitle {
+  color: #000000;
+}
+
+.item:hover .itemTitle {
+  color: var(--color-gold);
+}
+
+/*
+ * The shrinkable space above the divider, and above the button.
+ *
+ * Zero everywhere except desktop, which is the only tier that asks for
+ * the large gaps. See the note in AmenitiesClient for why these are flex
+ * items rather than margins.
+ */
+.dividerSpace,
+.ctaSpace {
+  flex: 0 0 0;
+
+  height: 0;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+
+  /*
+   * Pushes itself — and everything after it, since they share .content's
+   * flex column — all the way to the bottom, leaving the item list
+   * pinned at the top with the freed space collapsing in between.
+   */
+  margin: auto 0 0;
+
+  /*
+   * Never shrinks.
+   *
+   * A 1px flex item still has flex-shrink: 1, so once the spacers had
+   * collapsed the divider itself was the last thing left with any
+   * height to give and the browser took it: measured 0.16px at 1600x760
+   * with a 5-line paragraph, and a flat 0px at 6 lines. The line simply
+   * vanished, which is what a long amenity description did to it.
+   */
+  flex-shrink: 0;
+
+  border: 0;
+
+  /*
+   * 0.28 was too faint to survive a scaled display. A 1px line lands on
+   * a fractional device row at anything other than 100% zoom, so the
+   * browser splits it across two rows at roughly half strength each —
+   * and half of a barely-there line is nothing at all. This is the same
+   * hairline, just dark enough to still read after that split.
+   */
+  background: rgba(137, 118, 85, 0.45);
+}
+
+.ctaGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  /*
+   * The button reads as its own step rather than as part of the
+   * paragraph above it. At 20px the two were close enough to look like
+   * one block.
+   */
+  gap: 32px;
+}
+
+.ctaText {
+  margin: 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+.requestButton {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 26px;
+
+  border: 1px solid var(--color-cta-red);
+  border-radius: 999px;
+  background: transparent;
+
+  font-family: var(--font-noto-sans);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  color: var(--color-cta-red);
+
+  cursor: pointer;
+  overflow: hidden;
+
+  transition: color 500ms ease;
+}
+
+/*
+ * Fill animation: a red layer sweeps in from the left on hover, same
+ * technique as the Project Overview CTAs.
+ */
+.requestButton::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  background: var(--color-cta-red);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.requestButton:hover::before,
+.requestButton:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.requestButton > span {
+  position: relative;
+  z-index: 1;
+}
+
+.requestButton:hover,
+.requestButton:focus-visible {
+  color: var(--color-cream);
+}
+
+.linkIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* =========================================================
+   Photo panel
+   ========================================================= */
+
+.imagePanel {
+  /*
+   * Taken out of normal flow entirely and given a literal 50vw width —
+   * inside a grid, the gap between columns eats into each column's own
+   * share of the width, so neither column actually reaches a true 50%.
+   * Positioning it against .body (not the viewport) keeps it correctly
+   * placed within the page's normal scroll flow while still sizing
+   * against the viewport width.
+   */
+  position: absolute;
+  top: 0;
+  right: calc(-1 * var(--page-gutter));
+  bottom: calc(-1 * clamp(60px, 8vw, 110px));
+
+  width: 50vw;
+
+  overflow: hidden;
+}
+
+.imageLayer {
+  position: absolute;
+  inset: -5%;
+
+  width: 110%;
+  height: 110%;
+
+  overflow: hidden;
+
+  transform-origin: center center;
+
+  will-change: transform;
+}
+
+/*
+ * One of these per item, all stacked in the same box — separate from
+ * .imagePanel above them (whose own mask-image drives the
+ * scroll-scrubbed entrance). AmenitiesClient keeps every item's layer
+ * mounted permanently and animates only the active one's mask-image +
+ * stacking order, so the previous photo stays visible underneath as
+ * the new one opens over it instead of the page background showing
+ * through.
+ */
+.imageWipe {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+  /*
+   * Deliberately no `will-change: mask-image`.
+   *
+   * will-change only helps properties the compositor can animate on its
+   * own, and mask-image is not one of them — every change still costs a
+   * repaint. All the hint bought was four permanently promoted
+   * full-size layers, one per item, each holding its own texture for
+   * the whole life of the page.
+   */
+}
+
+.image {
+  object-fit: cover;
+  object-position: center center;
+}
+
+/* =========================================================
+   Desktop: the marker belongs to the selected item
+
+   A single continuous track used to run the full height of the list
+   with a fill growing down it as the journey advanced. It is replaced
+   here by a short rule beside the selected item only, in the same black
+   as that item's text, so the marker and the type say the same thing.
+
+   The rule is a pseudo-element rather than a border on the item: the
+   item sits inside .itemsWrapper's 20px of left padding, so a border
+   would land 20px inboard of where the old track was. Pulling the
+   pseudo-element out by that padding keeps the marker on the list's
+   true left edge.
+
+   It fades rather than jumping, on the same 250ms as the item's colour,
+   so the two read as one change of state.
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  /*
+   * Equal space above and below, set outright rather than left to the
+   * section's 8vw clamp, which capped at 110px and varied with the
+   * window. 90px matches the header's height, the same figure the
+   * project overview above uses, so the two sections sit on one rhythm.
+   */
+  .amenities {
+    padding-block: 90px;
+  }
+
+  .progressTrack {
+    display: none;
+  }
+
+  .item::before {
+    content: "";
+
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: -20px;
+
+    width: 2px;
+
+    background: #000000;
+
+    opacity: 0;
+
+    transition: opacity 250ms ease;
+  }
+
+  .item[data-active="true"]::before {
+    opacity: 1;
+  }
+
+  /*
+   * A measured 150px below the list, instead of `margin-top: auto`.
+   *
+   * The auto margin pushed the closing group to the bottom of the row,
+   * which left whatever space happened to be spare — about 250px — and
+   * the gap changed with the viewport rather than being a decision.
+   *
+   * The column's own gap is subtracted because the two stack: a flat
+   * 150px margin measured 198px on screen, which is 150 plus the 48 the
+   * flex column had already put there.
+   */
+  /*
+   * 150px between the list and the divider, as before — but as a
+   * flex-basis that shrinks rather than a margin that cannot.
+   *
+   * Twice the column gap is subtracted, not once: the spacer now sits
+   * BETWEEN the list and the divider, so the column's own gap falls on
+   * both sides of it. The old margin had the gap on one side only.
+   */
+  .dividerSpace {
+    flex: 0 1 calc(150px - var(--content-gap) * 2);
+
+    min-height: 0;
+  }
+
+  .divider {
+    margin-top: 0;
+  }
+
+  /*
+   * 100px between the paragraph and the button, held by a spacer for
+   * the same reason. The group keeps its base 32px gap, which now falls
+   * either side of the spacer, so the spacer carries the remainder.
+   */
+  .ctaSpace {
+    flex: 0 1 36px;
+
+    min-height: 0;
+  }
+
+  /*
+   * The list never gives way.
+   *
+   * This used to carry `min-height: 0`, which removed the automatic
+   * min-content floor a flex item has and let the browser compress the
+   * list's BOX below the height of the titles inside it. The titles kept
+   * their real height and spilled out, while the divider, paragraph and
+   * button were laid out against the compressed box — so they were
+   * positioned on top of the item text.
+   *
+   * Measured at 1366x768: the list needed 351px and was given 181px, and
+   * the divider ended up 46px ABOVE the last title, drawing a line
+   * straight through it. At 1152x864 it was 193px above.
+   *
+   * A flex item that cannot shrink is the whole fix for the collision.
+   * The height it then needs is found by the tiers below rather than
+   * taken out of the list.
+   */
+  .itemsWrapper {
+    flex-shrink: 0;
+  }
+}
+
+/* =========================================================
+   Desktop: sits above the hero's pinned photograph
+
+   The hero holds its photo on screen while the section before this one
+   rides over it. That photo is a positioned element, and this section's
+   background is not — so a static background paints UNDERNEATH it, and
+   the strip of screen below the project overview showed the building
+   through instead of cream.
+
+   Giving this section a stacking position of its own is what closes
+   that strip. Only the section immediately after the overview needs it:
+   the photo is pinned for exactly one screen of runway, so nothing
+   further down the page is ever in the same window.
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  .amenities {
+    position: relative;
+    z-index: 3;
+  }
+
+  /*
+   * One extra screen on the end, past the last stage.
+   *
+   * .stickyViewport is held by this wrapper, so lengthening the wrapper
+   * keeps the final amenity on screen for a screen longer. That is the
+   * runway the gallery below travels over: the gallery is pulled back
+   * up by the same amount (see ProjectGallery.module.css) and rides
+   * over this held screen instead of the page scrolling away from it
+   * first.
+   *
+   * The document is no taller for it — the runway added here is exactly
+   * what the gallery's negative margin takes away.
+   *
+   * The stage journey itself must NOT stretch to cover this, or a
+   * fifth stage would appear with nothing in it. Its ScrollTrigger ends
+   * at .stagesEnd instead of at the wrapper's bottom edge.
+   */
+  .stageWrapper {
+    height: calc(var(--stage-count, 1) * 100vh + 100vh);
+    height: calc(var(--stage-count, 1) * 100svh + 100svh);
+  }
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+/*
+ * Everything below the desktop tier stacks the photograph and the copy
+ * rather than sitting them side by side. Mobile shares these resets: it
+ * keeps the pinned journey, so only the rules that COLLAPSE that
+ * journey are held back for the tablet tier, in the block right after
+ * this one.
+ */
+/* =========================================================
+   Desktop, by viewport HEIGHT
+
+   The layout above was drawn against a 1080px-tall screen, where the
+   column has 864px to spend and needs about 730px. Every step down in
+   height takes from the same budget while the content stays the size it
+   is, and by 1366x768 the column had 614px for content that wanted 814.
+
+   Nothing here is decorative-only shrinking for its own sake: the order
+   is deliberate — the generous fixed gaps go first, then the column's
+   own rhythm, and only at the very bottom does the type step down. The
+   list itself is never touched, which is the rule that stops the
+   collision.
+
+   These are height queries, so they also catch the case that reported
+   this: a 1920x1080 laptop at 125% display scaling reports 1536x864 to
+   the browser, which lands in the first tier below.
+   ========================================================= */
+
+@media (min-width: 1025px) and (max-height: 920px) {
+  .content {
+    --content-gap: 30px;
+  }
+
+  /*
+   * 24px of breathing room under the section instead of the 20vh the
+   * flat 80vh left there, which is space the column can use.
+   */
+  .stickyViewport {
+    height: calc(100svh - 90px - 24px);
+  }
+
+  .dividerSpace {
+    flex: 0 1 calc(96px - var(--content-gap) * 2);
+  }
+}
+
+@media (min-width: 1025px) and (max-height: 800px) {
+  .content {
+    --content-gap: 22px;
+  }
+
+  .stickyViewport {
+    height: calc(100svh - 90px - 12px);
+  }
+
+  .dividerSpace {
+    flex: 0 1 calc(56px - var(--content-gap) * 2);
+  }
+
+  /*
+   * The first point the type gives ground. Under 800px of height the
+   * spacing alone cannot find the room, and a title one step smaller
+   * costs less than a button below the fold.
+   */
+  .itemTitle {
+    font-size: 21px;
+  }
+
+  .ctaText {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1025px) and (max-height: 720px) {
+  .content {
+    --content-gap: 16px;
+  }
+
+  .stickyViewport {
+    height: calc(100svh - 90px);
+  }
+
+  .dividerSpace {
+    flex: 0 1 calc(34px - var(--content-gap) * 2);
+  }
+
+  .ctaSpace {
+    flex: 0 1 12px;
+  }
+
+  .itemTitle {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .content {
+    max-width: 100%;
+  }
+
+  .itemsWrapper {
+    padding-left: 0;
+  }
+
+  .progressTrack {
+    display: none;
+  }
+
+  .divider {
+    margin: 0 0 24px;
+  }
+
+  .imagePanel {
+    /*
+     * relative, not static. It only needs to come out of the desktop's
+     * absolute placement and back into normal flow — but `static`
+     * removed the positioning context too, and .imageLayer inside is
+     * absolutely positioned at inset: -5% with height: 110%. With no
+     * positioned ancestor it resolved those against a far taller one
+     * instead: measured 1291px of layer inside a 790px panel, so the
+     * photo spilled well past the panel both vertically and
+     * horizontally. `relative` puts the context back; the base rule's
+     * overflow: hidden then clips the intended 5% parallax bleed.
+     */
+    position: relative;
+
+    /*
+     * Clears the desktop rule's top/right/bottom offsets. Under
+     * `absolute` they placed the panel; under `relative` they become a
+     * nudge, and the right offset alone shoved it a whole page-gutter
+     * off the viewport edge.
+     */
+    inset: auto;
+
+    width: auto;
+    min-height: 380px;
+  }
+}
+
+/* =========================================================
+   Tablet only — collapse the journey
+   =========================================================
+
+   The tall wrapper and the held screen are what the scroll-driven
+   journey scrubs through. The tablet tier runs no journey (no
+   ScrollTrigger is created for it in AmenitiesClient), so it cancels
+   both and lets the section run at its natural height — otherwise the
+   tall inline height would just leave a huge empty gap with nothing
+   scrubbing through it. Mobile keeps them.
+   ========================================================= */
+@media (max-width: 1024px) and (min-width: 768px) {
+  .stageWrapper {
+    height: auto;
+  }
+
+  .stickyViewport {
+    position: static;
+    height: auto;
+  }
+
+  .body {
+    flex-direction: column;
+    gap: clamp(40px, 6vw, 90px);
+
+    height: auto;
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .heading {
+    font-size: 26px;
+  }
+
+  .itemTitle {
+    font-size: 16px;
+  }
+
+  .content {
+    --content-gap: 20px;
+  }
+
+  /*
+   * Full-bleed and pinned to the section's bottom edge. The standard
+   * "break out of a padded parent" trick: width: 100vw is the true
+   * viewport width regardless of any ancestor's padding, and
+   * margin-left: calc(50% - 50vw) shifts the element's left edge back
+   * to the viewport's left edge from wherever its padded parent placed
+   * it — this holds no matter how deeply nested it is, unlike
+   * cancelling a specific ancestor's padding value directly. The
+   * negative bottom margin cancels .amenities' own bottom padding so
+   * the photo's bottom edge is the section's bottom edge.
+   */
+  /*
+   * The gallery below rides over this section here too — same runway,
+   * same stacking position as the desktop block above. The tablet tier
+   * between them is left out: it runs no journey, so it has no held
+   * screen for anything to ride over.
+   */
+  .amenities {
+    position: relative;
+    z-index: 3;
+  }
+
+  .stageWrapper {
+    height: calc(var(--stage-count, 1) * 100vh + 100vh);
+    height: calc(var(--stage-count, 1) * 100svh + 100svh);
+  }
+
+  /*
+   * The pinned journey, as on desktop: one screen held still while the
+   * scroll steps through the items, a photograph and its copy at a
+   * time.
+   *
+   * The wrapper's height is written inline from the item count (see
+   * AmenitiesClient), so the scroll distance and the number of stages
+   * cannot drift apart. Everything here just holds one screen still
+   * inside it.
+   */
+  .stickyViewport {
+    position: sticky;
+    top: var(--header-height, 90px);
+
+    height: calc(100vh - var(--header-height, 90px));
+    height: calc(100svh - var(--header-height, 90px));
+  }
+
+  /*
+   * Fills the held screen and splits it in half: the photograph on top,
+   * its copy underneath. Percentages rather than svh, so the two halves
+   * are of the HELD BOX and stay exact once the header's height is
+   * taken off the top.
+   */
+  .body {
+    height: 100%;
+    gap: 0;
+  }
+
+  /*
+   * Half the held screen is the target, not a hard rule: on a short
+   * phone the copy takes the few extra pixels it needs and the
+   * photograph gives them up, rather than the button being cut off at
+   * the bottom of the held box. Capped so the photograph always keeps
+   * a real share of the screen.
+   */
+  .content {
+    flex: 0 0 auto;
+
+    min-height: 50%;
+    max-height: 65%;
+
+    /*
+     * The copy starts just under the photograph rather than floating
+     * in the middle of its half. The bottom keeps a little room so the
+     * button never sits on the edge of the held box on a short phone.
+     */
+    justify-content: flex-start;
+
+    padding-top: 40px;
+    padding-bottom: 16px;
+  }
+
+  /*
+   * One heading at a time, not the full list. Half a phone screen
+   * cannot hold four headings plus the paragraph and the button, and
+   * the journey already names the stage you are on — the image, its
+   * heading, its text and the CTA change together.
+   *
+   * The active item stays in flow so it sets the list's height; the
+   * rest overlay it, out of flow, so the swap does not shift anything
+   * around it.
+   */
+  .items {
+    position: relative;
+  }
+
+  /*
+   * The wrapper's 40px top margin and the row's own padding are there
+   * to space a list of four. With one heading showing, they just add
+   * to the gap under the photograph, which .content's padding already
+   * sets on its own.
+   */
+  .itemsWrapper {
+    margin-top: 0;
+  }
+
+  .item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding-block: 0;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 0.35s ease;
+  }
+
+  .item[data-active="true"] {
+    position: relative;
+
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /*
+   * The photograph comes first on a phone, then the copy under it.
+   *
+   * column-reverse rather than reordering the markup: the copy is the
+   * section's substance and belongs first in the document for reading
+   * order and for anyone using a screen reader. Only the visual order
+   * changes here.
+   */
+  .body {
+    flex-direction: column-reverse;
+  }
+
+  /*
+   * On desktop the divider's `margin-top: auto` pushes the closing
+   * group to the bottom of a full-height column. Here the column is
+   * only half a screen, so that would push the button past the held
+   * box — the copy sits together instead.
+   */
+  .divider {
+    margin: 0;
+  }
+
+  .imagePanel {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    /*
+     * No negative margin in either direction.
+     *
+     * It carried one while it was the last thing in the column, to
+     * cancel the section's bottom padding and bleed to the edge. When
+     * the order reversed I moved that to the top for the same reason —
+     * but the heading and its paragraph still sit above the photo, so
+     * there is no section padding up there to cancel. All it did was
+     * drag the photo 12px over the last line of the paragraph.
+     *
+     * The gap above now comes from the intro's own bottom margin, which
+     * is what separates the heading from everything below it.
+     */
+    margin-top: 0;
+    margin-bottom: 0;
+
+    /*
+     * Takes whatever the copy leaves — half the held screen on a
+     * normal phone, a little less on a short one.
+     */
+    flex: 1 1 auto;
+
+    height: auto;
+    min-height: 0;
+  }
+}
+
+/* =========================================================
+   Short phones
+   =========================================================
+
+   The copy has to fit in the held screen alongside the photograph. On
+   a short handset the default spacing leaves the button sitting on the
+   bottom edge, so the copy closes up a little and the photograph keeps
+   its share.
+   ========================================================= */
+@media (max-width: 767px) and (max-height: 700px) {
+  .content {
+    --content-gap: 14px;
+
+    padding-top: 24px;
+  }
+
+  .ctaGroup {
+    gap: 20px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .heading,
+  .introText,
+  .items,
+  .ctaGroup {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .requestButton::before {
+    transition: none;
+  }
+}

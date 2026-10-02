@@ -1,0 +1,1252 @@
+{
+  "site": "movenpick",
+  "description": "Editable content model for the Movenpick landing page. Generated from src/admin/sections/ by npm run schema:export — do not edit by hand.",
+  "groups": [
+    {
+      "key": "header",
+      "label": "Header"
+    },
+    {
+      "key": "content",
+      "label": "Content"
+    },
+    {
+      "key": "seo",
+      "label": "SEO & Sharing"
+    }
+  ],
+  "sections": [
+    {
+      "slug": "navigation",
+      "label": "Menu & CTA Link",
+      "group": "header",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "nav-1-label",
+          "label": "Menu item 1 — Label",
+          "type": "TEXT",
+          "defaultValue": "About"
+        },
+        {
+          "key": "nav-1-href",
+          "label": "Menu item 1 — Link",
+          "type": "LINK",
+          "defaultValue": "#project-overview"
+        },
+        {
+          "key": "nav-2-label",
+          "label": "Menu item 2 — Label",
+          "type": "TEXT",
+          "defaultValue": "Location"
+        },
+        {
+          "key": "nav-2-href",
+          "label": "Menu item 2 — Link",
+          "type": "LINK",
+          "defaultValue": "#location-map"
+        },
+        {
+          "key": "nav-3-label",
+          "label": "Menu item 3 — Label",
+          "type": "TEXT",
+          "defaultValue": "Amenities"
+        },
+        {
+          "key": "nav-3-href",
+          "label": "Menu item 3 — Link",
+          "type": "LINK",
+          "defaultValue": "#amenities"
+        },
+        {
+          "key": "nav-4-label",
+          "label": "Menu item 4 — Label",
+          "type": "TEXT",
+          "defaultValue": "Payment Plan"
+        },
+        {
+          "key": "nav-4-href",
+          "label": "Menu item 4 — Link",
+          "type": "LINK",
+          "defaultValue": "#payment-plan"
+        },
+        {
+          "key": "nav-5-label",
+          "label": "Menu item 5 — Label",
+          "type": "TEXT",
+          "defaultValue": "Contact"
+        },
+        {
+          "key": "nav-5-href",
+          "label": "Menu item 5 — Link",
+          "type": "LINK",
+          "defaultValue": "#contact"
+        },
+        {
+          "key": "header-cta-label",
+          "label": "Button label",
+          "type": "TEXT",
+          "defaultValue": "Request Callback"
+        },
+        {
+          "key": "header-cta-href",
+          "label": "Button link",
+          "type": "LINK",
+          "helperText": "Leave as #contact to open the enquiry form. Any other link or web address is used exactly as typed. Only applies on the homepage — the enquiry form does not appear on Privacy or Terms, so this link always works normally there.",
+          "defaultValue": "#contact"
+        }
+      ]
+    },
+    {
+      "slug": "appearance",
+      "label": "Logo & Favicon",
+      "group": "header",
+      "minRole": "ADMIN",
+      "fields": [
+        {
+          "key": "logo",
+          "label": "Logo — SVG preferred (or transparent PNG, at least 300×82px / 600×164px for retina). Displayed at 147×40px in the header, aspect ratio 3.6:1 — see note above",
+          "type": "IMAGE",
+          "defaultValue": "/logos/movenpick-logo.svg"
+        },
+        {
+          "key": "favicon",
+          "label": "Favicon — square image, at least 512×512px (SVG or PNG, transparent background recommended)",
+          "type": "IMAGE",
+          "defaultValue": "/logos/movenpick-favicon.svg"
+        }
+      ]
+    },
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "main-image",
+          "label": "Main image",
+          "type": "IMAGE",
+          "helperText": "Recommended: 1920×1080px or larger. Fills the whole screen — a smaller image will look blurry.",
+          "defaultValue": "/images/hero/main.avif"
+        },
+        {
+          "key": "main-image-alt",
+          "label": "Main image alt text",
+          "type": "TEXT",
+          "defaultValue": "[Add Movenpick hero image description]"
+        },
+        {
+          "key": "eyebrow",
+          "label": "Eyebrow",
+          "type": "TEXT",
+          "defaultValue": "[Eyebrow]"
+        },
+        {
+          "key": "heading",
+          "label": "Heading",
+          "type": "TEXT",
+          "defaultValue": "[Movenpick Project Name]"
+        },
+        {
+          "key": "text",
+          "label": "Text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Short description of the project — location, unit types]"
+        },
+        {
+          "key": "cta-label",
+          "label": "Button label",
+          "type": "TEXT",
+          "defaultValue": "Discover More"
+        },
+        {
+          "key": "cta-href",
+          "label": "Button link",
+          "type": "LINK",
+          "helperText": "Leave as #contact to open the enquiry form. Any other link or web address is used exactly as typed.",
+          "defaultValue": "#contact"
+        },
+        {
+          "key": "cta-icon",
+          "label": "Button icon (optional SVG upload — leave blank to use the default arrow)",
+          "type": "IMAGE",
+          "defaultValue": ""
+        }
+      ]
+    },
+    {
+      "slug": "projectOverview",
+      "label": "Project Overview",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "description",
+          "label": "Description paragraph",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor Incididunt Ut Labore Et Dolore Magna Aliqua. Ut Enim Ad Minim Veniam. Duis Aute Irure Dolor In Reprehenderit In Voluptate Velit Esse Cillum Dolore"
+        },
+        {
+          "key": "stat-1-value",
+          "label": "Key fact 1 — value",
+          "type": "TEXT",
+          "defaultValue": "Q4 2028"
+        },
+        {
+          "key": "stat-1-label",
+          "label": "Key fact 1 — label",
+          "type": "TEXT",
+          "defaultValue": "Project Completion"
+        },
+        {
+          "key": "stat-2-value",
+          "label": "Key fact 2 — value",
+          "type": "TEXT",
+          "defaultValue": "40/60"
+        },
+        {
+          "key": "stat-2-label",
+          "label": "Key fact 2 — label",
+          "type": "TEXT",
+          "defaultValue": "Payment Plan"
+        },
+        {
+          "key": "stat-3-value",
+          "label": "Key fact 3 — value",
+          "type": "TEXT",
+          "defaultValue": "Studio - 2BR"
+        },
+        {
+          "key": "stat-3-label",
+          "label": "Key fact 3 — label",
+          "type": "TEXT",
+          "defaultValue": "Unit Types"
+        },
+        {
+          "key": "stat-4-value",
+          "label": "Key fact 4 — value",
+          "type": "TEXT",
+          "defaultValue": "From 799,000"
+        },
+        {
+          "key": "stat-4-label",
+          "label": "Key fact 4 — label",
+          "type": "TEXT",
+          "defaultValue": "Starting Price"
+        },
+        {
+          "key": "cta-1-label",
+          "label": "Primary button label",
+          "type": "TEXT",
+          "defaultValue": "Discover More"
+        },
+        {
+          "key": "cta-1-href",
+          "label": "Primary button link",
+          "type": "LINK",
+          "helperText": "Leave as #contact to open the enquiry form.",
+          "defaultValue": "#contact"
+        },
+        {
+          "key": "cta-2-label",
+          "label": "Secondary button label",
+          "type": "TEXT",
+          "defaultValue": "Download Brochure"
+        },
+        {
+          "key": "cta-2-href",
+          "label": "Secondary button link (brochure PDF)",
+          "type": "LINK",
+          "defaultValue": "/pdf/oceara-brochure.pdf"
+        }
+      ]
+    },
+    {
+      "slug": "amenities",
+      "label": "Amenities",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "heading",
+          "label": "Heading",
+          "type": "TEXT",
+          "defaultValue": "Duis Aute Irure Dolor In Reprehenderit"
+        },
+        {
+          "key": "intro-text",
+          "label": "Intro text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        },
+        {
+          "key": "items",
+          "label": "Items",
+          "type": "LIST",
+          "helperText": "Use + to add an item, the trash icon to remove one. Each item needs an image; title and description are shown in the hover/scroll panel.",
+          "defaultValue": null
+        },
+        {
+          "key": "cta-label",
+          "label": "Button label",
+          "type": "TEXT",
+          "defaultValue": "Submit Request"
+        }
+      ]
+    },
+    {
+      "slug": "projectGallery",
+      "label": "Project Gallery",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "slides",
+          "label": "Slides",
+          "type": "LIST",
+          "helperText": "Use + to add a slide, the trash icon to remove one. Each slide needs an image; heading and caption are optional.",
+          "defaultValue": null
+        }
+      ]
+    },
+    {
+      "slug": "trustedPartner",
+      "label": "Trusted Partner",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "logo",
+          "label": "Partner logo",
+          "type": "IMAGE",
+          "helperText": "Recommended: 300×300px. SVG or transparent PNG preferred.",
+          "defaultValue": "/images/accor-logo.svg"
+        },
+        {
+          "key": "logo-alt",
+          "label": "Partner logo — alt text",
+          "type": "TEXT",
+          "defaultValue": "Accor"
+        },
+        {
+          "key": "label",
+          "label": "Label",
+          "type": "TEXT",
+          "defaultValue": "Our Trusted Partner"
+        },
+        {
+          "key": "heading",
+          "label": "Heading",
+          "type": "TEXT",
+          "defaultValue": "Duis Aute Irure Dolor In Reprehenderit"
+        },
+        {
+          "key": "text",
+          "label": "Text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        },
+        {
+          "key": "image",
+          "label": "Photo",
+          "type": "IMAGE",
+          "helperText": "Recommended: 1920×660px. Full-width banner photo.",
+          "defaultValue": "/images/trust.avif"
+        },
+        {
+          "key": "image-alt",
+          "label": "Photo — alt text",
+          "type": "TEXT",
+          "defaultValue": "[Add alt text for the Accor lobby photo]"
+        },
+        {
+          "key": "card-heading",
+          "label": "Card — Heading",
+          "type": "TEXT",
+          "defaultValue": "Duis Aute Irure Dolor In Reprehenderit"
+        },
+        {
+          "key": "card-text",
+          "label": "Card — Text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        },
+        {
+          "key": "cta-label",
+          "label": "Card — Button label",
+          "type": "TEXT",
+          "defaultValue": "Discover Accor"
+        },
+        {
+          "key": "cta-href",
+          "label": "Card — Button link",
+          "type": "LINK",
+          "defaultValue": "https://www.accor.com"
+        }
+      ]
+    },
+    {
+      "slug": "location",
+      "label": "Location",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "eyebrow",
+          "label": "Eyebrow",
+          "type": "TEXT",
+          "defaultValue": ""
+        },
+        {
+          "key": "heading",
+          "label": "Heading",
+          "type": "TEXT",
+          "defaultValue": "Duis Aute Irure Dolor In Reprehenderit"
+        },
+        {
+          "key": "intro-text",
+          "label": "Intro text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        },
+        {
+          "key": "item-1-time",
+          "label": "Item 1 — Time",
+          "type": "TEXT",
+          "defaultValue": "2 Min"
+        },
+        {
+          "key": "item-1-destination",
+          "label": "Item 1 — Destination",
+          "type": "TEXT",
+          "defaultValue": "Medcare Medical Centre"
+        },
+        {
+          "key": "item-1-latitude",
+          "label": "Item 1 — Latitude",
+          "type": "TEXT",
+          "helperText": "The pin's real position on the map. Changing the destination without updating this leaves the pin pointing at the old place. Find coordinates by right-clicking the location in Google Maps and copying the first number.",
+          "defaultValue": "25.0500"
+        },
+        {
+          "key": "item-1-longitude",
+          "label": "Item 1 — Longitude",
+          "type": "TEXT",
+          "helperText": "The second number from the same Google Maps right-click.",
+          "defaultValue": "55.2280"
+        },
+        {
+          "key": "item-2-time",
+          "label": "Item 2 — Time",
+          "type": "TEXT",
+          "defaultValue": "9 Min"
+        },
+        {
+          "key": "item-2-destination",
+          "label": "Item 2 — Destination",
+          "type": "TEXT",
+          "defaultValue": "Dubai Hills Mall"
+        },
+        {
+          "key": "item-2-latitude",
+          "label": "Item 2 — Latitude",
+          "type": "TEXT",
+          "helperText": "The pin's real position on the map. Changing the destination without updating this leaves the pin pointing at the old place. Find coordinates by right-clicking the location in Google Maps and copying the first number.",
+          "defaultValue": "25.1010"
+        },
+        {
+          "key": "item-2-longitude",
+          "label": "Item 2 — Longitude",
+          "type": "TEXT",
+          "helperText": "The second number from the same Google Maps right-click.",
+          "defaultValue": "55.2450"
+        },
+        {
+          "key": "item-3-time",
+          "label": "Item 3 — Time",
+          "type": "TEXT",
+          "defaultValue": "19 Min"
+        },
+        {
+          "key": "item-3-destination",
+          "label": "Item 3 — Destination",
+          "type": "TEXT",
+          "defaultValue": "Dubai Marina"
+        },
+        {
+          "key": "item-3-latitude",
+          "label": "Item 3 — Latitude",
+          "type": "TEXT",
+          "helperText": "The pin's real position on the map. Changing the destination without updating this leaves the pin pointing at the old place. Find coordinates by right-clicking the location in Google Maps and copying the first number.",
+          "defaultValue": "25.0805"
+        },
+        {
+          "key": "item-3-longitude",
+          "label": "Item 3 — Longitude",
+          "type": "TEXT",
+          "helperText": "The second number from the same Google Maps right-click.",
+          "defaultValue": "55.139"
+        },
+        {
+          "key": "item-4-time",
+          "label": "Item 4 — Time",
+          "type": "TEXT",
+          "defaultValue": "23 Min"
+        },
+        {
+          "key": "item-4-destination",
+          "label": "Item 4 — Destination",
+          "type": "TEXT",
+          "defaultValue": "Dubai International Airport (DXB)"
+        },
+        {
+          "key": "item-4-latitude",
+          "label": "Item 4 — Latitude",
+          "type": "TEXT",
+          "helperText": "The pin's real position on the map. Changing the destination without updating this leaves the pin pointing at the old place. Find coordinates by right-clicking the location in Google Maps and copying the first number.",
+          "defaultValue": "25.2532"
+        },
+        {
+          "key": "item-4-longitude",
+          "label": "Item 4 — Longitude",
+          "type": "TEXT",
+          "helperText": "The second number from the same Google Maps right-click.",
+          "defaultValue": "55.3644"
+        },
+        {
+          "key": "item-5-time",
+          "label": "Item 5 — Time",
+          "type": "TEXT",
+          "defaultValue": "20 Min"
+        },
+        {
+          "key": "item-5-destination",
+          "label": "Item 5 — Destination",
+          "type": "TEXT",
+          "defaultValue": "Burj Khalifa"
+        },
+        {
+          "key": "item-5-latitude",
+          "label": "Item 5 — Latitude",
+          "type": "TEXT",
+          "helperText": "The pin's real position on the map. Changing the destination without updating this leaves the pin pointing at the old place. Find coordinates by right-clicking the location in Google Maps and copying the first number.",
+          "defaultValue": "25.197197"
+        },
+        {
+          "key": "item-5-longitude",
+          "label": "Item 5 — Longitude",
+          "type": "TEXT",
+          "helperText": "The second number from the same Google Maps right-click.",
+          "defaultValue": "55.274376"
+        }
+      ]
+    },
+    {
+      "slug": "project",
+      "label": "Project",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "eyebrow",
+          "label": "Eyebrow",
+          "type": "TEXT",
+          "defaultValue": "A Residential"
+        },
+        {
+          "key": "title",
+          "label": "Title",
+          "type": "TEXT",
+          "defaultValue": "Retreat On Dubai Islands"
+        },
+        {
+          "key": "button-label",
+          "label": "Brochure button label",
+          "type": "TEXT",
+          "defaultValue": "Download Brochure"
+        },
+        {
+          "key": "brochure-url",
+          "label": "Brochure file link",
+          "type": "LINK",
+          "defaultValue": "https://media.refinedubai.com/movenpick/1787663749778-233b107bb8d0b8a3c2b13c0d36eca7d9.pdf"
+        },
+        {
+          "key": "description",
+          "label": "Description",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Movenpick project description — unit count, types, and highlights to be provided]"
+        },
+        {
+          "key": "location",
+          "label": "Location text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Set within Dubai Islands, this distinctive address occupies a unique position where expansive parkland meets the coastline. Defined by open outlooks, natural surroundings and a sense of separation from the pace of the city, it offers a residential environment shaped by space, calm and connection to nature."
+        },
+        {
+          "key": "building-image",
+          "label": "Building image (used in both the desktop and mobile hero scene)",
+          "type": "IMAGE",
+          "helperText": "Recommended: 2560×1440px. Fills the whole screen in both scenes.",
+          "defaultValue": "/images/project/building.jpg"
+        },
+        {
+          "key": "building-image-alt",
+          "label": "Building image alt text",
+          "type": "TEXT",
+          "defaultValue": "[Add alt text for Movenpick project image]"
+        },
+        {
+          "key": "landscape-image",
+          "label": "Landscape editorial image",
+          "type": "IMAGE",
+          "helperText": "Recommended: 1920×940px. Wide crop.",
+          "defaultValue": "/images/project/dubai-islands.avif"
+        },
+        {
+          "key": "landscape-image-alt",
+          "label": "Landscape editorial image alt text",
+          "type": "TEXT",
+          "defaultValue": "Curtains overlooking the natural landscape"
+        },
+        {
+          "key": "portrait-image",
+          "label": "Portrait editorial image",
+          "type": "IMAGE",
+          "helperText": "Recommended: 1536×2160px. Tall crop.",
+          "defaultValue": "/images/project/oceara-park.avif"
+        },
+        {
+          "key": "portrait-image-alt",
+          "label": "Portrait editorial image alt text",
+          "type": "TEXT",
+          "defaultValue": "Curtains framing a calm coastal landscape"
+        }
+      ]
+    },
+    {
+      "slug": "gallery",
+      "label": "Gallery",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "heading",
+          "label": "Heading",
+          "type": "TEXT",
+          "defaultValue": "Duis Aute Irure Dolor In Reprehenderit"
+        },
+        {
+          "key": "text",
+          "label": "Intro text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        },
+        {
+          "key": "items",
+          "label": "Items",
+          "type": "LIST",
+          "helperText": "Use + to add an item, the trash icon to remove one. Needs at least 3 items for the carousel's left/right/centre layout to make sense.",
+          "defaultValue": null
+        }
+      ]
+    },
+    {
+      "slug": "contact",
+      "label": "Contact",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "eyebrow",
+          "label": "Eyebrow",
+          "type": "TEXT",
+          "defaultValue": "Reach Out"
+        },
+        {
+          "key": "heading",
+          "label": "Heading",
+          "type": "TEXT",
+          "defaultValue": "To Us"
+        },
+        {
+          "key": "description",
+          "label": "Description (shown above the form on the page section only)",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Our dedicated team is at your service to offer comprehensive insights into luxury investments across all Emirates of the UAE. Contact us today to embark on a journey towards a future characterized by opulence and excellence."
+        },
+        {
+          "key": "submit-button-label",
+          "label": "Submit button label",
+          "type": "TEXT",
+          "defaultValue": "Submit A Request"
+        }
+      ]
+    },
+    {
+      "slug": "seaSection",
+      "label": "Sea Section",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "IMAGE",
+          "helperText": "Recommended: 1920×1080px or larger. Fills the whole screen.",
+          "defaultValue": "/images/sea/sea.avif"
+        },
+        {
+          "key": "image-alt",
+          "label": "Image alt text",
+          "type": "TEXT",
+          "defaultValue": "Luxury yacht above the sea with divers exploring underwater"
+        }
+      ]
+    },
+    {
+      "slug": "payment",
+      "label": "Payment Plan",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "heading",
+          "label": "Heading",
+          "type": "TEXT",
+          "defaultValue": "Duis Aute Irure Dolor In Reprehenderit"
+        },
+        {
+          "key": "text",
+          "label": "Intro text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+        },
+        {
+          "key": "image",
+          "label": "Image",
+          "type": "IMAGE",
+          "helperText": "Recommended: 1920×1200px or taller. Panel height follows the payment table, so a tall image crops best.",
+          "defaultValue": "/images/payment/payment-plan.avif"
+        },
+        {
+          "key": "image-alt",
+          "label": "Image alt text",
+          "type": "TEXT",
+          "defaultValue": "[Add alt text for Movenpick lifestyle image]"
+        },
+        {
+          "key": "milestone-1-label",
+          "label": "Milestone 1 — Label",
+          "type": "TEXT",
+          "defaultValue": "Booking"
+        },
+        {
+          "key": "milestone-1-percent",
+          "label": "Milestone 1 — Percentage",
+          "type": "TEXT",
+          "defaultValue": "5%"
+        },
+        {
+          "key": "milestone-1-sublabel",
+          "label": "Milestone 1 — Sub-label",
+          "type": "TEXT",
+          "defaultValue": "On Booking / Reservation"
+        },
+        {
+          "key": "milestone-2-label",
+          "label": "Milestone 2 — Label",
+          "type": "TEXT",
+          "defaultValue": "1st Installment - DLD"
+        },
+        {
+          "key": "milestone-2-percent",
+          "label": "Milestone 2 — Percentage",
+          "type": "TEXT",
+          "defaultValue": "15%"
+        },
+        {
+          "key": "milestone-2-sublabel",
+          "label": "Milestone 2 — Sub-label",
+          "type": "TEXT",
+          "defaultValue": "Within 60 Days Of Booking"
+        },
+        {
+          "key": "milestone-3-label",
+          "label": "Milestone 3 — Label",
+          "type": "TEXT",
+          "defaultValue": "2nd Installment"
+        },
+        {
+          "key": "milestone-3-percent",
+          "label": "Milestone 3 — Percentage",
+          "type": "TEXT",
+          "defaultValue": "5%"
+        },
+        {
+          "key": "milestone-3-sublabel",
+          "label": "Milestone 3 — Sub-label",
+          "type": "TEXT",
+          "defaultValue": "6 Months After Booking"
+        },
+        {
+          "key": "milestone-4-label",
+          "label": "Milestone 4 — Label",
+          "type": "TEXT",
+          "defaultValue": "3rd Installment"
+        },
+        {
+          "key": "milestone-4-percent",
+          "label": "Milestone 4 — Percentage",
+          "type": "TEXT",
+          "defaultValue": "5%"
+        },
+        {
+          "key": "milestone-4-sublabel",
+          "label": "Milestone 4 — Sub-label",
+          "type": "TEXT",
+          "defaultValue": "12 Months After Booking"
+        },
+        {
+          "key": "milestone-5-label",
+          "label": "Milestone 5 — Label",
+          "type": "TEXT",
+          "defaultValue": "4th Installment"
+        },
+        {
+          "key": "milestone-5-percent",
+          "label": "Milestone 5 — Percentage",
+          "type": "TEXT",
+          "defaultValue": "5%"
+        },
+        {
+          "key": "milestone-5-sublabel",
+          "label": "Milestone 5 — Sub-label",
+          "type": "TEXT",
+          "defaultValue": "18 Months After Booking"
+        },
+        {
+          "key": "milestone-6-label",
+          "label": "Milestone 6 — Label",
+          "type": "TEXT",
+          "defaultValue": "5th Installment"
+        },
+        {
+          "key": "milestone-6-percent",
+          "label": "Milestone 6 — Percentage",
+          "type": "TEXT",
+          "defaultValue": "5%"
+        },
+        {
+          "key": "milestone-6-sublabel",
+          "label": "Milestone 6 — Sub-label",
+          "type": "TEXT",
+          "defaultValue": "24 Months After Booking"
+        },
+        {
+          "key": "milestone-7-label",
+          "label": "Milestone 7 — Label",
+          "type": "TEXT",
+          "defaultValue": "Final Installment"
+        },
+        {
+          "key": "milestone-7-percent",
+          "label": "Milestone 7 — Percentage",
+          "type": "TEXT",
+          "defaultValue": "60%"
+        },
+        {
+          "key": "milestone-7-sublabel",
+          "label": "Milestone 7 — Sub-label",
+          "type": "TEXT",
+          "defaultValue": "On Handover"
+        }
+      ]
+    },
+    {
+      "slug": "footer",
+      "label": "Footer",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "phone-display",
+          "label": "Phone — displayed text",
+          "type": "TEXT",
+          "defaultValue": "+971 4 330 0299"
+        },
+        {
+          "key": "phone-href",
+          "label": "Phone — link (tel:...)",
+          "type": "LINK",
+          "defaultValue": "tel:+97143300299"
+        },
+        {
+          "key": "tollfree-display",
+          "label": "UAE toll free — displayed text",
+          "type": "TEXT",
+          "defaultValue": "800 Refine (800 733463)"
+        },
+        {
+          "key": "tollfree-href",
+          "label": "UAE toll free — link (tel:...)",
+          "type": "LINK",
+          "defaultValue": "tel:800733463"
+        },
+        {
+          "key": "email",
+          "label": "Email address",
+          "type": "TEXT",
+          "defaultValue": "sales@refinedubai.com"
+        },
+        {
+          "key": "address",
+          "label": "Address (each line becomes its own line)",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "Office 4701, Floor 47, Ubora Tower,\nMarasi Drive, Business Bay, Dubai"
+        },
+        {
+          "key": "copyright",
+          "label": "Copyright text",
+          "type": "TEXT",
+          "defaultValue": "©2026. Refine Project Management. All rights reserved"
+        },
+        {
+          "key": "cookies-button-label",
+          "label": "\"Manage cookies\" button label",
+          "type": "TEXT",
+          "defaultValue": "Manage Cookies"
+        }
+      ]
+    },
+    {
+      "slug": "chatAgent",
+      "label": "Chat Widget",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "agent-photo",
+          "label": "Intro card photo — shown before the chat opens (portrait)",
+          "type": "IMAGE",
+          "helperText": "Recommended: 520×720px.",
+          "defaultValue": "/images/agent/avatar.avif"
+        },
+        {
+          "key": "agent-photo-square",
+          "label": "Chat header avatar — square, shown once the chat is open",
+          "type": "IMAGE",
+          "helperText": "Recommended: 80×80px.",
+          "defaultValue": "/images/agent/avatar-square.avif"
+        },
+        {
+          "key": "project-name",
+          "label": "Project name, in full — used in the chat header and every message that names the project",
+          "type": "TEXT",
+          "defaultValue": "Movenpick"
+        },
+        {
+          "key": "project-short-name",
+          "label": "Project name, shortened — used only where space is tight (the teaser bubble, one broker question)",
+          "type": "TEXT",
+          "defaultValue": "Movenpick"
+        }
+      ]
+    },
+    {
+      "slug": "privacy",
+      "label": "Privacy Policy",
+      "group": "content",
+      "minRole": "ADMIN",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Title",
+          "type": "TEXT",
+          "defaultValue": "Privacy Policy"
+        },
+        {
+          "key": "body",
+          "label": "Body",
+          "type": "RICHTEXT",
+          "defaultValue": "<p>This is a placeholder. Replace this text with a Privacy Policy reviewed by Refine's legal counsel before publishing.</p>"
+        }
+      ]
+    },
+    {
+      "slug": "terms",
+      "label": "Terms & Conditions",
+      "group": "content",
+      "minRole": "ADMIN",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Title",
+          "type": "TEXT",
+          "defaultValue": "Terms & Conditions"
+        },
+        {
+          "key": "body",
+          "label": "Body",
+          "type": "RICHTEXT",
+          "defaultValue": "<p>This is a placeholder. Replace this text with Terms & Conditions reviewed by Refine's legal counsel before publishing.</p>"
+        }
+      ]
+    },
+    {
+      "slug": "cookies",
+      "label": "Cookie Banner",
+      "group": "content",
+      "minRole": "EDITOR",
+      "fields": [
+        {
+          "key": "title",
+          "label": "Banner heading",
+          "type": "TEXT",
+          "defaultValue": "[Cookie banner heading]"
+        },
+        {
+          "key": "body",
+          "label": "Banner text",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Cookie banner text — state which cookies this site sets, what each is for, and how long they last. Needs legal review before launch.]"
+        },
+        {
+          "key": "accept-label",
+          "label": "\"Accept all\" button",
+          "type": "TEXT",
+          "defaultValue": "Accept all"
+        },
+        {
+          "key": "reject-label",
+          "label": "\"Reject\" button",
+          "type": "TEXT",
+          "defaultValue": "Reject non-essential"
+        },
+        {
+          "key": "manage-label",
+          "label": "\"Choose\" button",
+          "type": "TEXT",
+          "defaultValue": "Choose"
+        },
+        {
+          "key": "save-label",
+          "label": "\"Save choices\" button",
+          "type": "TEXT",
+          "defaultValue": "Save my choices"
+        },
+        {
+          "key": "necessary-title",
+          "label": "Necessary category — name",
+          "type": "TEXT",
+          "defaultValue": "Strictly necessary"
+        },
+        {
+          "key": "necessary-body",
+          "label": "Necessary category — description",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Describe the strictly necessary cookies — what they do and why they cannot be switched off.]"
+        },
+        {
+          "key": "analytics-title",
+          "label": "Analytics category — name",
+          "type": "TEXT",
+          "defaultValue": "Analytics"
+        },
+        {
+          "key": "analytics-body",
+          "label": "Analytics category — description",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "We use Google Analytics to understand how visitors use this site. Only loads if you allow it here — nothing is loaded until you agree."
+        },
+        {
+          "key": "marketing-title",
+          "label": "Marketing category — name",
+          "type": "TEXT",
+          "defaultValue": "Marketing"
+        },
+        {
+          "key": "marketing-body",
+          "label": "Marketing category — description",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Describe the marketing cookies — which platforms, and what they are used for.]"
+        },
+        {
+          "key": "privacy-label",
+          "label": "Privacy policy link text",
+          "type": "TEXT",
+          "defaultValue": "Privacy Policy"
+        },
+        {
+          "key": "privacy-href",
+          "label": "Privacy policy link",
+          "type": "LINK",
+          "defaultValue": "/privacy"
+        }
+      ]
+    },
+    {
+      "slug": "seo",
+      "label": "SEO & Sharing",
+      "group": "seo",
+      "minRole": "ADMIN",
+      "fields": [
+        {
+          "key": "meta-title",
+          "label": "Page title",
+          "type": "TEXT",
+          "defaultValue": "Movenpick by Refine | [tagline]"
+        },
+        {
+          "key": "meta-description",
+          "label": "Page description",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Movenpick meta description]"
+        },
+        {
+          "key": "og-title",
+          "label": "Social share title (WhatsApp, iMessage, Slack, etc.)",
+          "type": "TEXT",
+          "defaultValue": "Movenpick by Refine | [tagline]"
+        },
+        {
+          "key": "og-description",
+          "label": "Social share description",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Movenpick meta description]"
+        },
+        {
+          "key": "og-image",
+          "label": "Social share image (WhatsApp, iMessage, Slack, etc.)",
+          "type": "IMAGE",
+          "helperText": "Recommended 1200×630px. WhatsApp caches the old preview per link for a while after you change this — share the link to yourself once after saving to force a fresh preview.",
+          "defaultValue": "/images/og/og.jpg"
+        },
+        {
+          "key": "schema-name",
+          "label": "Structured data — Business name",
+          "type": "TEXT",
+          "defaultValue": "Movenpick"
+        },
+        {
+          "key": "schema-description",
+          "label": "Structured data — Description",
+          "type": "TEXT",
+          "long": true,
+          "defaultValue": "[Movenpick structured-data description]"
+        },
+        {
+          "key": "schema-address-locality",
+          "label": "Structured data — Community / area name",
+          "type": "TEXT",
+          "defaultValue": "[community/area name]"
+        },
+        {
+          "key": "schema-address-region",
+          "label": "Structured data — Emirate / region",
+          "type": "TEXT",
+          "defaultValue": "Dubai"
+        },
+        {
+          "key": "schema-address-country",
+          "label": "Structured data — Country code",
+          "type": "TEXT",
+          "defaultValue": "AE"
+        },
+        {
+          "key": "schema-org-name",
+          "label": "Structured data — Developer name",
+          "type": "TEXT",
+          "defaultValue": "Refine"
+        },
+        {
+          "key": "schema-org-url",
+          "label": "Structured data — Developer website",
+          "type": "LINK",
+          "defaultValue": "https://www.refinedubai.com"
+        },
+        {
+          "key": "bing-site-verification",
+          "label": "Bing Webmaster Tools verification code",
+          "type": "TEXT",
+          "defaultValue": ""
+        }
+      ]
+    },
+    {
+      "slug": "robots",
+      "label": "robots.txt",
+      "group": "seo",
+      "minRole": "ADMIN",
+      "fields": [
+        {
+          "key": "allow-indexing",
+          "label": "Allow search engines to index this site",
+          "type": "BOOLEAN",
+          "defaultValue": "false"
+        },
+        {
+          "key": "sitemap-url",
+          "label": "Sitemap URL override (leave blank to use the auto-generated /sitemap.xml)",
+          "type": "LINK",
+          "defaultValue": ""
+        }
+      ]
+    },
+    {
+      "slug": "sitemap",
+      "label": "Sitemap",
+      "group": "seo",
+      "minRole": "ADMIN",
+      "fields": []
+    },
+    {
+      "slug": "integrations",
+      "label": "Integrations",
+      "group": "seo",
+      "minRole": "SUPER_ADMIN",
+      "fields": [
+        {
+          "key": "google-site-verification",
+          "label": "Google Search Console verification code",
+          "type": "TEXT",
+          "helperText": "The content value of the verification meta tag, not the whole tag. From search.google.com/search-console — add a property, choose HTML tag verification, and copy only the value inside content=\"...\".",
+          "defaultValue": ""
+        },
+        {
+          "key": "gtm-container-id",
+          "label": "Google Tag Manager container ID",
+          "type": "TEXT",
+          "helperText": "e.g. GTM-XXXXXXX. Recommended: configure Google Analytics (GA4) as a tag inside your GTM container's own dashboard rather than filling in the GA4 field below too — see this section's own note on why not both. Only loads once a visitor allows the Analytics cookie category.",
+          "defaultValue": ""
+        },
+        {
+          "key": "ga4-measurement-id",
+          "label": "Google Analytics (GA4) measurement ID",
+          "type": "TEXT",
+          "helperText": "e.g. G-XXXXXXXXXX. Only needed if you are not using GTM to load GA4 — leave blank if GA4 is already configured as a tag inside your GTM container above. Only loads once a visitor allows the Analytics cookie category.",
+          "defaultValue": ""
+        }
+      ]
+    }
+  ]
+}

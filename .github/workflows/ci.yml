@@ -1,0 +1,71 @@
+# Runs on every push and pull request, so a change that breaks something is
+# caught here rather than on the live site.
+#
+# Render deploys from main on push and only refuses to release if the BUILD
+# fails. A change that compiles but breaks behaviour — a content shape no
+# longer parsed, an enquiry losing its name, a coordinate silently rejected —
+# would go straight to visitors. These are exactly the failures that leave no
+# error in any log, which is why they need a gate rather than a spot check.
+#
+# Deliberately uses no secrets. Every test either needs none or declares its
+# own precondition and skips, so this runs on a fork or a pull request from
+# anyone without granting access to anything.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A newer push makes an in-flight run pointless; cancel it rather than queue.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Matches .node-version and the NODE_VERSION set on Render, so CI
+          # cannot pass on a runtime production does not use.
+          node-version-file: .node-version
+          cache: npm
+
+      # `npm ci` not `npm install`: installs exactly the lockfile, which is
+      # also what Render's build command does.
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npx eslint src scripts test
+
+      - name: Unit tests
+        run: npm test
+
+      # Same command Render runs, so a build that would fail there fails here
+      # first. Env vars are deliberately absent: the site is designed to build
+      # and serve with none set, and this proves that stays true.
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: npx playwright test
+
+      # Kept on failure so a flake or a real break can be inspected rather
+      # than guessed at from a log line.
+      - name: Upload test report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

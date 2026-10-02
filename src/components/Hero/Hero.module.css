@@ -1,0 +1,714 @@
+/*
+ * 90px matches Header.module.css .inner's fixed height. The header is
+ * always solid now (no transparent-over-hero state), so every section
+ * needs this offset or the header covers its top content.
+ */
+.hero {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  padding: calc(90px + clamp(48px, 6vw, 96px)) var(--page-gutter) 0;
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+
+  text-align: center;
+}
+
+/* =========================================================
+   Text panel
+
+   A wrapper around the copy and the scroll cue so the two can be held
+   together as one layer on desktop. `display: contents` everywhere else
+   means the box is not there at all and the hero's own flex column is
+   untouched below 1025px.
+   ========================================================= */
+
+.textPanel {
+  display: contents;
+}
+
+/* =========================================================
+   Text content
+   ========================================================= */
+
+.content {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  max-width: 720px;
+}
+
+.eyebrow {
+  margin: 0 0 18px;
+
+  font-family: var(--font-noto-sans);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+
+  color: var(--color-red);
+}
+
+.title {
+  max-width: 680px;
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: 52px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+
+  color: var(--color-gold);
+
+  text-wrap: balance;
+}
+
+.subtitle {
+  max-width: 560px;
+  margin: 22px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+/* =========================================================
+   CTA button — same shape as ProjectOverview's/TrustedPartner's own
+   ctaButton, so the "Discover More" button reads as one system with
+   the rest of the page rather than a one-off.
+   ========================================================= */
+
+/*
+ * A text link with a rule under it, not a pill.
+ *
+ * Two lines stacked in the same place rather than one line that changes
+ * colour: ::after is the resting rule at 60%, ::before is the same red
+ * at full strength sitting on top of it, scaled to nothing until hover.
+ * Hovering scales it out from the left, so the rule appears to fill in
+ * rather than fade — and because it is a transform, it is a
+ * compositor-only animation with no repaint of the text above it.
+ *
+ * A single element animating background-position or width would have
+ * done it too, but both of those relayout or repaint on every frame,
+ * and neither leaves the 60% rule visible underneath while the full
+ * one travels.
+ */
+.ctaButton {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 32px;
+  /* Bottom padding only: it is the gap between the text and its rule. */
+  padding: 0 0 10px;
+
+  font-family: var(--font-noto-sans);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  color: var(--color-cta-red);
+}
+
+/* The resting rule. */
+.ctaButton::after {
+  content: "";
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  height: 1px;
+
+  background: rgba(var(--color-cta-red-rgb), 0.6);
+}
+
+/*
+ * The full-strength rule that fills in from the left on hover, and at
+ * 2px it is twice the weight of the one resting underneath. Because it
+ * sits at bottom: 0 it grows upward over the 1px rule rather than
+ * shifting anything, so the text above never moves.
+ */
+.ctaButton::before {
+  content: "";
+
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+
+  height: 2px;
+
+  background: var(--color-cta-red);
+
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ctaButton:hover::before,
+.ctaButton:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.ctaButton > span {
+  position: relative;
+  z-index: 1;
+}
+
+.ctaIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  line-height: 1;
+
+  /*
+   * Nudges 2px right on hover, on the same curve and duration as the
+   * rule filling in, so the two read as one gesture rather than two
+   * effects that happen to fire together.
+   *
+   * translate rather than margin or position: it is a compositor-only
+   * property, so the arrow cannot drag a relayout of the row behind it
+   * on every frame.
+   */
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ctaButton:hover .ctaIcon,
+.ctaButton:focus-visible .ctaIcon {
+  transform: translateX(2px);
+}
+
+/* =========================================================
+   Scroll indicator
+   ========================================================= */
+
+.scrollIndicator {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: clamp(36px, 5vw, 56px);
+
+  color: var(--color-gold);
+  text-decoration: none;
+}
+
+.scrollLine {
+  position: relative;
+
+  display: block;
+
+  width: 1px;
+  height: 34px;
+
+  overflow: hidden;
+
+  background: rgba(137, 118, 85, 0.28);
+}
+
+.scrollLine::after {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 42%;
+
+  background: var(--color-gold);
+
+  animation: scrollLineMove 1.8s cubic-bezier(0.76, 0, 0.24, 1) infinite;
+}
+
+@keyframes scrollLineMove {
+  0% {
+    transform: translateY(-110%);
+  }
+
+  50% {
+    transform: translateY(100%);
+  }
+
+  100% {
+    transform: translateY(220%);
+  }
+}
+
+.scrollText {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Image section — full-bleed, full-height panel holding the
+   pattern and the framed building photo together. The pattern
+   is scoped to this panel only, never behind the text above it.
+   ========================================================= */
+
+/*
+ * Holds the runway the photo panel is sticky across on desktop. Below
+ * 1025px it is `display: contents`, so the box is not there at all and
+ * the panel sits in the hero's own flex column exactly as before.
+ */
+.imageScroll {
+  display: contents;
+}
+
+.imageSection {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100vw;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  margin-top: clamp(50px, 7vw, 100px);
+  margin-right: calc(50% - 50vw);
+  margin-left: calc(50% - 50vw);
+}
+
+/*
+ * The box the pattern is drawn into. It exists so that something other
+ * than next/image owns the positioning: `fill` writes
+ * position: absolute inline, and an inline style cannot be overridden
+ * by a rule, so the pinning below has to live on a wrapper.
+ */
+.patternPin {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  pointer-events: none;
+}
+
+.patternShape {
+  object-fit: cover;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =========================================================
+   Framed image — 10 of the page's 12 columns wide.
+
+   On desktop this is the size the photo STARTS at — 6 of 12 columns —
+   not the size it ends at: HeroClient grows it from here to the full
+   width and height of its panel as the panel arrives, so the pattern around it is
+   gradually covered until the photograph is the whole section. The
+   growth reads this rule for its starting size rather than restating
+   it, so there is one definition of "framed".
+
+   ========================================================= */
+
+.imageFrame {
+  position: relative;
+  z-index: 1;
+
+  /*
+   * 50vw is 6 of the page's 12 columns, which is where the photo
+   * starts; it grows from here to the full 12 and the full height of
+   * the panel.
+   *
+   * 960px is the pixel cap, chosen as exactly 6 columns at 1920 wide,
+   * so the column count holds rather than the cap binding early and
+   * quietly making the photo narrower than it says. Beyond 1920 it does
+   * bind, which is the point of a cap: the photo stops chasing the
+   * viewport on very wide displays.
+   *
+   * The third term is a guard for short, wide screens: the frame can
+   * be tall enough to outgrow a 100svh panel, and this caps the width
+   * by the height available instead (904/624 is the aspect ratio
+   * below, so it converts a height budget into a width). It is
+   * inactive at ordinary desktop proportions.
+   */
+  width: min(50vw, 960px, calc((100svh - 64px) * 904 / 624));
+  aspect-ratio: 904 / 624;
+
+  overflow: hidden;
+
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center center;
+}
+
+/* =========================================================
+   Tablet
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .title {
+    max-width: 560px;
+  }
+
+  .imageFrame {
+    width: min(74vw, 680px);
+  }
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  /*
+   * One screen, shared between the text and the photo panel, so both
+   * are visible without scrolling. .hero is already a flex column, so
+   * the text takes the height it needs and .imageSection below takes
+   * everything left over.
+   */
+  .hero {
+    /*
+     * min-height, not height: on the target handset the content fits
+     * one screen exactly, but a short phone (a 568px-tall SE) cannot
+     * hold this much type and a fixed height would simply clip the
+     * photo. This way it is one screen wherever it fits and grows by
+     * the little it needs to where it does not.
+     */
+    min-height: 100vh;
+    min-height: 100svh;
+
+    /*
+     * Header clearance plus a breath, scaled by screen height so a
+     * short handset gives the space to the composition instead.
+     */
+    padding: calc(90px + clamp(24px, 5svh, 56px)) var(--page-gutter) 0;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+  }
+
+  /*
+   * 48px and 18px on the target handset, but bounded by the screen's
+   * HEIGHT as well as its width. Width alone gave a 667px-tall phone
+   * the same 480px of type as a 956px one, which left the photo panel
+   * 186px to hold a 228px frame. The svh term is what keeps the split
+   * roughly even on a short screen.
+   */
+  .title {
+    font-size: clamp(30px, min(11vw, 5.6svh), 48px);
+  }
+
+  .subtitle {
+    font-size: clamp(14px, min(4.2vw, 2.1svh), 18px);
+  }
+
+  /*
+   * Natural height, deliberately NOT stretched to fill a share of the
+   * screen.
+   *
+   * Forcing it to 65% and centring the type inside looked wrong for a
+   * measurable reason: the type only needs 272px of a 956px screen, so
+   * the surplus fell as 108px of dead cream between the body copy and
+   * the scroll cue — a hole in the middle of the composition. Letting
+   * the text be its own size and giving the leftover to the photo panel
+   * puts that space somewhere it does something.
+   */
+  .content {
+    flex: 0 0 auto;
+  }
+
+  /*
+   * Air on both sides. The cue used to sit flush against the pattern
+   * with 0px between them, so the texture cut straight through the
+   * label.
+   */
+  .scrollIndicator {
+    margin-top: clamp(24px, 5svh, 44px);
+    margin-bottom: clamp(20px, 4svh, 36px);
+  }
+
+  /*
+   * Everything the type does not use, with a floor so it is never
+   * squeezed thin. At a fixed 35% the pattern had only 68px of itself
+   * showing around the photo across the whole panel, which is not
+   * enough for a full-bleed texture to read as one.
+   */
+  .imageSection {
+    flex: 1;
+
+    min-height: 38svh;
+    margin-top: 0;
+  }
+
+  /*
+   * Bounded by the panel's height as well as the screen's width, so the
+   * frame can never outgrow the space it sits in. 904/624 is the aspect
+   * ratio above, converting a height budget into a width; keeping the
+   * budget under the panel's own height is what leaves pattern visible
+   * above and below the photo.
+   */
+  .imageFrame {
+    width: min(88vw, calc(32svh * 904 / 624));
+  }
+}
+
+/* =========================================================
+   Desktop parallax: the photo panel rises over the copy
+
+   The copy sticks to the top of the screen while the hero scrolls past
+   it, and the photo panel — a layer above it, the full width and height
+   of the screen — slides up and covers it. The copy does not move; it
+   is passed over and left behind.
+
+   The panel starts exactly where it always has: in normal flow directly
+   under the copy, with the same margin above it. Nothing is pushed down
+   a screen to make room. All that changed is that the copy now holds
+   its position instead of scrolling away, and the panel passes in front
+   of it rather than behind.
+
+   Because the layout is untouched, the hero is the same height it was
+   and the panel still comes to rest exactly one screen down — the
+   figure panelRestScrollY() computes for the Scroll Down button and for
+   the photo's 8-to-10 column growth in HeroClient. The parallax, the
+   button and the growth all finish at one position rather than three
+   tuned separately.
+
+   The cream background on the panel is what makes it a cover rather
+   than a veil: the pattern behind the photo is artwork with gaps in it,
+   not a backdrop, and without an opaque layer beneath it the heading
+   reads straight through.
+   ========================================================= */
+
+@media (min-width: 1025px) {
+  /*
+   * The top padding moves to the text panel. Left on .hero it would sit
+   * outside the sticky element, so the copy would stick to the very top
+   * of the viewport and slide up under the fixed header.
+   */
+  .hero {
+    padding-top: 0;
+  }
+
+  .textPanel {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+
+    padding-top: calc(90px + clamp(48px, 6vw, 96px));
+  }
+
+  /*
+   * The panel is one screen tall and its wrapper is two, so the panel
+   * has exactly one screen of runway to be sticky across.
+   *
+   * The runway has to belong to this wrapper and not to the panel's own
+   * margin: a sticky element is confined by its MARGIN box, so a
+   * margin-bottom on the panel made its margin box exactly as tall as
+   * its container and left no room at all to shift. It never stuck.
+   *
+   * It costs no extra scrolling either way: the section after the hero
+   * is pulled back up by the same amount (see .projectOverview), so the
+   * document is exactly as tall as it was and the runway is spent with
+   * that section sliding over the pinned photo.
+   */
+  .imageScroll {
+    display: block;
+
+    width: 100%;
+    height: 200vh;
+    height: 200svh;
+
+    /*
+     * The gap above the photo moves from the panel to this wrapper.
+     *
+     * Left on the panel it sat INSIDE the wrapper and ate into the
+     * runway, because the wrapper's height is fixed: the sticky range
+     * is the wrapper's height less the panel's top margin and its own
+     * height. That cost a screen-proportional amount and it showed up
+     * first at 1280, where the panel came unstuck before the section
+     * above it had finished passing over.
+     */
+    margin-top: clamp(50px, 7vw, 100px);
+  }
+
+  /*
+   * Pinned once it fills the screen, so the section after it can ride
+   * over the top. The hero's own copy is pinned behind this in the same
+   * way — each layer is held while the next one passes over it.
+   */
+  .imageSection {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    margin-top: 0;
+
+    background: var(--color-cream);
+  }
+
+  /*
+   * The pattern is pinned to the viewport, not laid inside the panel.
+   *
+   * Anything inside the panel travels with it, and the panel is what
+   * rises and grows — so as long as the pattern lived there it either
+   * moved with the panel or was progressively uncovered as the panel
+   * grew. Both read as movement. Taking it out of the panel's
+   * coordinate system entirely is the only way it can genuinely never
+   * change.
+   *
+   * --hero-pattern-top is the panel's top edge at a scroll position of
+   * zero, written by HeroClient and re-measured whenever the layout
+   * changes. Pinning the pattern there means what you see is exactly
+   * what the page loads with, and it stays that way at every scroll
+   * position: the photograph rises and grows in front of it and
+   * eventually covers it, but the pattern itself never moves and never
+   * shows more of itself than it did at the start.
+   */
+  .patternPin {
+    position: fixed;
+    top: var(--hero-pattern-top, 0px);
+    right: auto;
+    bottom: auto;
+    left: 0;
+    z-index: 0;
+
+    width: 100vw;
+    height: 100vh;
+    height: 100svh;
+  }
+}
+
+/* =========================================================
+   Page-load intro
+
+   These elements are revealed by the three-beat load sequence (see
+   the intro starts in lib/motion.js), and they start hidden HERE rather
+   than only in the GSAP from-state.
+
+   The server sends them visible, and GSAP cannot hide them until React
+   has hydrated. Measured, that is a window in which the finished page
+   is painted and then vanishes to play its own entrance — 195ms on a
+   phone. A flash-then-hide reads as a page failing to load, not as an
+   entrance.
+
+   Every width, not just desktop. The opening runs at every size, so
+   there is something to hide for at every size; the header's controls
+   already start hidden this way.
+
+   The scripting query is the safety net: with JavaScript off, nothing
+   will ever reveal these, so they must never have been hidden.
+   ========================================================= */
+
+.eyebrow,
+.title,
+.subtitle,
+.ctaButton,
+.scrollIndicator,
+.patternShape,
+.imageFrame {
+  opacity: 0;
+  visibility: hidden;
+
+  /*
+   * And the safety net for when JavaScript is not off but merely late.
+   * The scripting query below only catches it being disabled; a slow
+   * connection leaves it enabled and absent, which is the same thing
+   * from where the visitor is sitting — measured at 16.7s over Fast 3G
+   * against a production build, all of it spent on a page that had
+   * been deliberately hidden for an entrance that could not run.
+   *
+   * Timed from the stylesheet being parsed, so it needs nothing that
+   * has not already arrived. Set just after the splash's own fallback
+   * begins lifting (Loader.module.css), keeping the same order the
+   * scripted version has. The intro skips itself if this got there
+   * first — see the check in HeroClient.
+   */
+  animation: hero-intro-fallback 500ms ease 2000ms forwards;
+}
+
+@keyframes hero-intro-fallback {
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@media (scripting: none) {
+  .eyebrow,
+  .title,
+  .subtitle,
+  .ctaButton,
+  .scrollIndicator,
+  .patternShape,
+  .imageFrame {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .content > *,
+  .ctaButton,
+  .scrollIndicator,
+  .patternShape,
+  .imageFrame {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .scrollLine::after {
+    animation: none;
+  }
+
+  .ctaButton::before,
+  .ctaIcon {
+    transition: none;
+  }
+}

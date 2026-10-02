@@ -1,0 +1,951 @@
+/*
+ * Reserve scrollbar space on desktop only.
+ *
+ * Applying scrollbar-gutter globally was creating the visible
+ * empty strip in Chrome mobile emulation.
+ */
+@media (min-width: 901px) {
+  :global(html) {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
+  :global(html[data-mega-menu-open="true"]) {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+}
+
+/*
+ * Mobile and tablet use overlay-style scrolling and must not
+ * reserve a desktop scrollbar column.
+ */
+@media (max-width: 900px) {
+  :global(html) {
+    overflow-y: auto;
+    scrollbar-gutter: auto;
+  }
+
+  :global(html[data-mega-menu-open="true"]) {
+    overflow-y: auto;
+    scrollbar-gutter: auto;
+  }
+}
+
+/* =========================================================
+   Fixed header
+   ========================================================= */
+
+.header {
+  --header-divider: rgba(137, 118, 85, 0.22);
+
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  background: var(--color-cream);
+  color: var(--color-gold);
+
+  box-shadow: none;
+
+  transition:
+    background-color 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    backdrop-filter 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    -webkit-backdrop-filter 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================================
+   Scrolled state — frosted cream glass
+   ========================================================= */
+
+.header[data-scrolled="true"] {
+  background: rgba(var(--color-cream-rgb), 0.88);
+
+  backdrop-filter: blur(44px) saturate(160%);
+  -webkit-backdrop-filter: blur(44px) saturate(160%);
+
+  box-shadow:
+    0 1px 0 rgba(137, 118, 85, 0.12),
+    0 10px 30px rgba(137, 118, 85, 0.08);
+}
+
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .header[data-scrolled="true"] {
+    background: rgba(var(--color-cream-rgb), 0.96);
+  }
+}
+
+/* =========================================================
+   Header layout
+   ========================================================= */
+
+.inner {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  width: 100%;
+  height: 90px;
+
+  padding-inline: var(--page-gutter);
+
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   Menu control
+   ========================================================= */
+
+.menuControl {
+  grid-column: 1;
+  justify-self: start;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  min-height: 42px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: inherit;
+
+  font: inherit;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menuIcon {
+  display: block;
+  flex-shrink: 0;
+
+  width: 48px;
+  height: 8px;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: url("/icons/menu-icon.svg");
+  mask-image: url("/icons/menu-icon.svg");
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.menuText {
+  font-family: var(--font-noto-sans);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Centre logo
+   ========================================================= */
+
+.logo {
+  grid-column: 2;
+  justify-self: center;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: inherit;
+  text-decoration: none;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.logoMark {
+  display: block;
+
+  width: 128px;
+  height: 45px;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: var(--logo-mask-url, url("/logos/movenpick-logo.svg"));
+  mask-image: var(--logo-mask-url, url("/logos/movenpick-logo.svg"));
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* =========================================================
+   Request callback
+   ========================================================= */
+
+.callback {
+  grid-column: 3;
+  justify-self: end;
+
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  font-family: var(--font-noto-sans);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-align: right;
+  white-space: nowrap;
+
+  color: inherit;
+  text-decoration: none;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.callback::after {
+  content: "";
+
+  position: absolute;
+  right: 0;
+  bottom: -7px;
+  left: 0;
+
+  height: 1px;
+
+  background: currentColor;
+
+  transform: scaleX(0);
+  transform-origin: right center;
+
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.callback:hover::after,
+.callback:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* =========================================================
+   Divider
+   ========================================================= */
+
+.divider {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+  height: 1px;
+  margin: 0;
+
+  background: var(--header-divider);
+
+  transition: background-color 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =========================================================
+   Keyboard focus
+   ========================================================= */
+
+.menuControl:focus-visible,
+.logo:focus-visible,
+.callback:focus-visible,
+.closeButton:focus-visible,
+.menuLogo:focus-visible,
+.menuLink:focus-visible,
+.menuImagePanel:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 6px;
+}
+
+/* =========================================================
+   Full-screen menu
+   ========================================================= */
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  color: var(--color-gold);
+  background: transparent;
+
+  visibility: hidden;
+  pointer-events: none;
+
+  overflow: hidden;
+
+  clip-path: inset(0 100% 0 0);
+
+  will-change: clip-path;
+}
+
+/* =========================================================
+   Blue panel
+   ========================================================= */
+
+.menuBluePanel {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  margin: 0;
+
+  padding: clamp(32px, 4vw, 64px) clamp(40px, 7vw, 110px)
+    clamp(60px, 7vw, 110px);
+
+  box-sizing: border-box;
+
+  background: var(--color-cream);
+
+  overflow: hidden;
+}
+
+/* =========================================================
+   Image close panel
+   ========================================================= */
+
+.menuImagePanel {
+  position: relative;
+
+  display: block;
+
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+  border-radius: 0;
+
+  /*
+   * The payment-plan photograph, the same one the Payment section uses.
+   *
+   * The colour underneath it is not decoration: it is what shows while
+   * the photo is still loading, and it moved with the photo. It used to
+   * be #073d61, the deep blue of the sea image that was here before, so
+   * leaving it would have flashed a block of navy over a warm dusk
+   * shot. Brand gold sits under the new photograph instead.
+   */
+  background-color: var(--color-gold);
+  background-image: url("/images/payment/payment-plan.avif");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+
+  font: inherit;
+  text-align: initial;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menuImagePanel::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  /*
+   * A shade along the inner edge, so the photograph does not meet the
+   * cream nav panel as a hard seam. Keyed to the photograph's own
+   * palette — it was the sea image's navy and is now brand gold.
+   */
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-gold-rgb), 0.14) 0%,
+    transparent 20%
+  );
+
+  pointer-events: none;
+
+  transition: opacity 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menuImagePanel:hover::after,
+.menuImagePanel:focus-visible::after {
+  background: linear-gradient(
+    90deg,
+    rgba(7, 61, 97, 0.16) 0%,
+    rgba(7, 61, 97, 0.02) 32%,
+    transparent 65%
+  );
+}
+
+/* =========================================================
+   Close button
+   ========================================================= */
+
+.closeButton {
+  position: absolute;
+  top: clamp(30px, 4vw, 54px);
+  left: clamp(34px, 6.8vw, 96px);
+  z-index: 4;
+
+  display: grid;
+  place-items: center;
+
+  width: 48px;
+  height: 48px;
+
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+  color: var(--color-gold);
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.closeIcon {
+  display: block;
+
+  width: 38px;
+  height: 38px;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: url("/icons/cross.svg");
+  mask-image: url("/icons/cross.svg");
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+
+  transition: transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.closeButton:hover .closeIcon,
+.closeButton:focus-visible .closeIcon {
+  transform: rotate(90deg);
+}
+
+/* =========================================================
+   Overlay logo
+   ========================================================= */
+
+/*
+ * Sits in the cream panel's top corner, opposite the close button.
+ *
+ * It used to be fixed and centred on the WHOLE viewport, which on the
+ * two-panel layout put it across the photograph on the right — gold
+ * lettering on a bright sky, barely readable. Absolute inside the panel
+ * keeps it on the cream, where it has contrast.
+ *
+ * The offsets are the close button's own, mirrored: the same top, and
+ * the same gutter measured from the other side. Matching the button's
+ * 48px height and centring within it is what actually lines the two up,
+ * since the logo's own height comes from its aspect ratio and does not
+ * match the button's.
+ *
+ * The panel clips its overflow, which is the intended containment: the
+ * logo belongs to the cream section rather than floating over the page.
+ */
+.menuLogo {
+  position: absolute;
+  top: clamp(30px, 4vw, 54px);
+  right: clamp(34px, 6.8vw, 96px);
+  left: auto;
+  z-index: 4;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  height: 48px;
+
+  color: var(--color-gold);
+  text-decoration: none;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menuLogoMark {
+  display: block;
+
+  width: clamp(120px, 10.5vw, 165px);
+  aspect-ratio: 128 / 45;
+
+  background-color: currentColor;
+
+  -webkit-mask-image: var(--logo-mask-url, url("/logos/movenpick-logo.svg"));
+  mask-image: var(--logo-mask-url, url("/logos/movenpick-logo.svg"));
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+
+.menuNavigation {
+  display: flex;
+  align-items: center;
+
+  height: 100%;
+  padding-top: 80px;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+
+  gap: clamp(14px, 2vw, 28px);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.menuItem {
+  position: relative;
+}
+
+.menuLink {
+  position: relative;
+
+  display: inline-block;
+
+  font-family: var(--font-gloock);
+  font-size: clamp(44px, 4.4vw, 68px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+
+  color: rgba(137, 118, 85, 0.35);
+  text-decoration: none;
+
+  transition:
+    color 500ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menuLink::before {
+  content: "";
+
+  position: absolute;
+  top: 50%;
+  left: -34px;
+
+  width: 18px;
+  height: 1px;
+
+  background: currentColor;
+
+  opacity: 0;
+
+  transform: translateY(-50%) scaleX(0);
+  transform-origin: right center;
+
+  transition:
+    opacity 400ms ease,
+    transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.menuLink:hover,
+.menuLink:focus-visible {
+  color: var(--color-gold);
+
+  transform: translateX(8px);
+}
+
+.menuLink:hover::before,
+.menuLink:focus-visible::before {
+  opacity: 1;
+
+  transform: translateY(-50%) scaleX(1);
+}
+
+/* =========================================================
+   Tablet and mobile menu
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .menuOverlay {
+    display: block;
+
+    width: 100%;
+    height: 100dvh;
+
+    background: var(--color-cream);
+  }
+
+  .menuBluePanel {
+    width: 100%;
+    height: 100dvh;
+
+    padding: 28px 24px max(56px, env(safe-area-inset-bottom));
+
+    background: var(--color-cream);
+  }
+
+  .menuImagePanel {
+    display: none;
+  }
+
+  .closeButton {
+    top: max(20px, env(safe-area-inset-top));
+    left: max(18px, env(safe-area-inset-left));
+  }
+
+  .closeIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /*
+   * Back to centred below 900px. The photograph panel is hidden here,
+   * so the cream fills the screen and there is nothing for the logo to
+   * land on top of — the reason it was moved on the two-panel layout
+   * does not apply.
+   */
+  .menuLogo {
+    top: max(24px, env(safe-area-inset-top));
+    right: auto;
+    left: 50%;
+
+    height: auto;
+
+    justify-content: center;
+
+    transform: translateX(-50%);
+  }
+
+  .menuLogoMark {
+    width: 100px;
+  }
+
+  .menuNavigation {
+    height: 100%;
+    padding-top: 96px;
+  }
+
+  .menuList {
+    gap: 18px;
+  }
+
+  .menuLink {
+    font-size: clamp(42px, 12vw, 64px);
+  }
+}
+
+/* =========================================================
+   Mobile header
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .inner {
+    height: 90px;
+
+    padding-right: max(20px, env(safe-area-inset-right));
+
+    padding-left: max(20px, env(safe-area-inset-left));
+  }
+
+  .menuControl {
+    gap: 9px;
+    min-height: 44px;
+  }
+
+  .menuIcon {
+    width: 30px;
+    height: 10px;
+  }
+
+  .menuText {
+    display: inline;
+
+    font-size: 9px;
+    line-height: 1.2;
+    letter-spacing: 0.16em;
+  }
+
+  .logoMark {
+    width: 100px;
+    height: auto;
+
+    aspect-ratio: 128 / 45;
+  }
+
+  .callback {
+    max-width: 102px;
+
+    font-size: 9px;
+    line-height: 1.25;
+    letter-spacing: 0.1em;
+
+    text-align: right;
+    white-space: normal;
+  }
+
+  .callback::after {
+    bottom: -5px;
+  }
+}
+
+/* =========================================================
+   Small mobile
+   ========================================================= */
+
+@media (max-width: 480px) {
+  .inner {
+    height: 90px;
+    padding-inline: 16px;
+  }
+
+  .menuControl {
+    gap: 7px;
+  }
+
+  .menuIcon {
+    width: 30px;
+    height: 10px;
+  }
+
+  .menuText {
+    display: inline;
+
+    font-size: 9px;
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+  }
+
+  .logoMark {
+    width: 100px;
+  }
+
+  .callback {
+    max-width: 92px;
+
+    font-size: 9px;
+    line-height: 1.2;
+    letter-spacing: 0.07em;
+  }
+
+  .menuLogoMark {
+    width: 100px;
+  }
+}
+
+/* =========================================================
+   Very narrow devices
+   ========================================================= */
+
+@media (max-width: 360px) {
+  .inner {
+    padding-inline: 12px;
+  }
+
+  .menuControl {
+    gap: 5px;
+  }
+
+  .menuIcon {
+    width: 27px;
+  }
+
+  .menuText {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .logoMark {
+    width: 90px;
+  }
+
+  .callback {
+    max-width: 78px;
+
+    font-size: 8px;
+    line-height: 1.2;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+/* =========================================================
+   Page-load intro, desktop only
+
+   These elements are revealed by the three-beat load sequence (see
+   the intro starts in lib/motion.js), and they start hidden HERE rather
+   than only in the GSAP from-state.
+
+   The server sends them visible, and GSAP cannot hide them until React
+   has hydrated. Measured at 1440px, that is a 194ms window in which the
+   finished page is painted — and because the sequence then holds the
+   header back until 1.5s and the photo until 3.15s, the result was a
+   glimpse of everything followed by a second and a half of empty cream.
+   A flash-then-hide reads as a page failing to load, not as an
+   entrance.
+
+   Desktop only, because only desktop runs the sequence; below 1025px
+   the original cascade starts immediately and there is nothing to hide
+   for.
+
+   The scripting query is the safety net: with JavaScript off, nothing
+   will ever reveal these, so they must never have been hidden.
+   ========================================================= */
+
+/*
+ * No width condition on these three blocks any more: the opening
+ * sequence runs at every size, so the controls have to start hidden at
+ * every size. Left desktop-only, a phone rendered them from the server,
+ * GSAP hid them at hydration and revealed them a second later — a
+ * flash, then a blank header.
+ */
+.menuControl,
+.logo,
+.callback {
+  opacity: 0;
+  visibility: hidden;
+
+  /*
+   * See the matching note in Hero.module.css. If the script that is
+   * meant to reveal these has not arrived, the header still appears.
+   */
+  animation: header-intro-fallback 500ms ease 2000ms forwards;
+}
+
+@keyframes header-intro-fallback {
+  to {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@media (min-width: 1025px) {
+  /*
+   * The divider is drawn open by a scaleX tween rather than faded, so
+   * its resting state is collapsed rather than transparent.
+   */
+  .divider {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+}
+
+.divider {
+  transform: scaleX(0);
+  transform-origin: left center;
+
+  /* Drawn open rather than faded, so its fallback is a scale too. */
+  animation: header-divider-fallback 500ms ease 2000ms forwards;
+}
+
+@keyframes header-divider-fallback {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (scripting: none) {
+  .menuControl,
+  .logo,
+  .callback {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .divider {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuControl,
+  .logo,
+  .callback {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .divider {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .divider,
+  .callback::after,
+  .closeIcon,
+  .menuLink,
+  .menuLink::before,
+  .menuImagePanel::after {
+    transition-duration: 0.01ms !important;
+  }
+}

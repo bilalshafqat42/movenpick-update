@@ -1,0 +1,30 @@
+.diagramWrapper {
+  position: relative;
+
+  width: 100%;
+}
+
+.diagramStatus {
+  margin: 0;
+  padding: 60px 0;
+
+  font-family: var(--font-body);
+  font-size: 14px;
+
+  color: rgba(7, 61, 97, 0.56);
+  text-align: center;
+}
+
+.diagram {
+  width: 100%;
+  overflow-x: auto;
+
+  padding-bottom: 8px;
+}
+
+.diagram svg {
+  display: block;
+  height: auto;
+  min-width: 720px;
+  max-width: 100%;
+}

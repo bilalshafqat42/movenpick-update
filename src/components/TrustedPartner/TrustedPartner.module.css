@@ -1,0 +1,595 @@
+.trustedPartner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  background: var(--color-gold);
+  color: var(--color-cream);
+}
+
+/* =========================================================
+   Text block
+   ========================================================= */
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+
+  padding: clamp(60px, 8vw, 110px) var(--page-gutter) clamp(40px, 6vw, 110px);
+
+  text-align: center;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: clamp(32px, 4vw, 48px);
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+}
+
+.label {
+  margin: 0 0 16px;
+
+  font-family: var(--font-noto-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+
+  color: var(--color-cream);
+}
+
+.heading {
+  max-width: 720px;
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.25;
+
+  color: var(--color-cream);
+}
+
+.text {
+  max-width: 620px;
+  margin: 22px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(255, 240, 231, 0.82);
+}
+
+/* =========================================================
+   Media block: full-width photo + overlapping card
+   ========================================================= */
+
+.mediaBlock {
+  position: relative;
+
+  width: 100%;
+  height: clamp(420px, 55vw, 660px);
+}
+
+/*
+ * The runway the photo is held across while the card grows over it.
+ * --tp-runway is set inline by TrustedPartnerClient from the same two
+ * constants the ScrollTrigger uses, so the held distance and the
+ * animated distance cannot drift apart.
+ *
+ * No overflow on this or any ancestor: anything other than `visible`
+ * makes an element a scroll container, which would trap the sticky
+ * child inside it rather than letting it stick to the page.
+ */
+.mediaScroll {
+  position: relative;
+
+  width: 100%;
+}
+
+/*
+ * Two independent 80vh rows on desktop, not one 80vh section split
+ * between them — the text block and the photo block each get their
+ * own full 80vh, with their content centred within it both ways.
+ *
+ * This has to sit AFTER the .mediaBlock rule above, not before it. It
+ * used to lead the file, where the later base rule beat it on source
+ * order at equal specificity, so the photo block was silently 660px on
+ * desktop instead of the 80vh (720px at 900px tall) this describes.
+ */
+@media (min-width: 1025px) {
+  /*
+   * A full screen, with the fixed header's 90px taken off the top so
+   * the content centres in the part of the screen that is actually
+   * visible rather than in the whole viewport with a bar over it.
+   *
+   * padding-bottom is dropped to 0 here on purpose. With equal padding
+   * top and bottom, adding the header clearance to the top alone would
+   * push the optical centre 45px below the real one. Clearing the
+   * bottom makes the content box exactly the visible area, so
+   * justify-content: center centres it in what the eye actually sees.
+   */
+  .textBlock {
+    justify-content: center;
+
+    height: 100vh;
+    height: 100svh;
+
+    padding-top: var(--header-height, 90px);
+    padding-bottom: 0;
+
+    /*
+     * Held while the photo below rides up over it.
+     *
+     * The gold panel stops where it is and the photo screen travels
+     * across it, instead of the two scrolling past together. No
+     * negative margin is needed for this one, unlike the gallery over
+     * the amenities: the photo already starts a screen below this
+     * block, so simply holding this block still turns that screen of
+     * scroll into the overlay.
+     *
+     * Confined by the section, so it releases once the photo is pinned
+     * over it and is never seen sliding away.
+     */
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
+
+  /*
+   * In front of the panel it travels over. Both are positioned
+   * elements, so this would win on source order alone, but the order is
+   * what the effect depends on — worth stating rather than inheriting.
+   */
+  .mediaScroll {
+    z-index: 1;
+  }
+
+  .mediaScroll {
+    height: calc(
+      100svh - var(--header-height, 90px) + var(--tp-runway, 1.1) * 100vh
+    );
+  }
+
+  /*
+   * Held centred on screen for the whole takeover by position: sticky
+   * rather than by GSAP's pin — 10vh is (100vh - 80vh) / 2, so the
+   * photo parks exactly in the middle of the viewport. Sticky is a
+   * positioned element, so the absolutely positioned .card below still
+   * measures against this box.
+   *
+   * The pin was rewriting this element's geometry while the browser
+   * tried to snap to the section, and the two fought over the scroll
+   * position badly enough to swallow most of a wheel gesture. Sticky
+   * changes no boxes.
+   */
+  /*
+   * Held below the header rather than centred in the viewport. The
+   * photo is its own full screen now, so there is no leftover space to
+   * centre it in: it starts where the header ends and runs to the
+   * bottom of the screen.
+   *
+   * Sticky rather than GSAP's pin. The pin was rewriting this element's
+   * geometry while the browser tried to snap to the section, and the
+   * two fought over the scroll position badly enough to swallow most of
+   * a wheel gesture. Sticky changes no boxes.
+   */
+  .mediaBlock {
+    position: sticky;
+    top: var(--header-height, 90px);
+
+    height: calc(100svh - var(--header-height, 90px));
+  }
+}
+
+.mediaImage {
+  object-fit: cover;
+  object-position: center center;
+}
+
+/*
+ * Soft golden blur where the photo meets the solid gold block above it,
+ * so the two sections blend instead of cutting off sharply.
+ */
+/* .mediaBlock::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+
+  height: clamp(90px, 12vw, 160px);
+
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--color-gold-rgb), 0.9) 0%,
+    rgba(var(--color-gold-rgb), 0.55) 45%,
+    rgba(var(--color-gold-rgb), 0) 100%
+  );
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  pointer-events: none;
+} */
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /*
+   * Only align-items (horizontal) mattered while the card was small,
+   * since its content plus padding filled the whole box either way.
+   * Once it grows to nearly the full section height, content needs
+   * justify-content too or it just sits at the top of all that extra
+   * vertical space.
+   */
+  justify-content: center;
+
+  width: min(450px, 90%);
+
+  padding: clamp(36px, 4vw, 56px) clamp(28px, 4vw, 48px);
+
+  background: rgba(var(--color-cream-rgb), 1);
+
+  /*
+   * No visible edge, at any size. The card is meant to read as plain
+   * cream, so once it has grown to cover the whole photo it simply
+   * becomes the background rather than a panel sitting on one.
+   *
+   * These used to be a gold hairline and a soft gold drop shadow, there
+   * to keep the card's outline readable against a page background of
+   * nearly the same cream. Grown to full bleed that outline became a
+   * rule drawn across the page and the shadow a band under it, right
+   * where the section meets the one below.
+   *
+   * border-color, not `border: 0`. The card's growth is driven by four
+   * measured insets (see measureInsets in TrustedPartnerClient), and
+   * removing the border outright would take 2px off the box and shift
+   * every one of those measurements. Transparent leaves the geometry
+   * untouched: background-clip defaults to border-box, so the cream
+   * simply paints through where the line used to be.
+   */
+  border: 1px solid transparent;
+  box-shadow: none;
+
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+
+  text-align: center;
+
+  transform: translate(-50%, -50%);
+}
+
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .card {
+    background: rgba(var(--color-cream-rgb), 0.97);
+  }
+}
+
+/*
+ * Desktop: how wide the card rests before the takeover grows it.
+ */
+
+@media (min-width: 1025px) {
+  .card {
+    /*
+     * Sized so the card rests 685px in from each side of the photo.
+     *
+     * Written as "the panel less 1370px" rather than as a width,
+     * because 685 is the figure that was asked for and this keeps it
+     * literally in the rule: at 1920 the panel is 1905 and the card
+     * comes out 535 wide, which is 685 either side exactly.
+     *
+     * The 340px floor is what stops it collapsing on narrower windows.
+     * Below about 1710px wide there is not 1370px to give away — at
+     * 1440 the subtraction alone would leave a 55px card — so the floor
+     * takes over and the inset simply becomes whatever is left.
+     *
+     * The 420px ceiling stops it growing on wider ones. A fixed
+     * subtraction means the card keeps gaining width with the screen:
+     * it reads well up to about 1790px, where it lands at 415, and by
+     * 1920 it has gained another 120px and the copy sits in a notably
+     * wider box. The ceiling holds it at the size it has on a laptop,
+     * so a 1920 or larger screen shows the same card rather than a
+     * bigger one. Past roughly 1790px the resting inset is therefore
+     * larger than 685 — that is the trade for a card that stays put.
+     */
+    width: clamp(340px, calc(100% - 1370px), 420px);
+  }
+}
+
+.cardHeading {
+  max-width: 420px;
+  margin: 0;
+
+  font-family: var(--font-gloock);
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 400;
+  line-height: 1.3;
+
+  color: var(--color-gold);
+}
+
+.cardText {
+  max-width: 400px;
+  margin: 20px 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(137, 118, 85, 0.75);
+}
+
+/*
+ * The copy keeps the width it has at rest, even once the card behind it
+ * has grown to fill the screen.
+ *
+ * --tp-card-content-width is measured and published by
+ * TrustedPartnerClient at the one moment the card is at its resting
+ * size. Without it the heading and paragraph stretch WITH the card as it
+ * grows and re-centre as they widen, so the finished state shows the
+ * same words in a different shape from the one that was designed.
+ *
+ * Applies at every width. It used to be inside the desktop block, which
+ * is why the takeover looked right on a laptop and wrong on a phone:
+ * measured on mobile, the heading drifted 31px sideways and grew from
+ * 314px to 372px wide across the grow, while on desktop it held exactly
+ * still at 244px. Nothing about the reason for the rule was ever
+ * desktop-specific — the variable is published at every width.
+ *
+ * The button is not listed: it sizes to its own label and is centred, so
+ * it never re-wrapped in the first place.
+ */
+.cardHeading,
+.cardText {
+  width: var(--tp-card-content-width, auto);
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 28px;
+  padding: 14px 26px;
+
+  border: 1px solid var(--color-gold);
+  border-radius: 999px;
+
+  font-family: var(--font-noto-sans);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  color: var(--color-gold);
+
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+}
+
+.ctaButton:hover,
+.ctaButton:focus-visible {
+  background: var(--color-gold);
+  color: var(--color-cream);
+}
+
+.ctaIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* =========================================================
+   Mobile
+   ========================================================= */
+
+@media (max-width: 767px) {
+  /*
+   * No snap points on these two blocks.
+   *
+   * They used to be one each: two full screens, and a gesture rested on
+   * one or the other rather than half way between. That was right while
+   * they scrolled past each other. It is wrong now that the photo
+   * travels UP OVER the held gold panel, because half way between is
+   * the whole effect — and snapping removed it completely.
+   *
+   * Measured with both snap points in place: asking to scroll 75, 150
+   * or 225px into the section landed back at 0, pulled to the gold
+   * panel; ten real wheel gestures of 90px moved the page 18px in
+   * total; and the next gesture jumped 866px straight to the photo. The
+   * travel could not happen at all, so the photo simply appeared.
+   *
+   * The section scrolls freely here now, exactly as it does on desktop,
+   * which is where this transition was already smooth.
+   */
+
+  /*
+   * The same overlay as desktop: the gold panel is held while the photo
+   * screen rides up over it. See the note in the desktop block.
+   *
+   * Sticky does not move an element's layout position, only where it
+   * paints, so the snap point above still resolves to the top of this
+   * block and a gesture still rests on the gold panel.
+   */
+  .textBlock {
+    position: sticky;
+    top: 0;
+    z-index: 0;
+  }
+
+  .mediaScroll {
+    z-index: 1;
+  }
+
+  .textBlock {
+    justify-content: center;
+
+    min-height: 100svh;
+
+    padding-top: calc(var(--header-height, 90px) + clamp(20px, 4svh, 48px));
+    padding-bottom: clamp(24px, 5svh, 56px);
+  }
+
+  /*
+   * One screen for the photo, plus the runway the card's takeover plays
+   * across — same shape as the desktop rule above, just with the photo
+   * filling the whole screen rather than 80% of it. --tp-runway is set
+   * inline by TrustedPartnerClient from the same two constants its
+   * ScrollTrigger uses, so the held distance and the animated distance
+   * cannot drift apart.
+   */
+  .mediaScroll {
+    min-height: calc(100svh + var(--tp-runway, 1.1) * 100svh);
+  }
+
+  .logo {
+    width: 180px;
+  }
+
+  /*
+   * Roomier spacing, to use the screen rather than leave 353px of empty
+   * gold above the mark and 273px below the copy on a 956px screen.
+   *
+   * Deliberately uneven, and NOT space-between. The eyebrow and the
+   * heading are one unit — an even distribution would have put ~170px
+   * between them and broken the pair apart. So the logo, which is a
+   * separate brand mark, takes the large gap; the eyebrow stays tight
+   * to its heading; the body copy takes a middling one. All three scale
+   * with the screen so a short handset tightens rather than overflows.
+   */
+  .logoWrapper {
+    /* 50px, tightening on a short handset so the larger mark plus the
+       copy still fit one screen. */
+    margin-bottom: clamp(28px, 5.3svh, 50px);
+  }
+
+  .label {
+    margin-bottom: clamp(14px, 2.2svh, 22px);
+  }
+
+  .text {
+    margin-top: clamp(20px, 3.6svh, 36px);
+  }
+
+  .heading {
+    font-size: 24px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+
+  /*
+   * Held on screen for the whole takeover by position: sticky, the same
+   * mechanism the desktop rule uses. top is 0 rather than 10vh because
+   * here the photo is the full height of the screen, so there is
+   * nothing to centre it within.
+   */
+  .mediaBlock {
+    position: sticky;
+    top: 0;
+
+    height: 100svh;
+  }
+
+  /*
+   * fit-content, not a percentage.
+   *
+   * The card used to shrink-wrap its text here by accident: the resting
+   * size was measured while an inline `width: auto` was still on the
+   * element, so the 88% in this rule never actually applied. Now that
+   * the measurement respects the stylesheet, 88% would suddenly widen
+   * the card from about 220px to 388px — a visible change to a mobile
+   * layout that was signed off as it stands. fit-content asks for the
+   * shrink-wrap deliberately, so the size is what it was and the rule
+   * now says so rather than leaking it.
+   */
+  /*
+   * Proportioned like the desktop card rather than like a phone screen.
+   *
+   * It used to be 314 wide and 714 tall — a ratio of 0.44, a tall
+   * narrow strip with slivers of photograph beside it. Desktop's card
+   * sits between 0.69 and 1.04 depending on the window, which is the
+   * shape that was signed off.
+   *
+   * Two changes get it there. The height is content-driven now, exactly
+   * as it is on desktop: the old `min-height: calc(100% - 242px)`
+   * stretched the card to three quarters of the screen whatever the
+   * copy needed, and that alone is what made it a strip. And the card
+   * is wider, so the paragraph wraps at a comfortable measure instead
+   * of into a column.
+   *
+   * Measured at rest with the 64px gutter below: 376x364 at 440 wide
+   * (ratio 1.03), 326x412 at 390 (0.79), 296x468 at 360 (0.63) — inside
+   * the desktop range at every size, with the photograph showing 32px
+   * either side and 150-300px above and below.
+   *
+   * No max-width or max-height: the takeover drives the card out to the
+   * whole panel, and a ceiling would quietly stop it short of full
+   * bleed.
+   */
+  .card {
+    width: calc(100% - 64px);
+
+    padding: 44px 32px;
+  }
+}
+
+/* =========================================================
+   Reduced motion
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .logoWrapper,
+  .label,
+  .heading,
+  .text,
+  .mediaImage,
+  .card {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .logoWrapper,
+  .label,
+  .heading,
+  .text,
+  .mediaImage {
+    transform: none !important;
+  }
+}

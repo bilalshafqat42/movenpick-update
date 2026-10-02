@@ -1,0 +1,44 @@
+/*
+ * Fixed to the bottom, same positioning convention as CookieConsent
+ * (see that component's own module CSS) — deliberately not pinned to the
+ * top, which is where the site's own header lives as position: fixed; a
+ * banner inserted above it in the DOM would not push it down, since fixed
+ * positioning ignores document flow entirely, and the two would overlap.
+ * The bottom is uncontested.
+ */
+.banner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  padding: 10px var(--page-gutter, 24px);
+
+  background: #111;
+  color: #fff;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+}
+
+.label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.exit {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.exit:hover {
+  opacity: 0.8;
+}

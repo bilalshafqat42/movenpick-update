@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+:root {
+  /*
+   * These three names are the old Oceara template's font roles
+   * (body/heading/decorative-cursive), still referenced across the
+   * site (MapSection, Hero, Contact, Chat, and others) rather than
+   * every one of those files having been individually migrated to
+   * --font-gloock/--font-noto-sans directly. Repointing the aliases
+   * here to the Movenpick brand fonts — instead of editing every
+   * file that still uses var(--font-body)/var(--font-heading)/
+   * var(--font-curve) — is what actually makes Gloock and Noto Sans
+   * the fonts used everywhere on the site, not just wherever a file
+   * happened to already reference them by their real names.
+   */
+  --font-body: var(--font-noto-sans), Arial, sans-serif;
+  --font-heading: var(--font-gloock), Georgia, serif;
+  --font-curve: var(--font-gloock), cursive;
+
+  /* Movenpick brand palette */
+  --color-cream: #fff0e7;
+  --color-cream-rgb: 255, 240, 231;
+  --color-gold: #897655;
+  --color-gold-rgb: 137, 118, 85;
+  --color-red: #f95331;
+  --color-cta-red: #ff4016;
+  /* Same colour as an RGB triplet, so rules can set their own alpha on it. */
+  --color-cta-red-rgb: 255, 64, 22;
+
+  /*
+   * Standard side padding for every section: 1 column of a 12-column grid
+   * on each side (2/12 total), per the approved design spec. 8.3334vw is
+   * 1/12 of the viewport width; clamped so it never collapses too tight
+   * on small screens or grows excessively wide on large monitors.
+   */
+  --page-gutter: clamp(20px, 8.3334vw, 140px);
+
+  /*
+   * The fixed header's height. It is currently also written literally
+   * in Header.module.css, in Amenities' sticky offset, and in the
+   * scroll-padding below — worth pointing those at this name next time
+   * one of them is touched, so a change to the header does not have to
+   * be chased through four files.
+   */
+  --header-height: 90px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+
+  /*
+   * The brand cream, not the slightly greyer #f2ede5 this used to be.
+   *
+   * This colour is what shows wherever the page itself does not paint:
+   * the overscroll area above and below the document, and behind any
+   * section without its own background. At #f2ede5 it read as a
+   * different tone from every cream section sitting on top of it.
+   */
+  background: var(--color-cream);
+  color: #17201f;
+}
+
+/*
+ * Section thresholds — a scroll gesture comes to rest at a section
+ * boundary rather than half way through one.
+ *
+ * "proximity", not "mandatory". Mandatory would force a snap after
+ * EVERY gesture, and two sections here are deliberately several
+ * viewports tall (Amenities' four-stage journey, Project Gallery's
+ * horizontal one). Forcing a snap inside those would fight the scroll
+ * that drives them and can leave a visitor unable to stop where they
+ * want. Proximity only engages when a gesture already comes to rest
+ * near a boundary, which is the "threshold" behaviour without the
+ * hijacking.
+ */
+html {
+  scroll-snap-type: y proximity;
+
+  /* Matches the fixed header's height so a snap point's element lands
+     fully below it, not partially hidden underneath. */
+  scroll-padding-top: 90px;
+}
+
+/*
+ * The snap targets, listed here rather than scattered across each
+ * section's own module: which sections act as thresholds is a
+ * page-level decision, and one list is far easier to reason about than
+ * seven separate declarations.
+ *
+ * Project Gallery is deliberately absent because it owns its own snap
+ * point already, placed on its inner scroll wrapper (.scrollWrapper) so
+ * the anchor stays still while its journey plays.
+ */
+/*
+ * #project-overview is deliberately NOT in this list. It rides up over
+ * the hero's pinned photograph, and a snap point in the middle of that
+ * handover fought the gesture that was driving it.
+ */
+/*
+ * #contact is deliberately NOT in this list either, for the same reason
+ * as #project-overview above: the footer now rides up over it and it is
+ * held in place by position: sticky while that happens.
+ *
+ * A sticky element takes its snap area with it. Once this section stuck
+ * to the top of the viewport, its snap point sat permanently under the
+ * scroll position and kept pulling the page back to it — so the page
+ * could not be scrolled past. Measured: the bottom of the page became
+ * unreachable by 735px on a 440x956 phone and 660px on a 1024x768
+ * tablet, which is the whole footer. With the snap point removed the
+ * page reaches the bottom exactly.
+ */
+#trusted-partner,
+#gallery,
+#location-map,
+#payment-plan {
+  scroll-snap-align: start;
+}
+
+/*
+ * Trusted Partner is two full screens on desktop, and the first of them
+ * carries its own header clearance internally (see .textBlock in
+ * TrustedPartner.module.css). So it wants the global scroll-padding
+ * cancelled: without this it would rest 90px down and hang that far
+ * below the fold, which is the same reasoning as the mobile block
+ * below.
+ */
+@media (min-width: 1025px) {
+  #trusted-partner {
+    scroll-margin-top: calc(-1 * var(--header-height, 90px));
+  }
+}
+
+/*
+ * Mobile: the hero and the project overview each become exactly one
+ * screen, so they get their own snap point and rest flush.
+ *
+ * The negative scroll-margin cancels the scroll-padding above. That
+ * padding exists so an ordinary section lands clear of the fixed
+ * header, but a section that is deliberately 100svh tall would then
+ * rest 90px down and hang that far below the fold. These two carry
+ * their own header clearance internally instead, so they want the
+ * padding cancelled.
+ *
+ * The hero gets a snap point ONLY here. On desktop it must not have one
+ * (see the note below) because its Scroll Down journey and the frame's
+ * scrubbed growth both run through that scroll range; on mobile there
+ * is no growth animation and Scroll Down leaves the section entirely.
+ */
+@media (max-width: 767px) {
+  #home {
+    scroll-snap-align: start;
+  }
+
+  #home,
+  #project-overview {
+    scroll-margin-top: calc(-1 * var(--header-height, 90px));
+  }
+}
+
+/*
+ * The hero's photo panel snaps on desktop, at the position where it
+ * fills the screen — which is also where its growth finishes and where
+ * Scroll Down lands, so all three agree on one resting composition.
+ *
+ * The negative scroll-margin cancels the scroll-padding above. That
+ * padding keeps an ordinary section clear of the fixed header, but this
+ * panel is full-bleed and the header is meant to float over it; without
+ * the cancellation it would rest 90px short of covering the screen.
+ *
+ * This section carried a warning for a while that it must NOT have a
+ * snap point, after an earlier attempt wrecked it: Scroll Down animates
+ * the scroll position with GSAP frame by frame, the browser re-snapped
+ * after each of those frames, and the two took turns dragging the page
+ * — 276px of movement in a single frame against 12px without it. That
+ * cause is gone. The button's handler now suspends snapping for the
+ * duration of its tween and restores it on completion and on interrupt
+ * (see revealImage in HeroClient), so there is nothing left to fight.
+ * If this section ever stutters again, that suspension is the first
+ * thing to check.
+ */
+
+@media (min-width: 1025px) {
+  #hero-image {
+    scroll-snap-align: start;
+    scroll-margin-top: calc(-1 * var(--header-height, 90px));
+  }
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-curve {
+  font-family: var(--font-curve);
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
