@@ -21,6 +21,7 @@ import Project from "@/components/Project";
 import SeaSection from "@/components/SeaSection";
 import Gallery from "@/components/Gallery";
 import Payment from "@/components/Payment";
+import FloorPlan from "@/components/FloorPlan";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop/BackToTop";
 import Chat from "@/components/Chat/Chat";
@@ -96,6 +97,8 @@ export default async function Home() {
         {/* <SeaSection /> */}
 
         <Payment />
+
+        <FloorPlan />
 
         <Contact />
 

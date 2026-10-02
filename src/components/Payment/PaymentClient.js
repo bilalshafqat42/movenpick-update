@@ -21,6 +21,13 @@ export default function PaymentClient({
   imageFallback,
   imageAlt,
   milestones,
+  /*
+   * Overridable so the same layout can be placed again as another
+   * section (see FloorPlan) with its own anchor and column names.
+   */
+  id = "payment-plan",
+  titleId = "payment-title",
+  columnLabels = ["Milestone", "%"],
 }) {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
@@ -236,12 +243,12 @@ export default function PaymentClient({
   return (
     <section
       ref={sectionRef}
-      id="payment-plan"
+      id={id}
       className={styles.payment}
-      aria-labelledby="payment-title"
+      aria-labelledby={titleId}
     >
       <div className={styles.intro}>
-        <h2 ref={headingRef} id="payment-title" className={styles.heading}>
+        <h2 ref={headingRef} id={titleId} className={styles.heading}>
           {heading}
         </h2>
 
@@ -267,8 +274,8 @@ export default function PaymentClient({
 
         <div className={styles.tablePanel}>
           <div ref={tableHeaderRef} className={styles.tableHeader}>
-            <span>Milestone</span>
-            <span>%</span>
+            <span>{columnLabels[0]}</span>
+            <span>{columnLabels[1]}</span>
           </div>
 
           <div ref={tableRef} className={styles.table}>
