@@ -101,13 +101,30 @@ export function checkRateLimit(bucket, { limit, windowMs }) {
  * Best-effort client IP. Takes a Headers object so it works from a Route
  * Handler (`request.headers`) or a Server Action (`await headers()`).
  *
- * Render sets x-forwarded-for; the left-most entry is the original client.
- * Requests without one fall back to a shared bucket, which is
- * intentionally conservative — anyone able to strip the header lands in
+ * Cloudflare's own headers come first. The left-most x-forwarded-for entry
+ * is whatever the CLIENT sent, so trusting it let a script put a different
+ * fake IP on every request and never hit the limit. Cloudflare overwrites
+ * cf-connecting-ip / true-client-ip with the address it actually saw, so a
+ * visitor cannot forge them on any request that came through Cloudflare.
+ *
+ * x-forwarded-for remains only as a fallback for local development and any
+ * deployment without Cloudflare in front. If the site is ever moved off
+ * Cloudflare, revisit this: it is the weak link.
+ *
+ * Requests without any of these fall back to a shared bucket, which is
+ * intentionally conservative — anyone able to strip the headers lands in
  * the same bucket as every other header-less caller rather than getting an
  * unlimited private one.
  */
 export function getClientIp(requestHeaders) {
+  const edgeIp =
+    requestHeaders.get("cf-connecting-ip") ??
+    requestHeaders.get("true-client-ip");
+
+  if (edgeIp) {
+    return edgeIp.trim();
+  }
+
   const forwarded = requestHeaders.get("x-forwarded-for");
 
   if (forwarded) {
