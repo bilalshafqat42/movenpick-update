@@ -62,6 +62,17 @@ const CENTRE_WIDTH_SCALE = 1.2;
 const SIDE_SCALE = 0.9;
 
 /*
+ * A further 30% on the centre photo, in both height and width, on top of
+ * everything above. It deliberately goes past the desktop height budget,
+ * so on an ordinary laptop the caption under the photo sits a short
+ * scroll below the fold. The width is still kept clear of the side cards
+ * (CENTRE_SIDE_CLEARANCE), so where that bites — around 1024-1440px wide,
+ * and on phones — the photo grows to that limit instead, while its
+ * height still grows the full 30%.
+ */
+const CENTRE_GROWTH = 1.3;
+
+/*
  * Minimum gap kept between the scaled centre photo and each side card.
  * On a phone the side cards are so narrow that the full 20% would cover
  * part of them, so there the centre grows only as far as this allows.
@@ -85,11 +96,6 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const carouselRef = useRef(null);
-
-  const [cursorVisible, setCursorVisible] = useState(false);
-  const cursorRef = useRef(null);
-  const cursorMoveXRef = useRef(null);
-  const cursorMoveYRef = useRef(null);
 
   const cardRefs = useRef([]);
   const imageWrapperRefs = useRef([]);
@@ -115,205 +121,6 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-
-  /*
-   * A JS-driven cursor rather than the native CSS `cursor` property — see
-   * ProjectGalleryClient for why: browsers cap how large a native cursor
-   * image can render, so a real element positioned under the pointer is
-   * the only way to show this icon at full size in every browser.
-   *
-   * Visibility is decided by testing the pointer's position against the
-   * PHOTOGRAPHS, not against the carousel's box. The icon invites a
-   * drag, and only the photos are draggable — over the cream space
-   * around them, or the caption beneath, the ordinary arrow is the
-   * honest cursor.
-   *
-   * Tested by hit-testing each visible card's image rather than by
-   * onMouseEnter/onMouseLeave on them — this carousel calls
-   * setPointerCapture during a drag (see handlePointerDown below), and a
-   * captured pointer can leave the visible area without ever firing
-   * mouseleave, which would leave the icon stuck on screen after a drag
-   * ends elsewhere.
-   *
-   * The crucial part is WHEN that test runs. It used to run only on
-   * pointermove, which meant the pointer had to move for anything to
-   * change — and scrolling does not move the pointer. Scrolling the
-   * carousel up under a stationary pointer left the icon hidden until
-   * the mouse was jiggled or clicked, and scrolling the carousel away
-   * left the icon stranded on screen over the rest of the page. So the
-   * same test also runs whenever the page scrolls or resizes, against
-   * the last position the pointer was seen at.
-   */
-  useEffect(() => {
-    const cursor = cursorRef.current;
-
-    if (!cursor) {
-      return undefined;
-    }
-
-    cursorMoveXRef.current = gsap.quickTo(cursor, "x", {
-      duration: 0.12,
-      ease: "power3.out",
-    });
-
-    cursorMoveYRef.current = gsap.quickTo(cursor, "y", {
-      duration: 0.12,
-      ease: "power3.out",
-    });
-
-    let wasInside = false;
-
-    /*
-     * Where the pointer was last seen. Needed because a scroll has to be
-     * judged against a position it cannot itself report.
-     */
-    let pointerX = 0;
-    let pointerY = 0;
-    let pointerKnown = false;
-
-    /*
-     * True while the pointer is over one of the photographs on screen.
-     *
-     * Only the cards at centre/left/right are on screen — the rest are
-     * parked at data-position="hidden" — and it is the image wrapper
-     * that is tested, not the card, because a card's box also contains
-     * the caption below the photo.
-     */
-    const isOverAPhoto = () => {
-      const cards = cardRefs.current;
-
-      for (let index = 0; index < cards.length; index += 1) {
-        const card = cards[index];
-
-        if (!card || card.dataset.position === "hidden") {
-          continue;
-        }
-
-        const image = imageWrapperRefs.current[index];
-
-        if (!image) {
-          continue;
-        }
-
-        const rect = image.getBoundingClientRect();
-
-        if (
-          pointerX >= rect.left &&
-          pointerX <= rect.right &&
-          pointerY >= rect.top &&
-          pointerY <= rect.bottom
-        ) {
-          return true;
-        }
-      }
-
-      return false;
-    };
-
-    const evaluate = () => {
-      if (!pointerKnown) {
-        return;
-      }
-
-      /*
-       * A drag in progress keeps the icon regardless of where the
-       * pointer has travelled to. The gesture started on a photo and
-       * still owns the pointer, so losing the icon part way through it
-       * would read as the drag having been dropped.
-       */
-      const isOverArrow = Boolean(
-        document
-          .elementFromPoint(pointerX, pointerY)
-          ?.closest("[data-gallery-nav]"),
-      );
-
-      const isInside =
-        dragStateRef.current.isDragging || (!isOverArrow && isOverAPhoto());
-
-      /*
-       * Placed instantly on the way in, so it does not glide across the
-       * screen from wherever it was last left. Only the following moves
-       * are smoothed.
-       */
-      if (isInside && !wasInside) {
-        gsap.set(cursor, { x: pointerX, y: pointerY });
-      }
-
-      wasInside = isInside;
-
-      setCursorVisible(isInside);
-
-      if (isInside) {
-        cursorMoveXRef.current?.(pointerX);
-        cursorMoveYRef.current?.(pointerY);
-      }
-    };
-
-    const handlePointerMove = (event) => {
-      if (event.pointerType !== "mouse") {
-        return;
-      }
-
-      pointerX = event.clientX;
-      pointerY = event.clientY;
-      pointerKnown = true;
-
-      evaluate();
-    };
-
-    /*
-     * Coalesced to one check per frame: this runs on scroll, and reading
-     * a bounding box is a layout read — doing it per scroll event on a
-     * page this animation-heavy would be a needless cost.
-     */
-    let queued = false;
-
-    const handleReflow = () => {
-      if (queued) {
-        return;
-      }
-
-      queued = true;
-
-      window.requestAnimationFrame(() => {
-        queued = false;
-        evaluate();
-      });
-    };
-
-    const handlePointerLeaveWindow = () => {
-      wasInside = false;
-      pointerKnown = false;
-      setCursorVisible(false);
-    };
-
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("scroll", handleReflow, { passive: true });
-    window.addEventListener("resize", handleReflow);
-    /*
-     * The end of a drag has to be re-tested too. A drag keeps the icon
-     * wherever the pointer travels, so releasing over the caption or the
-     * cream space left the icon showing with nothing under it to justify
-     * it. handleReflow defers to the next frame, which is what makes
-     * this correct regardless of whether this listener or the
-     * carousel's own pointerup handler runs first — by then the drag
-     * flag has been cleared either way.
-     */
-    window.addEventListener("pointerup", handleReflow);
-    window.addEventListener("pointercancel", handleReflow);
-    window.addEventListener("pointerleave", handlePointerLeaveWindow);
-    window.addEventListener("blur", handlePointerLeaveWindow);
-
-    return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("scroll", handleReflow);
-      window.removeEventListener("resize", handleReflow);
-      window.removeEventListener("pointerup", handleReflow);
-      window.removeEventListener("pointercancel", handleReflow);
-      window.removeEventListener("pointerleave", handlePointerLeaveWindow);
-      window.removeEventListener("blur", handlePointerLeaveWindow);
-    };
-  }, []);
 
   /*
    * Desktop dimensions:
@@ -430,7 +237,7 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
        */
       const sideWidth = Math.max(48, viewportWidth * 0.11) * SIDE_SCALE;
 
-      const centreHeight = window.innerHeight * 0.5;
+      const centreHeight = window.innerHeight * 0.5 * CENTRE_GROWTH;
       const centreWidth = Math.min(
         centreHeight * MOBILE_CENTRE_ASPECT * CENTRE_WIDTH_SCALE,
         viewportWidth * 0.86,
@@ -455,7 +262,7 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
     if (viewportWidth <= 767) {
       const sideWidth = Math.max(62, viewportWidth * 0.13) * SIDE_SCALE;
 
-      const centreHeight = window.innerHeight * 0.5;
+      const centreHeight = window.innerHeight * 0.5 * CENTRE_GROWTH;
       const centreWidth = Math.min(
         centreHeight * MOBILE_CENTRE_ASPECT * CENTRE_WIDTH_SCALE,
         viewportWidth * 0.86,
@@ -513,7 +320,8 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
 
     sideWidth *= SIDE_SCALE;
 
-    const centreHeight = Math.min(widthCap / CENTRE_ASPECT, heightBudget);
+    const centreHeight =
+      Math.min(widthCap / CENTRE_ASPECT, heightBudget) * CENTRE_GROWTH;
     const centreWidth = Math.min(
       centreHeight * CENTRE_ASPECT * CENTRE_WIDTH_SCALE,
       viewportWidth - 2 * (sideWidth + CENTRE_SIDE_CLEARANCE),
@@ -1577,15 +1385,6 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
             />
           </>
         )}
-      </div>
-
-      <div
-        ref={cursorRef}
-        className={styles.customCursor}
-        data-visible={cursorVisible ? "true" : "false"}
-        aria-hidden="true"
-      >
-        <Image src="/images/drag-icon.svg" alt="" width={200} height={200} />
       </div>
 
       <div className={styles.pagination} aria-label="Gallery pagination">

@@ -115,25 +115,18 @@
 }
 
 /*
- * The native cursor is hidden ONLY over the photographs themselves, not
- * across the whole stage. The drag icon is an invitation to drag a
- * photo, so it belongs on the photos; the cream space around them, and
- * the caption beneath, are not draggable and keep the ordinary arrow.
- *
- * The dragging case is separate on purpose: a drag that starts on a
- * photo and travels off it still owns the pointer (setPointerCapture),
- * so the icon has to stay and the native arrow has to stay hidden until
- * the gesture ends. Without this the two would swap back and forth
- * mid-drag.
+ * The centre photo is the one that drags, so it shows the grab hand
+ * (its button is disabled, which would otherwise give the plain arrow),
+ * closing while a drag is under way. The side photos keep the pointer:
+ * clicking one brings it to the centre.
  */
-.imageWrapper,
-.imageWrapper * {
-  cursor: none !important;
+.cardButton:disabled .imageWrapper {
+  cursor: grab;
 }
 
 .carousel[data-dragging="true"],
 .carousel[data-dragging="true"] * {
-  cursor: none !important;
+  cursor: grabbing !important;
 }
 
 /* =========================================================
@@ -180,32 +173,6 @@
   .navNext {
     right: max(0px, calc(var(--gallery-side-width, 44px) / 2 - 22px));
   }
-}
-
-/* =========================================================
-   Custom cursor
-   ========================================================= */
-
-.customCursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 50;
-
-  width: 200px;
-  height: 200px;
-  margin-top: -100px;
-  margin-left: -100px;
-
-  opacity: 0;
-
-  pointer-events: none;
-
-  transition: opacity 100ms ease;
-}
-
-.customCursor[data-visible="true"] {
-  opacity: 1;
 }
 
 .card {
