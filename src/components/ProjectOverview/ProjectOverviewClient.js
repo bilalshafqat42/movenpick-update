@@ -20,6 +20,9 @@ export default function ProjectOverviewClient({
   cta1Href,
   cta2Label,
   cta2Href,
+  id = "project-overview",
+  standalone = false,
+  analyticsLocation = "project_overview",
 }) {
   const sectionRef = useRef(null);
   const descriptionRef = useRef(null);
@@ -204,9 +207,9 @@ export default function ProjectOverviewClient({
   return (
     <section
       ref={sectionRef}
-      id="project-overview"
-      className={styles.projectOverview}
-      aria-labelledby="project-overview-description"
+      id={id}
+      className={`${styles.projectOverview} ${standalone ? styles.standalone : ""}`}
+      aria-labelledby={`${id}-description`}
     >
       {/*
        * Split on whitespace and kept as separate tokens, so the runs of
@@ -217,7 +220,7 @@ export default function ProjectOverviewClient({
        */}
       <h2
         ref={descriptionRef}
-        id="project-overview-description"
+        id={`${id}-description`}
         className={styles.description}
       >
         {description.split(/(\s+)/).map((token, index) =>
@@ -265,7 +268,7 @@ export default function ProjectOverviewClient({
           download="movenpick-brochure.pdf"
           className={styles.ctaButton}
           onClick={() =>
-            trackEvent("brochure_download", { location: "project_overview" })
+            trackEvent("brochure_download", { location: analyticsLocation })
           }
         >
           <span>{cta2Label}</span>

@@ -64,6 +64,12 @@ export default async function Home() {
 
         {/* <Project /> */}
 
+        <ProjectOverview
+          id="project-overview-2"
+          standalone
+          analyticsLocation="project_overview_2"
+        />
+
         <MapSection
           eyebrow={locationContent.eyebrow}
           heading={locationContent.heading}

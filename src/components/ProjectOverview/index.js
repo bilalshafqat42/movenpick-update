@@ -9,7 +9,17 @@ import ProjectOverviewClient from "./ProjectOverviewClient";
 const DESCRIPTION =
   "Mövenpick Residences Dubai Motor City offers wellness-focused, furnished studios and 1–2BR apartments with views of Arabian Ranches, the skyline, and Motor City.";
 
-export default async function ProjectOverview() {
+/*
+ * Rendered twice on the homepage: once under the hero, and again further
+ * down as a full-screen `standalone` copy (see page.js). The standalone
+ * one takes its own id and skips the ride over the hero's pinned photo,
+ * which only makes sense directly beneath the hero.
+ */
+export default async function ProjectOverview({
+  id,
+  standalone = false,
+  analyticsLocation,
+} = {}) {
   const content = await getSectionContent(
     "projectOverview",
     buildDefaultsFromFields(PROJECT_OVERVIEW_FIELDS),
@@ -22,6 +32,9 @@ export default async function ProjectOverview() {
 
   return (
     <ProjectOverviewClient
+      id={id}
+      standalone={standalone}
+      analyticsLocation={analyticsLocation}
       description={DESCRIPTION}
       stats={stats}
       cta1Label={content["cta-1-label"]}
