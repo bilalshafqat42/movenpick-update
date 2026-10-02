@@ -2,10 +2,18 @@ import dynamic from "next/dynamic";
 
 import { getSectionContent, buildDefaultsFromFields } from "@/lib/content";
 import { CHAT_AGENT_FIELDS } from "@/content/sections/chatAgent";
-import { LOCATION_FIELDS, shapeLocationContent } from "@/content/sections/location";
+import {
+  LOCATION_FIELDS,
+  shapeLocationContent,
+} from "@/content/sections/location";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ProjectOverview from "@/components/ProjectOverview";
+import {
+  OVERVIEW_DAY_HEADING,
+  OVERVIEW_DAY_INTRO,
+  OVERVIEW_DAY_ITEMS,
+} from "@/content/sections/overviewDay";
 import Amenities from "@/components/Amenities";
 import ProjectGallery from "@/components/ProjectGallery";
 import TrustedPartner from "@/components/TrustedPartner";
@@ -13,6 +21,7 @@ import Project from "@/components/Project";
 import SeaSection from "@/components/SeaSection";
 import Gallery from "@/components/Gallery";
 import Payment from "@/components/Payment";
+import FloorPlan from "@/components/FloorPlan";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop/BackToTop";
 import Chat from "@/components/Chat/Chat";
@@ -44,7 +53,10 @@ export default async function Home() {
   );
 
   const locationContent = shapeLocationContent(
-    await getSectionContent("location", buildDefaultsFromFields(LOCATION_FIELDS)),
+    await getSectionContent(
+      "location",
+      buildDefaultsFromFields(LOCATION_FIELDS),
+    ),
   );
 
   return (
@@ -68,6 +80,9 @@ export default async function Home() {
           id="project-overview-2"
           standalone
           analyticsLocation="project_overview_2"
+          description={OVERVIEW_DAY_HEADING}
+          intro={OVERVIEW_DAY_INTRO}
+          dayItems={OVERVIEW_DAY_ITEMS}
         />
 
         <MapSection
@@ -82,6 +97,8 @@ export default async function Home() {
         {/* <SeaSection /> */}
 
         <Payment />
+
+        <FloorPlan />
 
         <Contact />
 
