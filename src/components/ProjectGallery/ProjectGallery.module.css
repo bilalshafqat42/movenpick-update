@@ -275,6 +275,19 @@
   color: rgba(255, 255, 255, 0.75);
 }
 
+/*
+ * The long arrows at either end of the bar, held off it by about 50px
+ * (the row's 20px gap plus this margin). Less on a phone, where the bar
+ * needs the room.
+ */
+.navPrev {
+  margin-right: 30px;
+}
+
+.navNext {
+  margin-left: 30px;
+}
+
 /* =========================================================
    Mobile
    ========================================================= */
@@ -290,6 +303,14 @@
 
   .pagination {
     gap: 14px;
+  }
+
+  .navPrev {
+    margin-right: 10px;
+  }
+
+  .navNext {
+    margin-left: 10px;
   }
 
   /*
