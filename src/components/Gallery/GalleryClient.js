@@ -486,8 +486,7 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
       const stage = carouselRef.current;
 
       if (stage) {
-        const { centreWidth, centreHeight, sideWidth, sideHeight, sideYOffset } =
-          getResponsiveSizes();
+        const { centreWidth, centreHeight } = getResponsiveSizes();
 
         /*
          * Published before the caption is measured, not after: it is
@@ -497,24 +496,6 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
         stage.style.setProperty(
           "--gallery-caption-width",
           `${Math.round(centreWidth)}px`,
-        );
-
-        /*
-         * The arrows centre on the photo rather than on the whole stage
-         * (which includes the caption), and on a phone sit over the
-         * narrow side cards — so those figures are published for the CSS.
-         */
-        stage.style.setProperty(
-          "--gallery-photo-height",
-          `${Math.round(centreHeight)}px`,
-        );
-        stage.style.setProperty(
-          "--gallery-side-width",
-          `${Math.round(sideWidth)}px`,
-        );
-        stage.style.setProperty(
-          "--gallery-side-middle",
-          `${Math.round(sideYOffset + sideHeight / 2)}px`,
         );
 
         stage.style.height = `${Math.round(centreHeight + getCaptionBlock())}px`;
@@ -826,11 +807,6 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
   const handlePointerDown = useCallback(
     (event) => {
       if (isAnimating || event.button > 0) {
-        return;
-      }
-
-      /* The arrows are buttons, not the start of a drag. */
-      if (event.target.closest("[data-gallery-nav]")) {
         return;
       }
 
@@ -1367,27 +1343,23 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
             </article>
           );
         })}
-
-        {galleryItems.length > 1 && (
-          <>
-            <NavArrow
-              direction="prev"
-              className={styles.navPrev}
-              data-gallery-nav=""
-              onClick={showPrevious}
-            />
-
-            <NavArrow
-              direction="next"
-              className={styles.navNext}
-              data-gallery-nav=""
-              onClick={showNext}
-            />
-          </>
-        )}
       </div>
 
+      {/*
+       * The controls row under the carousel: long-line arrows either side
+       * of the slide indicator, the same arrangement as the project
+       * gallery's arrows around its progress bar.
+       */}
       <div className={styles.pagination} aria-label="Gallery pagination">
+        {galleryItems.length > 1 && (
+          <NavArrow
+            variant="line"
+            direction="prev"
+            className={styles.navPrev}
+            onClick={showPrevious}
+          />
+        )}
+
         {galleryItems.map((item, index) => (
           <button
             key={item.image}
@@ -1400,6 +1372,15 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
             onClick={() => selectSlide(index)}
           />
         ))}
+
+        {galleryItems.length > 1 && (
+          <NavArrow
+            variant="line"
+            direction="next"
+            className={styles.navNext}
+            onClick={showNext}
+          />
+        )}
       </div>
     </section>
   );

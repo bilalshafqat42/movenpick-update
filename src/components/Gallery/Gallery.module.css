@@ -129,52 +129,6 @@
   cursor: grabbing !important;
 }
 
-/* =========================================================
-   Previous / next arrows
-
-   The shared NavArrow, placed on the page gutter like the project
-   gallery's and centred on the photo rather than on the whole stage
-   (which also holds the caption). Above every card, whose stacking
-   GalleryClient sets up to 4.
-   ========================================================= */
-
-.navPrev,
-.navNext {
-  position: absolute;
-  top: calc(var(--gallery-photo-height, 600px) / 2);
-  z-index: 6;
-
-  transform: translateY(-50%);
-}
-
-.navPrev {
-  left: var(--page-gutter);
-}
-
-.navNext {
-  right: var(--page-gutter);
-}
-
-/*
- * On a phone the gutter would put the arrows over the centre photo's
- * edge, so they centre on the narrow side cards instead, which sit
- * lower than the photo's middle there.
- */
-@media (max-width: 767px) {
-  .navPrev,
-  .navNext {
-    top: var(--gallery-side-middle, 50%);
-  }
-
-  .navPrev {
-    left: max(0px, calc(var(--gallery-side-width, 44px) / 2 - 22px));
-  }
-
-  .navNext {
-    right: max(0px, calc(var(--gallery-side-width, 44px) / 2 - 22px));
-  }
-}
-
 .card {
   position: absolute;
   top: 0;
@@ -381,8 +335,7 @@
   position: relative;
   z-index: 10;
 
-  display: none;
-  /* display: flex; */
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
@@ -421,6 +374,29 @@
 
 .paginationButton:disabled {
   cursor: default;
+}
+
+/*
+ * The long arrows either side of the indicator, about 50px from it (the
+ * row's 9px gap plus this margin), less on a phone. Gold here, from the
+ * section's text colour, where the project gallery's are white.
+ */
+.navPrev {
+  margin-right: 41px;
+}
+
+.navNext {
+  margin-left: 41px;
+}
+
+@media (max-width: 767px) {
+  .navPrev {
+    margin-right: 15px;
+  }
+
+  .navNext {
+    margin-left: 15px;
+  }
 }
 
 /* =========================================================
