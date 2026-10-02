@@ -60,8 +60,6 @@ export default async function Home() {
 
         <ProjectGallery />
 
-        <TrustedPartner />
-
         <Gallery />
 
         {/* <Project /> */}
@@ -72,6 +70,8 @@ export default async function Home() {
           introText={locationContent.introText}
           destinations={locationContent.items}
         />
+
+        <TrustedPartner />
 
         {/* <SeaSection /> */}
 

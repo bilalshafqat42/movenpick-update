@@ -11,6 +11,7 @@ import {
   ENTRANCE_STAGGER,
   ENTRANCE_START,
 } from "@/lib/motion";
+import NavArrow from "@/components/NavArrow/NavArrow";
 import styles from "./Gallery.module.css";
 
 const DRAG_DISTANCE_THRESHOLD = 64;
@@ -48,6 +49,26 @@ const MIN_CENTRE_HEIGHT = 300;
  */
 const MOBILE_CENTRE_ASPECT = 0.65;
 const MOBILE_SIDE_LIFT = 100;
+
+/*
+ * Overall emphasis, applied on top of every tier's sizing below: the
+ * centre photo 20% larger and the side photos 10% smaller.
+ *
+ * The centre scale deliberately goes past the desktop height budget, so
+ * on a short laptop screen the photo's lower edge and the caption under
+ * it sit just below the fold. It is still kept clear of the side cards
+ * (see CENTRE_SIDE_CLEARANCE).
+ */
+const CENTRE_SCALE = 1.2;
+const SIDE_SCALE = 0.9;
+
+/*
+ * Minimum gap kept between the scaled centre photo and each side card.
+ * On a phone the side cards are so narrow that the full 20% would cover
+ * part of them, so there the centre grows only as far as this allows.
+ */
+const CENTRE_SIDE_CLEARANCE = 32;
+const MOBILE_CENTRE_SIDE_CLEARANCE = 10;
 
 /*
  * Wraps an index into range for a carousel of `count` items. Takes count
@@ -201,7 +222,14 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
        * still owns the pointer, so losing the icon part way through it
        * would read as the drag having been dropped.
        */
-      const isInside = dragStateRef.current.isDragging || isOverAPhoto();
+      const isOverArrow = Boolean(
+        document
+          .elementFromPoint(pointerX, pointerY)
+          ?.closest("[data-gallery-nav]"),
+      );
+
+      const isInside =
+        dragStateRef.current.isDragging || (!isOverArrow && isOverAPhoto());
 
       /*
        * Placed instantly on the way in, so it does not glide across the
@@ -401,13 +429,14 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
        * the viewportWidth cap keeps it from ever overflowing sideways
        * on unusually tall/narrow devices.
        */
-      const centreHeight = window.innerHeight * 0.5;
+      const sideWidth = Math.max(48, viewportWidth * 0.11) * SIDE_SCALE;
+
+      const centreHeight = window.innerHeight * 0.5 * CENTRE_SCALE;
       const centreWidth = Math.min(
         centreHeight * MOBILE_CENTRE_ASPECT,
         viewportWidth * 0.86,
+        viewportWidth - 2 * (sideWidth + MOBILE_CENTRE_SIDE_CLEARANCE),
       );
-
-      const sideWidth = Math.max(48, viewportWidth * 0.11);
       const sideHeight = sideWidth * (446 / 210);
 
       return {
@@ -425,13 +454,14 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
     }
 
     if (viewportWidth <= 767) {
-      const centreHeight = window.innerHeight * 0.5;
+      const sideWidth = Math.max(62, viewportWidth * 0.13) * SIDE_SCALE;
+
+      const centreHeight = window.innerHeight * 0.5 * CENTRE_SCALE;
       const centreWidth = Math.min(
         centreHeight * MOBILE_CENTRE_ASPECT,
         viewportWidth * 0.86,
+        viewportWidth - 2 * (sideWidth + MOBILE_CENTRE_SIDE_CLEARANCE),
       );
-
-      const sideWidth = Math.max(62, viewportWidth * 0.13);
       const sideHeight = sideWidth * (446 / 210);
 
       return {
@@ -482,8 +512,15 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
       window.innerHeight - getSpaceAbovePhoto(),
     );
 
-    const centreHeight = Math.min(widthCap / CENTRE_ASPECT, heightBudget);
-    const centreWidth = centreHeight * CENTRE_ASPECT;
+    sideWidth *= SIDE_SCALE;
+
+    const centreWidth = Math.min(
+      Math.min(widthCap / CENTRE_ASPECT, heightBudget) *
+        CENTRE_ASPECT *
+        CENTRE_SCALE,
+      viewportWidth - 2 * (sideWidth + CENTRE_SIDE_CLEARANCE),
+    );
+    const centreHeight = centreWidth / CENTRE_ASPECT;
 
     /*
      * The side cards are bottom-aligned against the centre photo, so a
@@ -644,7 +681,8 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
       const stage = carouselRef.current;
 
       if (stage) {
-        const { centreWidth, centreHeight } = getResponsiveSizes();
+        const { centreWidth, centreHeight, sideWidth, sideHeight, sideYOffset } =
+          getResponsiveSizes();
 
         /*
          * Published before the caption is measured, not after: it is
@@ -654,6 +692,24 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
         stage.style.setProperty(
           "--gallery-caption-width",
           `${Math.round(centreWidth)}px`,
+        );
+
+        /*
+         * The arrows centre on the photo rather than on the whole stage
+         * (which includes the caption), and on a phone sit over the
+         * narrow side cards — so those figures are published for the CSS.
+         */
+        stage.style.setProperty(
+          "--gallery-photo-height",
+          `${Math.round(centreHeight)}px`,
+        );
+        stage.style.setProperty(
+          "--gallery-side-width",
+          `${Math.round(sideWidth)}px`,
+        );
+        stage.style.setProperty(
+          "--gallery-side-middle",
+          `${Math.round(sideYOffset + sideHeight / 2)}px`,
         );
 
         stage.style.height = `${Math.round(centreHeight + getCaptionBlock())}px`;
@@ -965,6 +1021,11 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
   const handlePointerDown = useCallback(
     (event) => {
       if (isAnimating || event.button > 0) {
+        return;
+      }
+
+      /* The arrows are buttons, not the start of a drag. */
+      if (event.target.closest("[data-gallery-nav]")) {
         return;
       }
 
@@ -1501,6 +1562,24 @@ export default function GalleryClient({ heading, text, items: galleryItems }) {
             </article>
           );
         })}
+
+        {galleryItems.length > 1 && (
+          <>
+            <NavArrow
+              direction="prev"
+              className={styles.navPrev}
+              data-gallery-nav=""
+              onClick={showPrevious}
+            />
+
+            <NavArrow
+              direction="next"
+              className={styles.navNext}
+              data-gallery-nav=""
+              onClick={showNext}
+            />
+          </>
+        )}
       </div>
 
       <div
