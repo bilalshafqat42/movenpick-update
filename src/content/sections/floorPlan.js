@@ -11,9 +11,11 @@
  * out entirely while the list is empty).
  *
  * `units` are the buttons under the intro. Choosing one shows its
- * `image` in the photo panel, whole and centred on the plans' own cream
+ * `image` in the photo panel, whole and centred, with nothing behind it
  * (see .imagePanel[data-plans] in Payment.module.css). Floor plans live
- * in public/images/floor-plan/.
+ * in public/images/floor-plan/ as PNGs with a transparent background, so
+ * they sit straight on the section's cream; a plan with a solid
+ * background would show as a box.
  */
 export const FLOOR_PLAN_CONTENT = {
   heading: "Floor Plan",
@@ -24,17 +26,17 @@ export const FLOOR_PLAN_CONTENT = {
   units: [
     {
       label: "Studio",
-      image: "/images/floor-plan/studio.jpg",
+      image: "/images/floor-plan/studio.png",
       alt: "Studio floor plan with balcony, living and sleeping area, kitchen and bathroom",
     },
     {
       label: "1 Bedroom",
-      image: "/images/floor-plan/1-bedroom.jpg",
+      image: "/images/floor-plan/1-bedroom.png",
       alt: "1 bedroom floor plan with balcony, living room, bedroom, kitchen and dining, dressing area, bathroom and guest WC",
     },
     {
       label: "2 Bedroom",
-      image: "/images/floor-plan/2-bedroom-utility.jpg",
+      image: "/images/floor-plan/2-bedroom-utility.png",
       alt: "2 bedroom with utility floor plan with balcony, two bedrooms, living room, kitchen and dining, bathrooms and utility room",
     },
     {

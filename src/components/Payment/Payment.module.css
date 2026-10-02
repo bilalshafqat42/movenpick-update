@@ -683,14 +683,13 @@
 
 /*
  * Floor plans rather than a photograph (Floor Plan's unit buttons).
- * Shown whole, never cropped, centred on the plans' own background
- * colour so the image's edges disappear into the panel. Inset so the
- * drawing does not run to the panel's edges, and kept near its native
- * size: the supplied plans are 501px square, and blowing them up to a
- * full half-screen would soften the line work.
+ * Shown whole, never cropped, on no background of their own: the plan
+ * files are transparent PNGs, so the drawing sits straight on the
+ * section's cream with no box or edge around it. Inset so the drawing
+ * does not run to the panel's edges.
  */
 .imagePanel[data-plans] {
-  background: #fcf2e9;
+  background: transparent;
 }
 
 .imagePanel[data-plans] .imageLayer {
