@@ -96,9 +96,9 @@ export default async function Home() {
 
         {/* <SeaSection /> */}
 
-        <Payment />
-
         <FloorPlan />
+
+        <Payment />
 
         <Contact />
 
