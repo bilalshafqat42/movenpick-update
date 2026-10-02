@@ -14,11 +14,17 @@ const DESCRIPTION =
  * down as a full-screen `standalone` copy (see page.js). The standalone
  * one takes its own id and skips the ride over the hero's pinned photo,
  * which only makes sense directly beneath the hero.
+ *
+ * `description` and `intro` let a copy show its own heading and a line
+ * beneath it; left out, it shows the original DESCRIPTION above.
  */
 export default async function ProjectOverview({
   id,
   standalone = false,
   analyticsLocation,
+  dayItems,
+  description = DESCRIPTION,
+  intro,
 } = {}) {
   const content = await getSectionContent(
     "projectOverview",
@@ -35,7 +41,9 @@ export default async function ProjectOverview({
       id={id}
       standalone={standalone}
       analyticsLocation={analyticsLocation}
-      description={DESCRIPTION}
+      dayItems={dayItems}
+      description={description}
+      intro={intro}
       stats={stats}
       cta1Label={content["cta-1-label"]}
       cta1Href={content["cta-1-href"]}

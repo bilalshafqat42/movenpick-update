@@ -281,6 +281,200 @@
 }
 
 /* =========================================================
+   Day timeline (standalone copy only)
+
+   The figures row as eight clickable times of day, and beneath it the
+   photograph for the chosen one in place of the buttons. Reuses .stat,
+   .statValue and .statLabel so it keeps the original row's type, rules
+   and entrance; only what differs is set here.
+   ========================================================= */
+
+/* The line beneath the heading, in the copies that have one. */
+.intro {
+  max-width: 720px;
+  margin: clamp(14px, 1.6vw, 22px) 0 0;
+
+  font-family: var(--font-noto-sans);
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: rgba(var(--color-gold-rgb), 0.85);
+}
+
+/*
+ * .stats.dayRow rather than .dayRow: the original row's tablet rule
+ * further down sets .stats to two columns, and this has to outrank it.
+ */
+.stats.dayRow {
+  grid-template-columns: repeat(8, 1fr);
+
+  margin-bottom: clamp(24px, 3vw, 40px);
+}
+
+.dayItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  margin: 0;
+  padding-block: 4px;
+
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+  background: transparent;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dayItem .statValue {
+  font-size: clamp(24px, 2.2vw, 34px);
+
+  color: rgba(var(--color-gold-rgb), 0.45);
+
+  transition: color 300ms ease;
+}
+
+.dayItem .statLabel {
+  font-size: clamp(13px, 1.1vw, 17px);
+  letter-spacing: 0.04em;
+
+  color: rgba(var(--color-gold-rgb), 0.6);
+
+  transition: color 300ms ease;
+}
+
+.dayItem:hover .statValue,
+.dayItem:focus-visible .statValue,
+.dayItem[data-active] .statValue {
+  color: var(--color-gold);
+}
+
+.dayItem:hover .statLabel,
+.dayItem:focus-visible .statLabel,
+.dayItem[data-active] .statLabel {
+  color: var(--color-red);
+}
+
+.dayItem:focus-visible {
+  outline: 1px solid var(--color-gold);
+  outline-offset: 4px;
+}
+
+/*
+ * Takes whatever height the section has left once the copy and the row
+ * are laid out, so the whole composition fills exactly one screen. The
+ * floor keeps the photo a real photo on a short window.
+ */
+.dayStage {
+  position: relative;
+
+  flex: 1 1 auto;
+  min-height: 260px;
+
+  overflow: hidden;
+
+  background: rgba(var(--color-gold-rgb), 0.12);
+}
+
+/* Every photo is mounted; only the chosen one is shown, crossfading. */
+.dayImage {
+  object-fit: cover;
+  object-position: center;
+
+  opacity: 0;
+
+  transition: opacity 600ms ease;
+}
+
+.dayImage[data-active] {
+  opacity: 1;
+}
+
+@media (max-width: 1024px) {
+  .stats.dayRow {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /*
+   * The original's tablet rule (below) clears the divider on every
+   * other item for its 2-up grid. A 4-up row needs it cleared on the
+   * first of each row instead; .dayRow lifts these over that rule.
+   */
+  .dayRow .dayItem:nth-child(2n + 1) {
+    padding-left: clamp(16px, 2vw, 32px);
+
+    border-left: 1px dotted rgba(137, 118, 85, 0.5);
+  }
+
+  .dayRow .dayItem:nth-child(4n + 1) {
+    padding-left: 0;
+
+    border-left: 0;
+  }
+}
+
+/*
+ * A phone gets a single swipeable strip rather than a cramped grid: the
+ * chosen time is scrolled into view when picked (see selectDay).
+ */
+@media (max-width: 767px) {
+  .stats.dayRow {
+    display: flex;
+
+    margin-inline: calc(-1 * var(--page-gutter));
+    padding-inline: var(--page-gutter);
+
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .dayRow::-webkit-scrollbar {
+    display: none;
+  }
+
+  .dayRow .dayItem,
+  .dayRow .dayItem:nth-child(2n + 1),
+  .dayRow .dayItem:nth-child(4n + 1) {
+    flex: 0 0 auto;
+
+    padding-inline: 16px;
+
+    border-left: 1px dotted rgba(137, 118, 85, 0.5);
+
+    scroll-snap-align: start;
+  }
+
+  .dayRow .dayItem:first-child {
+    padding-left: 0;
+
+    border-left: 0;
+  }
+
+  .dayItem .statLabel {
+    white-space: nowrap;
+  }
+
+  .dayStage {
+    min-height: 220px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dayImage,
+  .dayItem .statValue,
+  .dayItem .statLabel {
+    transition: none;
+  }
+}
+
+/* =========================================================
    Tablet
    ========================================================= */
 

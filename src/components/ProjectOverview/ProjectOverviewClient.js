@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import Image from "next/image";
+import { useRef, useState } from "react";
 
 import { trackEvent } from "@/lib/analytics";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
@@ -23,9 +24,52 @@ export default function ProjectOverviewClient({
   id = "project-overview",
   standalone = false,
   analyticsLocation = "project_overview",
+  dayItems = null,
+  intro = null,
 }) {
+  /*
+   * With dayItems the figures row becomes a clickable timeline and the
+   * buttons give way to a photograph that changes with it (the
+   * standalone copy). Without, this is the original overview.
+   */
+  const isDay = Array.isArray(dayItems) && dayItems.length > 0;
+  const [activeDay, setActiveDay] = useState(0);
+  const dayButtonRefs = useRef([]);
+
+  const selectDay = (index) => {
+    setActiveDay(index);
+
+    /*
+     * On a phone the row is a horizontal strip; keep the chosen time in
+     * view rather than leaving it half off the edge.
+     */
+    dayButtonRefs.current[index]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "nearest",
+    });
+  };
+
+  /* Arrow keys move along the timeline, as in any tab list. */
+  const handleDayKeyDown = (event) => {
+    const step =
+      event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+
+    if (!step) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const next = (activeDay + step + dayItems.length) % dayItems.length;
+
+    selectDay(next);
+    dayButtonRefs.current[next]?.focus();
+  };
+
   const sectionRef = useRef(null);
   const descriptionRef = useRef(null);
+  const introRef = useRef(null);
   const descriptionWordRefs = useRef([]);
   const dividerRef = useRef(null);
   const statsRef = useRef(null);
@@ -40,6 +84,9 @@ export default function ProjectOverviewClient({
         ? Array.from(statsRef.current.querySelectorAll(`.${styles.stat}`))
         : [];
       const ctaRow = ctaRowRef.current;
+
+      /* Only the copies that pass an intro have one. */
+      const introEls = introRef.current ? [introRef.current] : [];
 
       if (!section || !descriptionEl || !divider || !ctaRow) {
         return;
@@ -93,7 +140,7 @@ export default function ProjectOverviewClient({
       };
 
       if (reduceMotion) {
-        gsap.set([descriptionEl, divider, ...statItems, ctaRow], {
+        gsap.set([descriptionEl, ...introEls, divider, ...statItems, ctaRow], {
           autoAlpha: 1,
           y: 0,
         });
@@ -103,7 +150,7 @@ export default function ProjectOverviewClient({
         return;
       }
 
-      gsap.set([descriptionEl, divider, ...statItems, ctaRow], {
+      gsap.set([descriptionEl, ...introEls, divider, ...statItems, ctaRow], {
         autoAlpha: 0,
         y: 24,
       });
@@ -165,7 +212,7 @@ export default function ProjectOverviewClient({
               step,
             )
             .to(
-              divider,
+              [...introEls, divider],
               { autoAlpha: 1, y: 0, duration: ENTRANCE_DURATION },
               step,
             )
@@ -240,41 +287,106 @@ export default function ProjectOverviewClient({
         )}
       </h2>
 
+      {intro && (
+        <p ref={introRef} className={styles.intro}>
+          {intro}
+        </p>
+      )}
+
       <hr ref={dividerRef} className={styles.divider} />
 
-      <div ref={statsRef} className={styles.stats}>
-        {stats.map((stat, index) => (
-          <div className={styles.stat} key={index}>
-            <p className={styles.statValue}>{stat.value}</p>
-            <p className={styles.statLabel}>{stat.label}</p>
+      {isDay ? (
+        <>
+          <div
+            ref={statsRef}
+            className={`${styles.stats} ${styles.dayRow}`}
+            role="tablist"
+            aria-label="A day at Mövenpick"
+            onKeyDown={handleDayKeyDown}
+          >
+            {dayItems.map((item, index) => (
+              <button
+                key={item.time}
+                ref={(element) => {
+                  dayButtonRefs.current[index] = element;
+                }}
+                type="button"
+                role="tab"
+                id={`${id}-day-tab-${index}`}
+                aria-selected={index === activeDay}
+                aria-controls={`${id}-day-photo`}
+                tabIndex={index === activeDay ? 0 : -1}
+                className={`${styles.stat} ${styles.dayItem}`}
+                data-active={index === activeDay || undefined}
+                onClick={() => selectDay(index)}
+              >
+                <span className={styles.statValue}>{item.time}</span>
+                <span className={styles.statLabel}>{item.label}</span>
+              </button>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div ref={ctaRowRef} className={styles.ctaRow}>
-        <a
-          href={cta1Href}
-          className={styles.ctaButton}
-          {...(cta1Href === "#contact" ? { "data-contact-popup": true } : {})}
-        >
-          <span>{cta1Label}</span>
-          <span className={styles.ctaIcon} aria-hidden="true">
-            →
-          </span>
-        </a>
+          <div
+            ref={ctaRowRef}
+            id={`${id}-day-photo`}
+            className={styles.dayStage}
+            role="tabpanel"
+            aria-labelledby={`${id}-day-tab-${activeDay}`}
+          >
+            {dayItems.map((item, index) => (
+              <Image
+                key={item.time}
+                src={item.image}
+                alt={index === activeDay ? item.alt : ""}
+                aria-hidden={index !== activeDay || undefined}
+                fill
+                sizes="(max-width: 767px) 100vw, 84vw"
+                quality={85}
+                className={styles.dayImage}
+                data-active={index === activeDay || undefined}
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <div ref={statsRef} className={styles.stats}>
+            {stats.map((stat, index) => (
+              <div className={styles.stat} key={index}>
+                <p className={styles.statValue}>{stat.value}</p>
+                <p className={styles.statLabel}>{stat.label}</p>
+              </div>
+            ))}
+          </div>
 
-        <a
-          href={cta2Href}
-          download="movenpick-brochure.pdf"
-          className={styles.ctaButton}
-          onClick={() =>
-            trackEvent("brochure_download", { location: analyticsLocation })
-          }
-        >
-          <span>{cta2Label}</span>
-          <span className={styles.downloadIcon} aria-hidden="true" />
-        </a>
-      </div>
+          <div ref={ctaRowRef} className={styles.ctaRow}>
+            <a
+              href={cta1Href}
+              className={styles.ctaButton}
+              {...(cta1Href === "#contact"
+                ? { "data-contact-popup": true }
+                : {})}
+            >
+              <span>{cta1Label}</span>
+              <span className={styles.ctaIcon} aria-hidden="true">
+                →
+              </span>
+            </a>
+
+            <a
+              href={cta2Href}
+              download="movenpick-brochure.pdf"
+              className={styles.ctaButton}
+              onClick={() =>
+                trackEvent("brochure_download", { location: analyticsLocation })
+              }
+            >
+              <span>{cta2Label}</span>
+              <span className={styles.downloadIcon} aria-hidden="true" />
+            </a>
+          </div>
+        </>
+      )}
     </section>
   );
 }
