@@ -8,7 +8,7 @@ import PaymentClient from "@/components/Payment/PaymentClient";
  * animation and responsive behaviour, and a fix to one fixes both.
  */
 export default function FloorPlan() {
-  const { heading, text, image, imageAlt, columnLabels, rows } =
+  const { heading, text, image, imageAlt, columnLabels, rows, units } =
     FLOOR_PLAN_CONTENT;
 
   return (
@@ -23,6 +23,7 @@ export default function FloorPlan() {
       milestones={rows}
       columnLabels={columnLabels}
       introInPanel
+      units={units}
     />
   );
 }

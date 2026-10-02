@@ -571,6 +571,95 @@
   }
 }
 
+/*
+ * The column headings as the eyebrow above the heading: same red, with
+ * space beneath instead of sitting tight on the first milestone.
+ */
+.introInPanel .tableHeader {
+  padding-bottom: 0;
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+
+/*
+ * The unit-type buttons: one horizontal row under the paragraph, in the
+ * site's red outline pill. The chosen unit is filled.
+ */
+.units {
+  display: flex;
+  gap: 10px;
+
+  margin-top: clamp(18px, 2.6vh, 28px);
+}
+
+/*
+ * Equal shares of the row, so the four always fit on one line in the
+ * narrow table column rather than the last one wrapping below.
+ */
+.unitButton {
+  flex: 1 1 0;
+  min-width: 0;
+
+  margin: 0;
+  padding: 12px 10px;
+
+  border: 1px solid var(--color-cta-red);
+  border-radius: 999px;
+
+  background: transparent;
+
+  font-family: var(--font-noto-sans);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  color: var(--color-cta-red);
+
+  cursor: pointer;
+
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.unitButton:hover,
+.unitButton:focus-visible,
+.unitButton[aria-pressed="true"] {
+  background: var(--color-cta-red);
+
+  color: var(--color-cream);
+}
+
+.unitButton:focus-visible {
+  outline: 1px solid var(--color-cta-red);
+  outline-offset: 3px;
+}
+
+/* Four pills are too wide for a phone; there the row scrolls sideways. */
+@media (max-width: 767px) {
+  .units {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .units::-webkit-scrollbar {
+    display: none;
+  }
+
+  .unitButton {
+    flex: 0 0 auto;
+
+    padding: 11px 18px;
+
+    font-size: 12px;
+  }
+}
+
 /* =========================================================
    Reduced motion
    ========================================================= */

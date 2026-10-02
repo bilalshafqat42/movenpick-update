@@ -8,6 +8,10 @@
  * starting point. Replace it with the floor plan details: the heading,
  * intro, photo, the two column names, and one row per line of the table
  * (add or remove rows freely; the table follows the list).
+ *
+ * `units` are the buttons under the intro. Choosing one shows its
+ * `image` in the photo panel; every unit uses the same placeholder until
+ * its own floor plan is added (e.g. "/images/floor-plan/studio.avif").
  */
 export const FLOOR_PLAN_CONTENT = {
   heading: "Floor Plan",
@@ -15,6 +19,28 @@ export const FLOOR_PLAN_CONTENT = {
   image: "/images/payment/payment-plan.avif",
   imageAlt: "[Add alt text for the floor plan image]",
   columnLabels: ["Milestone", "%"],
+  units: [
+    {
+      label: "Studio",
+      image: "/images/payment/payment-plan.avif",
+      alt: "[Add alt text for the studio floor plan]",
+    },
+    {
+      label: "1 Bedroom",
+      image: "/images/payment/payment-plan.avif",
+      alt: "[Add alt text for the 1 bedroom floor plan]",
+    },
+    {
+      label: "2 Bedroom",
+      image: "/images/payment/payment-plan.avif",
+      alt: "[Add alt text for the 2 bedroom floor plan]",
+    },
+    {
+      label: "3 Bedroom",
+      image: "/images/payment/payment-plan.avif",
+      alt: "[Add alt text for the 3 bedroom floor plan]",
+    },
+  ],
   rows: [
     {
       label: "Booking",

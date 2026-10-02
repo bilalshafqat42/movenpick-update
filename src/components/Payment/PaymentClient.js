@@ -1,7 +1,7 @@
 "use client";
 
 import SafeImage from "@/components/SafeImage";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { revealOnArrival } from "@/lib/revealOnArrival";
@@ -29,7 +29,18 @@ export default function PaymentClient({
   titleId = "payment-title",
   columnLabels = ["Milestone", "%"],
   introInPanel = false,
+  /*
+   * Optional unit-type buttons under the intro (Floor Plan): each is
+   * { label, image, alt }, and choosing one swaps the photo for its own.
+   */
+  units = null,
 }) {
+  const hasUnits = Array.isArray(units) && units.length > 0;
+  const [activeUnit, setActiveUnit] = useState(0);
+
+  const shownImage = hasUnits ? units[activeUnit].image : image;
+  const shownAlt = hasUnits ? units[activeUnit].alt : imageAlt;
+
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const textRef = useRef(null);
@@ -37,6 +48,7 @@ export default function PaymentClient({
   const imageLayerRef = useRef(null);
   const tableRef = useRef(null);
   const tableHeaderRef = useRef(null);
+  const unitsRef = useRef(null);
 
   useGSAP(
     () => {
@@ -47,6 +59,15 @@ export default function PaymentClient({
       const imageLayer = imageLayerRef.current;
       const table = tableRef.current;
       const tableHeader = tableHeaderRef.current;
+
+      /*
+       * With introInPanel the column headings sit above the heading as
+       * its eyebrow, so they arrive with the intro rather than leading
+       * the table's own sequence further down.
+       */
+      const introEls = introInPanel
+        ? [tableHeader, headingEl, textEl, unitsRef.current].filter(Boolean)
+        : [headingEl, textEl];
 
       if (
         !section ||
@@ -65,7 +86,7 @@ export default function PaymentClient({
       ).matches;
 
       if (reduceMotion) {
-        gsap.set([headingEl, textEl, tableHeader, table], {
+        gsap.set([...introEls, tableHeader, table], {
           autoAlpha: 1,
           y: 0,
         });
@@ -81,14 +102,14 @@ export default function PaymentClient({
       /*
        * Top heading + intro, same staggered rhythm as every other section.
        */
-      gsap.set([headingEl, textEl], { autoAlpha: 0, y: 24 });
+      gsap.set(introEls, { autoAlpha: 0, y: 24 });
 
       const introTrigger = revealOnArrival({
         trigger: section,
         start: ENTRANCE_START,
 
         onReveal: () => {
-          gsap.to([headingEl, textEl], {
+          gsap.to(introEls, {
             autoAlpha: 1,
             y: 0,
             duration: ENTRANCE_DURATION,
@@ -200,7 +221,10 @@ export default function PaymentClient({
       const BEAT_STEP = ENTRANCE_STAGGER * 0.8;
       const BEAT_DURATION = ENTRANCE_DURATION * 0.55;
 
-      gsap.set(tableHeader, { autoAlpha: 0, y: 12 });
+      if (!introInPanel) {
+        gsap.set(tableHeader, { autoAlpha: 0, y: 12 });
+      }
+
       gsap.set(rows, { autoAlpha: 0, y: 18 });
       gsap.set(rules.filter(Boolean), { scaleX: 0 });
 
@@ -215,8 +239,10 @@ export default function PaymentClient({
 
           let at = 0;
 
-          timeline.to(tableHeader, { autoAlpha: 1, y: 0 }, at);
-          at += BEAT_STEP;
+          if (!introInPanel) {
+            timeline.to(tableHeader, { autoAlpha: 1, y: 0 }, at);
+            at += BEAT_STEP;
+          }
 
           rows.forEach((row, index) => {
             timeline.to(row, { autoAlpha: 1, y: 0 }, at);
@@ -254,6 +280,34 @@ export default function PaymentClient({
       <p ref={textRef} className={styles.text}>
         {text}
       </p>
+
+      {hasUnits && (
+        <div
+          ref={unitsRef}
+          className={styles.units}
+          role="group"
+          aria-label="Unit types"
+        >
+          {units.map((unit, index) => (
+            <button
+              key={unit.label}
+              type="button"
+              className={styles.unitButton}
+              aria-pressed={index === activeUnit}
+              onClick={() => setActiveUnit(index)}
+            >
+              {unit.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const tableHeaderEl = (
+    <div ref={tableHeaderRef} className={styles.tableHeader}>
+      <span>{columnLabels[0]}</span>
+      <span>{columnLabels[1]}</span>
     </div>
   );
 
@@ -270,9 +324,9 @@ export default function PaymentClient({
         <div ref={imagePanelRef} className={styles.imagePanel}>
           <div ref={imageLayerRef} className={styles.imageLayer}>
             <SafeImage
-              src={image}
+              src={shownImage}
               fallbackSrc={imageFallback}
-              alt={imageAlt}
+              alt={shownAlt}
               fill
               quality={90}
               sizes="(max-width: 767px) 100vw, 50vw"
@@ -282,12 +336,14 @@ export default function PaymentClient({
         </div>
 
         <div className={styles.tablePanel}>
-          {introInPanel && intro}
-
-          <div ref={tableHeaderRef} className={styles.tableHeader}>
-            <span>{columnLabels[0]}</span>
-            <span>{columnLabels[1]}</span>
-          </div>
+          {introInPanel ? (
+            <>
+              {tableHeaderEl}
+              {intro}
+            </>
+          ) : (
+            tableHeaderEl
+          )}
 
           <div ref={tableRef} className={styles.table}>
             {milestones.map((milestone, index) => (
