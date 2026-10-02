@@ -320,19 +320,20 @@ export default function PaymentClient({
 
       {/*
        * The chosen unit's own heading and description, under a rule.
-       * The wrapper is stable so the entrance animation has one element
-       * to reveal; the inner block is keyed on the selection so it
+       * The wrapper is stable, so the entrance animation has one element
+       * to reveal and screen readers keep the live region they are
+       * watching; the inner block is keyed on the selection so it
        * remounts and fades in each time a different unit is chosen.
        */}
       {hasUnits && (units[activeUnit].heading || units[activeUnit].text) && (
-        <div ref={unitDetailRef} className={styles.unitDetail}>
+        <div
+          ref={unitDetailRef}
+          className={styles.unitDetail}
+          aria-live="polite"
+        >
           <hr className={styles.unitDivider} />
 
-          <div
-            key={activeUnit}
-            className={styles.unitDetailBody}
-            aria-live="polite"
-          >
+          <div key={activeUnit} className={styles.unitDetailBody}>
             {units[activeUnit].heading && (
               <h3 className={styles.unitHeading}>
                 {units[activeUnit].heading}

@@ -18,7 +18,12 @@ export default function FloorPlan() {
       heading={heading}
       text={text}
       image={image}
-      imageFallback={image}
+      /*
+       * No fallback photo: if a floor plan ever fails to load, showing a
+       * lifestyle render in its place would be more misleading than an
+       * empty panel.
+       */
+      imageFallback={null}
       imageAlt={imageAlt}
       milestones={rows}
       columnLabels={columnLabels}

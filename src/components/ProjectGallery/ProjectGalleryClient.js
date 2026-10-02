@@ -287,6 +287,18 @@ export default function ProjectGalleryClient({ slides }) {
         return;
       }
 
+      /*
+       * A mouse pressed here and released somewhere else before the drag
+       * threshold was reached never delivers its pointerup to this
+       * element (capture only starts once the drag is under way). With
+       * no button held, that press is over: drop it, or the next plain
+       * hover would start dragging the slides.
+       */
+      if (event.pointerType === "mouse" && event.buttons === 0) {
+        dragRef.current = null;
+        return;
+      }
+
       const dx = event.clientX - drag.startX;
 
       if (!drag.moved) {
